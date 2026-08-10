@@ -1,0 +1,105 @@
+name: 🚀 Build and Deploy App
+on:
+  workflow_run:
+    workflows: ["Lint"]
+    branches: [main]
+    types:
+      - completed
+
+  workflow_dispatch:
+    inputs:
+      os:
+        type: choice
+        description: OS to build on
+        options:
+          - macos-latest
+          - ubuntu-latest
+      platform:
+        type: choice
+        description: Platform to build for
+        options:
+          - android
+          - ios
+      profile:
+        type: choice
+        description: Build profile to use
+        options:
+          - development
+          - preview
+          - production
+env:
+  platform: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.platform || vars.DEFAULT_PLATFORM }}
+  profile: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.profile || vars.DEFAULT_PROFILE }}
+jobs:
+  build:
+    name: 🚀 Build and Deploy App
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.os || vars.DEFAULT_OS }}
+    strategy:
+      matrix:
+        node: [22.x]
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v2
+
+      - name: 🏗 List Xcode installations
+        run: sudo ls -1 /Applications | grep "Xcode"
+
+        #Select your required version
+      - name: 🏗 Select Xcode 15.2
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+
+      - name: 🏗 Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Log dir
+        shell: bash
+        run: |
+          ls
+
+      - name: 🏎️ Cache Pods
+        if: runner.os == 'macOS'
+        uses: actions/cache@v3
+        id: pods-cache
+        with:
+          path: /apps/expo/ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('/apps/expo/ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: 🛠️ Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: 🛠️ Install dependencies
+        run: bun install
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 👷 Build packages
+        run: "bun run build"
+
+      - name: 👷 Build app
+        working-directory: apps/expo
+        run: |
+          eas build --local \
+            --non-interactive \
+            --output=./app-${{ env.platform }}-${{ env.profile }}.${{ env.platform == 'android' && 'apk' || 'ipa' }} \
+            --platform=${{ env.platform }} \
+            --profile=${{ env.profile }}
+
+      - name: 📱 Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-${{ env.platform }}-${{ env.profile }}.${{ env.platform == 'android' && 'apk' || 'ipa' }}
+          path: ${{ github.workspace }}/apps/expo/app-${{ env.platform }}-${{ env.profile }}.${{ env.platform == 'android' && 'apk' || 'ipa' }}
+
+      - name: 🚀 Submit to Store
+        working-directory: apps/expo
+        if: env.profile == 'production'
+        run: |
+          eas submit --platform=${{ env.platform }} --non-interactive --path=./app-${{ env.platform }}-${{ env.profile }}.${{ env.platform == 'android' && 'apk' || 'ipa' }}

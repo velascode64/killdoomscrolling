@@ -1,0 +1,34 @@
+{
+  "cli": {
+    "version": ">= 5.2.0",
+    "promptToConfigurePushNotifications": false,
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "simulator": {
+      "extends": "development",
+      "ios": {
+        "simulator": true
+      }
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "stahl.luke@web.de",
+        "ascAppId": "6474795966",
+        "appleTeamId": "3X5J8LXMDM"
+      }
+    }
+  }
+}
