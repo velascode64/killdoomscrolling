@@ -21,6 +21,7 @@ import {
   YStack,
 } from "tamagui";
 import { AppIcon } from "../../../components/app.icon";
+import { AndroidFocusDashboard } from "../../../components/android-focus-dashboard";
 import { Container } from "../../../components/container";
 import { Divider } from "../../../components/divider";
 import { Header } from "../../../components/header";
@@ -49,6 +50,7 @@ const Overview = observer(() => {
       <YStack space="$4">
         <H4 color="$text11">Overview</H4>
         <WeeklySummary />
+        {Platform.OS === "android" && <AndroidFocusDashboard />}
         {OverviewStore.stillCollectingData && (
           <ShadowCard>
             <XStack space="$3">

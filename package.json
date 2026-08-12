@@ -11,6 +11,8 @@
     "build": "turbo build",
     "check-deps": "check-dependency-version-consistency .",
     "android": "bun run --cwd apps/expo android",
+    "android:metro": "bun run --cwd apps/expo dev:client",
+    "android:usb": "adb reverse tcp:8081 tcp:8081",
     "android:apk": "bun run --cwd apps/expo android:apk"
   },
   "workspaces": [
