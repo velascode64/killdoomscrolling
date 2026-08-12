@@ -14,7 +14,7 @@ const LightIcon = require("../../assets/images/light.png") as ImageURISource;
 const icons = [
   {
     name: "Default",
-    value: "default",
+    value: "primary",
     source: DefaultIcon,
   },
   {

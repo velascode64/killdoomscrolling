@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import { router } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { RefreshControl } from "react-native";
+import { Platform, RefreshControl } from "react-native";
 import {
   H1,
   H2,
@@ -208,7 +208,7 @@ const Overview = observer(() => {
             backgroundColor: "$grey1",
           }}
           onPress={() => {
-            router.push("/setup");
+            router.push(Platform.OS === "android" ? "/onboarding" : "/setup");
           }}
         >
           <View

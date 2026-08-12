@@ -10,7 +10,8 @@
     "format": "turbo format",
     "build": "turbo build",
     "check-deps": "check-dependency-version-consistency .",
-    "android": "expo run:android"
+    "android": "bun run --cwd apps/expo android",
+    "android:apk": "bun run --cwd apps/expo android:apk"
   },
   "workspaces": [
     "packages/*",

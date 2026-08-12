@@ -80,7 +80,7 @@ export class BreakStoreSingleton {
     }
   }
 
-  public async openApp(): Promise {
+  public async openApp(): Promise<void> {
     if (!this.app) {
       throw new Error("App not initialized");
     }
@@ -100,7 +100,7 @@ export class BreakStoreSingleton {
     router.replace("/");
   }
 
-  public async exitApp(): Promise {
+  public async exitApp(): Promise<void> {
     if (!this.app || isRunningInExpoGo) {
       throw new Error("App not initialized");
     }

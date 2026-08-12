@@ -4,7 +4,7 @@ import { useFonts } from "expo-font";
 import { router, Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import { TamaguiProvider, useTheme as useThemeTamagui } from "tamagui";
 
 import { ThemeProvider, useTheme } from "../components/theme-provider";
@@ -37,6 +37,12 @@ export default function RootLayout() {
   }, [error]);
   const appState = useRef(AppState.currentState);
   useEffect(() => {
+    // The original product receives iOS Shortcut/AppIntent callbacks. Android
+    // uses the native foreground service in expo-app-blocker instead.
+    if (Platform.OS === "android") {
+      void SplashScreen.hideAsync();
+      return;
+    }
     const checkShortcut = () => {
       void listenForShortcut()
         .then(({ app, timestamp, event }) => {

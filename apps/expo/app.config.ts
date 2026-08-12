@@ -22,6 +22,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       usesNonExemptEncryption: false,
     },
   },
+  android: {
+    package: "com.gdesign.digitalbreak",
+  },
   web: {
     bundler: "metro",
     // output: 'static',
@@ -31,10 +34,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-localization",
     "expo-font",
     "expo-web-browser",
+    "./plugins/with-android-jvm-target",
     [
       "expo-dynamic-app-icon",
       {
-        default: {
+        primary: {
           image: "./assets/images/default.png",
           prerendered: true,
         },
@@ -53,6 +57,24 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         ios: {
           deploymentTarget: "16.0",
+        },
+      },
+    ],
+    [
+      "expo-app-blocker",
+      {
+        // This app currently keeps its existing iOS integration. The Android
+        // reward blocker does not need to add any iOS extensions or targets.
+        ios: { enabled: false },
+        android: {
+          scheme: "digitalbreak",
+          overlayTitle: "Time to focus",
+          overlayText: "Use one of your focus apps to earn your social time.",
+          overlayBackgroundColor: "#FFF8F1",
+          overlayTitleColor: "#1C1917",
+          overlayTextColor: "#57534E",
+          notificationTitle: "Focus time",
+          notificationText: "{appName} is blocked until you complete your focus time.",
         },
       },
     ],
