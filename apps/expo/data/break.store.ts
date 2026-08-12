@@ -1,7 +1,6 @@
 import Constants, { AppOwnership } from "expo-constants";
 import { router } from "expo-router";
 import { makeAutoObservable } from "mobx";
-import * as ExpoExitApp from "../../../packages/expo-exit-app";
 import { AppStatisticsStore } from "./app.statistics";
 import type { App } from "./apps.store";
 import { AppsStore } from "./apps.store";
@@ -110,6 +109,10 @@ export class BreakStoreSingleton {
       type: "app-close",
     });
     await ShortCutPayload.clear();
+
+    // This module is optional in development builds. Loading it here prevents a
+    // missing native implementation from blocking the rest of the application.
+    const ExpoExitApp = require("../../../packages/expo-exit-app") as typeof import("../../../packages/expo-exit-app");
     ExpoExitApp.exit();
   }
 

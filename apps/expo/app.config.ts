@@ -16,6 +16,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
+    buildNumber: "1",
     bundleIdentifier: "com.lukesthl.digitalbreak",
     config: {
       usesNonExemptEncryption: false,
