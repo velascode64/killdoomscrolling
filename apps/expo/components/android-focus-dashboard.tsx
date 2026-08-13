@@ -4,6 +4,7 @@ import {
   AndroidRewardBlockerStatus,
   getInstalledApps,
   getRewardBlockerStatus,
+  startMonitoring,
 } from "expo-app-blocker";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -45,6 +46,9 @@ export function AndroidFocusDashboard() {
     const refresh = async () => {
       const [config, installedApps] = await Promise.all([loadAndroidRewardConfig(), getInstalledApps()]);
       setConfigured(Boolean(config?.enabled));
+      // Android stops foreground services when a debug APK is updated. Resume
+      // the saved plan as soon as the dashboard loads after an install.
+      if (config?.enabled) startMonitoring();
       setBlockedApps(installedApps.filter((app) => config?.blockedPackages.includes(app.packageName)));
       setFocusApps(installedApps.filter((app) => config?.productivePackages.includes(app.packageName)));
       setStatus(getRewardBlockerStatus());
