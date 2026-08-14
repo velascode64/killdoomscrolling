@@ -1,18 +1,20 @@
-import { Check, Focus, Timer } from "@tamagui/lucide-icons";
+import { ArrowRight, Focus } from "@tamagui/lucide-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import {
-  AndroidBlockableApp,
   AndroidRewardBlockerStatus,
   getInstalledApps,
   getRewardBlockerStatus,
+  openSelectedApp,
+  type IOSBlockedItem,
 } from "expo-app-blocker";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, Platform } from "react-native";
-import { H1, H4, Paragraph, SizableText, View, XStack, YStack } from "tamagui";
+import { Alert, Image, Platform, Pressable } from "react-native";
+import Svg, { Circle } from "react-native-svg";
+import { H1, Paragraph, SizableText, View, XStack, YStack } from "tamagui";
 
-import { Container } from "../components/container";
-import { ShadowCard } from "../components/shadow.card";
 import { loadAndroidRewardConfig } from "../data/android-reward";
+import { loadIOSRewardPlan } from "../data/ios-reward";
 
 const EMPTY_STATUS: AndroidRewardBlockerStatus = {
   enabled: false,
@@ -23,48 +25,97 @@ const EMPTY_STATUS: AndroidRewardBlockerStatus = {
   unlockRemainingSeconds: 0,
 };
 
+type FocusApp = {
+  id: string;
+  name: string;
+  iconBase64?: string | null;
+  packageName?: string;
+};
+
 function formatDuration(seconds: number) {
-  const minutes = Math.floor(Math.max(0, seconds) / 60);
-  return `${minutes}:${String(Math.max(0, seconds) % 60).padStart(2, "0")}`;
+  const safe = Math.max(0, seconds);
+  return `${String(Math.floor(safe / 60)).padStart(2, "0")}:${String(safe % 60).padStart(2, "0")}`;
+}
+
+function formatSessionDuration(seconds: number) {
+  const safe = Math.max(0, seconds);
+  return `${String(Math.floor(safe / 3600)).padStart(2, "0")}:${String(Math.floor((safe % 3600) / 60)).padStart(2, "0")}:${String(safe % 60).padStart(2, "0")}`;
+}
+
+function formatIOSItem(item: IOSBlockedItem, index: number) {
+  return item.displayName ?? item.categoryName ?? item.domain ?? `${item.type === "category" ? "Categoria" : "App"} seleccionada ${index + 1}`;
+}
+
+function ProgressRing({ progress }: { progress: number }) {
+  const size = 268;
+  const radius = 122;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference * (1 - Math.min(1, Math.max(0, progress)));
+
+  return <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <Circle cx={size / 2} cy={size / 2} r={radius} stroke="rgba(255,255,255,0.28)" strokeWidth={5} fill="none" />
+    <Circle cx={size / 2} cy={size / 2} r={radius} stroke="#FFFFFF" strokeWidth={7} strokeLinecap="round" fill="none" strokeDasharray={`${circumference} ${circumference}`} strokeDashoffset={offset} rotation="-90" origin={`${size / 2}, ${size / 2}`} />
+  </Svg>;
 }
 
 export default function BlockedPage() {
   const { app } = useLocalSearchParams<{ app?: string }>();
   const [status, setStatus] = useState<AndroidRewardBlockerStatus>(EMPTY_STATUS);
-  const [focusApps, setFocusApps] = useState<AndroidBlockableApp[]>([]);
+  const [focusApps, setFocusApps] = useState<FocusApp[]>([]);
 
   useEffect(() => {
-    if (Platform.OS !== "android") return;
     const refresh = async () => {
-      setStatus(getRewardBlockerStatus());
+      if (Platform.OS === "ios") {
+        const plan = await loadIOSRewardPlan();
+        setFocusApps((plan?.productiveItems ?? []).slice(0, 3).map((item, index) => ({ id: `${item.type}:${item.token}`, name: formatIOSItem(item, index), iconBase64: item.iconBase64 })));
+        setStatus({ ...EMPTY_STATUS, enabled: Boolean(plan?.enabled), isScheduleActive: true, phase: "earning", productiveRemainingSeconds: (plan?.productiveMinutes ?? 0) * 60 });
+        return;
+      }
+      if (Platform.OS !== "android") return;
       const [config, installed] = await Promise.all([loadAndroidRewardConfig(), getInstalledApps()]);
-      const focusPackageNames = new Set(config?.productivePackages ?? []);
-      setFocusApps(installed.filter((item) => focusPackageNames.has(item.packageName)));
+      const focusPackages = new Set(config?.productivePackages ?? []);
+      setFocusApps(installed.filter((item) => focusPackages.has(item.packageName)).slice(0, 3).map((item) => ({ id: item.packageName, name: item.name, iconBase64: item.iconBase64, packageName: item.packageName })));
+      setStatus(getRewardBlockerStatus());
     };
-    void refresh().catch((error) => console.warn("Unable to load focus reward", error));
-    const interval = setInterval(() => setStatus(getRewardBlockerStatus()), 1000);
+
+    void refresh().catch((error) => console.warn("Unable to load focus screen", error));
+    const interval = setInterval(() => {
+      if (Platform.OS === "android") setStatus(getRewardBlockerStatus());
+    }, 1_000);
     return () => clearInterval(interval);
   }, []);
 
-  const isUnlocked = status.phase === "unlocked";
-  const remaining = isUnlocked ? status.unlockRemainingSeconds : status.productiveRemainingSeconds;
-  const label = isUnlocked ? "Tiempo recuperado" : "Estas recuperando tu tiempo";
-  const body = isUnlocked
-    ? "Tu recompensa esta activa. Disfruta el tiempo que elegiste, sin culpa."
-    : `Completa tu enfoque y ${app ?? "esta app"} vuelve a estar disponible.`;
+  const unlocked = status.phase === "unlocked";
+  const total = status.productiveElapsedSeconds + status.productiveRemainingSeconds;
+  const progress = total > 0 ? status.productiveElapsedSeconds / total : 0;
+  const timer = unlocked ? status.unlockRemainingSeconds : status.productiveElapsedSeconds;
+  const progressLabel = unlocked
+    ? `TIEMPO DISPONIBLE ${formatSessionDuration(status.unlockRemainingSeconds)}`
+    : `${Math.round(progress * 100)}% DE ${formatSessionDuration(total)}`;
+  const subtitle = unlocked
+    ? "Tu recompensa esta activa. Disfruta el tiempo que elegiste."
+    : `${app ?? "Esta app"} puede esperar. Tu sesion de enfoque esta en curso.`;
 
-  return <Container paddingVertical="$6">
-    <YStack space="$4" flex={1} justifyContent="center">
-      <YStack alignItems="center" space="$3">
-        <View width={74} height={74} borderRadius={99} alignItems="center" justifyContent="center" backgroundColor={isUnlocked ? "#DCFCE7" : "#FFEDD5"}>
-          {isUnlocked ? <Check color="#15803D" size={34} /> : <Focus color="#C2410C" size={34} />}
-        </View>
-        <YStack alignItems="center" space="$1"><H1 color="$text11" textAlign="center" fontSize="$10" lineHeight={44}>{label}</H1><Paragraph color="$text6" textAlign="center" fontSize="$5" lineHeight={23}>{body}</Paragraph></YStack>
+  const openFocusApp = (focusApp: FocusApp) => {
+    if (focusApp.packageName && openSelectedApp(focusApp.packageName)) return;
+    Alert.alert("Abre esta app", Platform.OS === "ios"
+      ? "iOS no permite abrir directamente una app elegida con Family Controls. Abrela desde tu pantalla de inicio para avanzar."
+      : "No se pudo abrir esta app desde Rehabbit.");
+  };
+
+  return <LinearGradient colors={["#16D9D5", "#008CEB", "#06254E"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
+    <YStack flex={1} paddingHorizontal="$7" paddingTop="$8" paddingBottom="$6" justifyContent="space-between">
+      <YStack alignItems="center" space="$2">
+        <H1 color="white" textAlign="center" fontSize="$8" lineHeight={34}>Estas recuperando tu tiempo</H1>
+        <Paragraph color="rgba(255,255,255,0.80)" textAlign="center" fontSize="$5" lineHeight={25}>{subtitle}</Paragraph>
       </YStack>
-      <ShadowCard backgroundColor={isUnlocked ? "#F0FDF4" : "#FFF8F1"} borderColor={isUnlocked ? "#86EFAC" : "#FED7AA"} padding="$5">
-        <YStack alignItems="center" space="$2"><Timer color={isUnlocked ? "#15803D" : "#C2410C"} size={24} /><SizableText color="$text6" fontWeight="700">{isUnlocked ? "Disponible durante" : "Enfoque que falta"}</SizableText><H1 color="$text11" fontSize="$12" lineHeight={66}>{formatDuration(remaining)}</H1><Paragraph color="$text6" textAlign="center">{isUnlocked ? "Cuando termine, puedes iniciar un nuevo ciclo." : "El contador se pausa si sales de una app de enfoque."}</Paragraph></YStack>
-      </ShadowCard>
-      <YStack space="$2"><H4 color="$text11">Tus apps de enfoque</H4><Paragraph color="$text6">Abre cualquiera de estas apps para avanzar el contador.</Paragraph>{focusApps.map((focusApp) => <ShadowCard key={focusApp.packageName} padding="$2"><XStack alignItems="center" space="$3">{focusApp.iconBase64 ? <Image source={{ uri: `data:image/png;base64,${focusApp.iconBase64}` }} style={{ width: 38, height: 38, borderRadius: 9 }} /> : <View width={38} height={38} borderRadius={9} backgroundColor="$grey3" />}<SizableText color="$text11" fontWeight="800">{focusApp.name}</SizableText></XStack></ShadowCard>)}</YStack>
+
+      <View width={268} height={268} alignSelf="center" alignItems="center" justifyContent="center">
+        <View position="absolute"><ProgressRing progress={unlocked ? 1 : progress} /></View>
+        <YStack alignItems="center" space="$1"><H1 color="white" fontSize={54} lineHeight={64} fontWeight="400">{formatDuration(timer)}</H1><SizableText color="rgba(255,255,255,0.82)" fontWeight="800" letterSpacing={1.5}>{progressLabel}</SizableText></YStack>
+      </View>
+
+      <YStack space="$3">{focusApps.map((focusApp) => <Pressable key={focusApp.id} onPress={() => openFocusApp(focusApp)}><XStack height={76} alignItems="center" paddingHorizontal="$3" borderRadius="$6" borderWidth={1} borderColor="rgba(255,255,255,0.33)" backgroundColor="rgba(255,255,255,0.13)"><View width={46} height={46} borderRadius="$4" alignItems="center" justifyContent="center" backgroundColor="rgba(255,255,255,0.16)">{focusApp.iconBase64 ? <Image source={{ uri: `data:image/png;base64,${focusApp.iconBase64}` }} style={{ width: 46, height: 46, borderRadius: 12 }} /> : <Focus color="white" size={23} />}</View><SizableText flex={1} marginLeft="$3" color="white" fontSize="$6" fontWeight="800">{focusApp.name}</SizableText><ArrowRight color="rgba(255,255,255,0.85)" size={28} /></XStack></Pressable>)}</YStack>
     </YStack>
-  </Container>;
+  </LinearGradient>;
 }

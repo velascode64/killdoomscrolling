@@ -3,5 +3,5 @@ export const appConfig = {
   termsAndConditionsUrl: "https://www.google.com",
   contactUsUrl: "https://www.google.com",
   imprintUrl: "https://www.google.com",
-  bundleIdentifier: "com.lukesthl.digitalbreak",
+  bundleIdentifier: "com.gdesign.rehabbit",
 } as const;

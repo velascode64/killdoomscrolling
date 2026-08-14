@@ -1,5 +1,5 @@
 {
-  "name": "digital-break-app",
+  "name": "mytempo",
   "private": true,
   "scripts": {
     "native": "bun run --cwd apps/expo dev:client",

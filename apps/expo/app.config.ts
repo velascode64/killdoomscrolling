@@ -17,7 +17,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     buildNumber: "1",
-    bundleIdentifier: "com.lukesthl.digitalbreak",
+    bundleIdentifier: "com.gdesign.rehabbit",
+    appleTeamId: "TNKF79KRP5",
+    infoPlist: {
+      CFBundleDisplayName: "Rehabbit",
+    },
+    entitlements: {
+      "com.apple.developer.family-controls": true,
+      "com.apple.security.application-groups": ["group.com.gdesign.rehabbit"],
+    },
     config: {
       usesNonExemptEncryption: false,
     },
@@ -63,9 +71,26 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "expo-app-blocker",
       {
-        // This app currently keeps its existing iOS integration. The Android
-        // reward blocker does not need to add any iOS extensions or targets.
-        ios: { enabled: false },
+        ios: {
+          appGroup: "group.com.gdesign.rehabbit",
+          shield: {
+            title: "Estas recuperando tu tiempo",
+            subtitle: "{appName} puede esperar. Abre Rehabbit para completar tu enfoque.",
+            primaryButtonLabel: "Abrir Rehabbit",
+            secondaryButtonLabel: "Cerrar",
+            primaryButtonColor: "#008CEB",
+            titleColor: "#06254E",
+            subtitleColor: "#145A90",
+            backgroundColor: "#E8F9FC",
+            backgroundBlurStyle: "systemThinMaterialLight",
+            icon: "./assets/images/default.png",
+          },
+          notification: {
+            title: "Rehabbit",
+            body: "Toca para volver a Rehabbit y recuperar tu tiempo.",
+            attachIcon: false,
+          },
+        },
         android: {
           scheme: "digitalbreak",
           overlayTitle: "Time to focus",
@@ -76,12 +101,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           notificationTitle: "Focus time",
           notificationText: "{appName} is blocked until you complete your focus time.",
         },
-      },
-    ],
-    [
-      "./app.plugin",
-      {
-        appleTeamId: "3X5J8LXMDM",
       },
     ],
   ],

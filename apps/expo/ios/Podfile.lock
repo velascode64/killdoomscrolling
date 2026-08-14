@@ -202,6 +202,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - ExpoAppBlocker (0.1.73):
+    - ExpoModulesCore
   - ExpoAsset (12.0.12):
     - ExpoModulesCore
   - ExpoBlur (15.0.8):
@@ -229,6 +231,8 @@ PODS:
     - ExpoModulesCore
   - ExpoLocalization (17.0.8):
     - ExpoModulesCore
+  - ExpoLogBox (55.0.10):
+    - React-Core
   - ExpoModulesCore (3.0.29):
     - hermes-engine
     - RCTRequired
@@ -2349,6 +2353,7 @@ DEPENDENCIES:
   - expo-dev-launcher (from `../../../node_modules/expo-dev-launcher`)
   - expo-dev-menu (from `../../../node_modules/expo-dev-menu`)
   - expo-dev-menu-interface (from `../../../node_modules/expo-dev-menu-interface/ios`)
+  - ExpoAppBlocker (from `../node_modules/expo-app-blocker/ios`)
   - ExpoAsset (from `../../../node_modules/expo-asset/ios`)
   - ExpoBlur (from `../../../node_modules/expo-blur/ios`)
   - ExpoCrypto (from `../../../node_modules/expo-crypto/ios`)
@@ -2362,6 +2367,7 @@ DEPENDENCIES:
   - ExpoLinearGradient (from `../../../node_modules/expo-linear-gradient/ios`)
   - ExpoLinking (from `../../../node_modules/expo-linking/ios`)
   - ExpoLocalization (from `../../../node_modules/expo-localization/ios`)
+  - "ExpoLogBox (from `../node_modules/expo-app-blocker/node_modules/@expo/log-box`)"
   - ExpoModulesCore (from `../../../node_modules/expo-modules-core`)
   - ExpoSharing (from `../../../node_modules/expo-sharing/ios`)
   - ExpoSplashScreen (from `../../../node_modules/expo-splash-screen/ios`)
@@ -2471,6 +2477,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/expo-dev-menu"
   expo-dev-menu-interface:
     :path: "../../../node_modules/expo-dev-menu-interface/ios"
+  ExpoAppBlocker:
+    :path: "../node_modules/expo-app-blocker/ios"
   ExpoAsset:
     :path: "../../../node_modules/expo-asset/ios"
   ExpoBlur:
@@ -2497,6 +2505,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/expo-linking/ios"
   ExpoLocalization:
     :path: "../../../node_modules/expo-localization/ios"
+  ExpoLogBox:
+    :path: "../node_modules/expo-app-blocker/node_modules/@expo/log-box"
   ExpoModulesCore:
     :path: "../../../node_modules/expo-modules-core"
   ExpoSharing:
@@ -2677,6 +2687,7 @@ SPEC CHECKSUMS:
   expo-dev-launcher: a1fa980e36477563afcbc19e759e76f9bf2d20ad
   expo-dev-menu: 34e1cbb3d6e1408904d341f448be69b158425c60
   expo-dev-menu-interface: 600df12ea01efecdd822daaf13cc0ac091775533
+  ExpoAppBlocker: e11b05852e470d40365756662722b6bd2b8e4200
   ExpoAsset: d999f3bbd998a750f3b74cb913229848901b926b
   ExpoBlur: 688c53d5d26575cbb6c72e7fbd4caef8d8cfadf6
   ExpoCrypto: 4d23a9ff67c25e2ed23ca792d81e58817a7ea1b9
@@ -2690,6 +2701,7 @@ SPEC CHECKSUMS:
   ExpoLinearGradient: 814a21fc4056c3cf606e4f19e31e47074c5b5a86
   ExpoLinking: ebf543fd411d56375cb4eee07f6ab4e31c7ad959
   ExpoLocalization: 6ac6f326210f0a3141ef6f58ab8f8f4ed003b485
+  ExpoLogBox: ba1ad09d3e7632ce488e1eeab684ee6fd75f2777
   ExpoModulesCore: 77496909fd3c800f97f7f2007dd26aeac4bb3798
   ExpoSharing: a0e593c497c49377e9797b72586964e31c17ca7c
   ExpoSplashScreen: 72fbc6dd9d6404dd9d0725a56c9ac1383bc0b14f
@@ -2776,6 +2788,6 @@ SPEC CHECKSUMS:
   RNWorklets: 56b7e8755716f5995a4a775bebf3a6ea4e2f7f64
   Yoga: 3fd22c2cae22d7a2b0f0b538f55f7c2a17dc94d5
 
-PODFILE CHECKSUM: 5c47d67fab582d284c76b47906bb3dd3af2b593c
+PODFILE CHECKSUM: df1585d52a2ae1b6dae3b37ff1a6056c7168e061
 
 COCOAPODS: 1.16.2

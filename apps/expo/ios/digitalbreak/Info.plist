@@ -2,23 +2,27 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+      <string>com.gdesign.rehabbit.relock</string>
+    </array>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Digital Break</string>
+    <string>Rehabbit</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIcons</key>
     <dict>
       <key>CFBundleAlternateIcons</key>
       <dict>
-        <key>default</key>
+        <key>primary</key>
         <dict>
           <key>CFBundleIconFiles</key>
           <array>
-            <string>default-Icon-60x60</string>
+            <string>primary-Icon-60x60</string>
           </array>
           <key>UIPrerenderedIcon</key>
           <true/>
@@ -54,11 +58,11 @@
     <dict>
       <key>CFBundleAlternateIcons</key>
       <dict>
-        <key>default</key>
+        <key>primary</key>
         <dict>
           <key>CFBundleIconFiles</key>
           <array>
-            <string>default-Icon-60x60</string>
+            <string>primary-Icon-60x60</string>
           </array>
           <key>UIPrerenderedIcon</key>
           <true/>
@@ -108,7 +112,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>digitalbreak</string>
-          <string>com.lukesthl.digitalbreak</string>
+          <string>com.gdesign.rehabbit</string>
         </array>
       </dict>
       <dict>

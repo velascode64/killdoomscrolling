@@ -21,7 +21,7 @@ import {
   YStack,
 } from "tamagui";
 import { AppIcon } from "../../../components/app.icon";
-import { AndroidFocusDashboard } from "../../../components/android-focus-dashboard";
+import { FocusDashboard } from "../../../components/android-focus-dashboard";
 import { Container } from "../../../components/container";
 import { Divider } from "../../../components/divider";
 import { Header } from "../../../components/header";
@@ -50,7 +50,7 @@ const Overview = observer(() => {
       <YStack space="$4">
         <H4 color="$text11">Overview</H4>
         <WeeklySummary />
-        {Platform.OS === "android" && <AndroidFocusDashboard />}
+        {Platform.OS !== "web" && <FocusDashboard />}
         {OverviewStore.stillCollectingData && (
           <ShadowCard>
             <XStack space="$3">
@@ -210,7 +210,7 @@ const Overview = observer(() => {
             backgroundColor: "$grey1",
           }}
           onPress={() => {
-            router.push(Platform.OS === "android" ? "/onboarding" : "/setup");
+            router.push(Platform.OS === "web" ? "/setup" : "/onboarding");
           }}
         >
           <View

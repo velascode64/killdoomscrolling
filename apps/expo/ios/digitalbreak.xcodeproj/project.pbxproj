@@ -7,76 +7,200 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C349D554F2A93463553ACFD /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E601B9A84050998CF5A4D58A /* PrivacyInfo.xcprivacy */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		2734DE9584534A99870E2EE9 /* primary-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E7298A7B2BD54746A0C703DC /* primary-Icon-60x60@2x.png */; };
+		31A90F6E246A48DB95A21DE0 /* primary-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB07A6ECA9B24971957CEE2E /* primary-Icon-60x60@3x.png */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		48AC804F74C849DFBBEE095B /* dark-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 256069AE016E4011B5C8AF5D /* dark-Icon-60x60@2x.png */; };
-		55CF9B944BC3E6E8B97A70FC /* libPods-DigitalBreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57B0E7CE089BD3DFD8B2A796 /* libPods-DigitalBreak.a */; };
-		56922EA588D948B48155378F /* light-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 53CD930741844010926B3764 /* light-Icon-60x60@2x.png */; };
-		7BB8462D7B3445BBA5D398EA /* light-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2410B82527F64D379D2AF083 /* light-Icon-60x60@3x.png */; };
-		848067E319014CF69EFAA1E7 /* default-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DCBAEF081F643ABB091EE50 /* default-Icon-60x60@3x.png */; };
-		9664DD65A63A6C866B72AE12 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A508355DE000B6842617AA /* ExpoModulesProvider.swift */; };
-		A22500900E1F4D8EBE455425 /* default-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 73B4A88FB49B4ACC806216EB /* default-Icon-60x60@2x.png */; };
+		4C6A89DFF6BF4C139A6373DF /* dark-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC4D6F3BB54E17B075F712 /* dark-Icon-60x60@3x.png */; };
+		54CF2617CE154145BB46B0AA /* dark-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DBB9A00EC96454F825B242C /* dark-Icon-60x60@2x.png */; };
+		5E690FD43D173DCB07747C16 /* libPods-DigitalBreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B13B52973B4CA8E870C2A8A4 /* libPods-DigitalBreak.a */; };
+		667E262699BA43A49E79E435 /* light-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B00A36B4E0840D79E3AF5AB /* light-Icon-60x60@2x.png */; };
+		96C505A0BE744F758E75B193 /* light-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 198D0784FC474C098C73F689 /* light-Icon-60x60@3x.png */; };
+		A7E7D094EE284D7F8F63C3B5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 00834D79D6D14AB696334BE3 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		F48F809B0FEA4452AAC147D3 /* dark-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A6EE81DC844A20BF24283E /* dark-Icon-60x60@3x.png */; };
-		XX3D4ED83F2F384DF79E08XX /* OpenAppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = XXFF35EAE7C8900B877650XX /* OpenAppIntent.swift */; };
-		XX6AD9C35F954782D0194AXX /* DigitalBreak.swift in Sources */ = {isa = PBXBuildFile; fileRef = XX52A7DD74151AD05DE229XX /* DigitalBreak.swift */; };
-		XXDC816F5571B199073CFCXX /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XXD678FA657E513B380AF0XX /* AppIntents.framework */; };
+		FAED9AEAA1B72CA317FD8E8C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7A10D402001210CDAAFDC /* ExpoModulesProvider.swift */; };
+		XX076844FE118F6A5C1B01XX /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XX4B0399183C70A4AEB5CBXX /* ManagedSettings.framework */; };
+		XX103037AC5A7B821341EBXX /* ShieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = XXEC8F4A23169846583657XX /* ShieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		XX329BC77451094B5EA999XX /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XXB6D82409997898620841XX /* ManagedSettingsUI.framework */; };
+		XX44FC18D28196FBCB6075XX /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XXB6D82409997898620841XX /* ManagedSettingsUI.framework */; };
+		XX57208438D18BA30AAA5BXX /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XX4B0399183C70A4AEB5CBXX /* ManagedSettings.framework */; };
+		XX6988F97FDFE82C1F2737XX /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XX4B0399183C70A4AEB5CBXX /* ManagedSettings.framework */; };
+		XX8D07B2DC66AD960C9A1BXX /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XX1A4F99D7C8CC82656668XX /* FamilyControls.framework */; };
+		XX9E1F55B7F517A8DC4A97XX /* DeviceActivityMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = XX321F6702B362BC6747B0XX /* DeviceActivityMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		XXBEFFB36AB412820C306DXX /* ShieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = XX05E83E103BF49F57A457XX /* ShieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		XXD33E402502F114432AD3XX /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XXCA68A9416C78B970D1D9XX /* DeviceActivity.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		XX8ED47D68F8F72D94ED6DXX /* PBXContainerItemProxy */ = {
+		XX07F61876C08B2A8EB1FEXX /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = XX9FD13968CB554040B9A3XX;
-			remoteInfo = intents;
+			remoteGlobalIDString = XX8FA5507CE4A84A6B8F9FXX;
+			remoteInfo = ShieldAction;
+		};
+		XXB47774B9174B0DDC26ADXX /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = XXB9498D9A0B983C34D1DAXX;
+			remoteInfo = ShieldConfiguration;
+		};
+		XXC79740733D5C250A9974XX /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = XX4AB28926E8BA653E7F53XX;
+			remoteInfo = DeviceActivityMonitor;
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		XX72A8CFBF0FBA13A79902XX /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				XX9E1F55B7F517A8DC4A97XX /* DeviceActivityMonitor.appex in Embed Foundation Extensions */,
+				XXBEFFB36AB412820C306DXX /* ShieldAction.appex in Embed Foundation Extensions */,
+				XX103037AC5A7B821341EBXX /* ShieldConfiguration.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		09A6EE81DC844A20BF24283E /* dark-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "dark-Icon-60x60@3x.png"; path = "DigitalBreak/DynamicAppIcons/dark-Icon-60x60@3x.png"; sourceTree = "<group>"; };
+		00834D79D6D14AB696334BE3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = DigitalBreak/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* DigitalBreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; fileEncoding = 4; includeInIndex = 0; path = DigitalBreak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DigitalBreak/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = DigitalBreak/Info.plist; sourceTree = "<group>"; };
-		2410B82527F64D379D2AF083 /* light-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "light-Icon-60x60@3x.png"; path = "DigitalBreak/DynamicAppIcons/light-Icon-60x60@3x.png"; sourceTree = "<group>"; };
-		256069AE016E4011B5C8AF5D /* dark-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "dark-Icon-60x60@2x.png"; path = "DigitalBreak/DynamicAppIcons/dark-Icon-60x60@2x.png"; sourceTree = "<group>"; };
-		25A508355DE000B6842617AA /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-DigitalBreak/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		53CD930741844010926B3764 /* light-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "light-Icon-60x60@2x.png"; path = "DigitalBreak/DynamicAppIcons/light-Icon-60x60@2x.png"; sourceTree = "<group>"; };
-		57B0E7CE089BD3DFD8B2A796 /* libPods-DigitalBreak.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DigitalBreak.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		640081DC3B981C1C00946C8E /* Pods-DigitalBreak.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DigitalBreak.release.xcconfig"; path = "Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak.release.xcconfig"; sourceTree = "<group>"; };
-		6DCBAEF081F643ABB091EE50 /* default-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "default-Icon-60x60@3x.png"; path = "DigitalBreak/DynamicAppIcons/default-Icon-60x60@3x.png"; sourceTree = "<group>"; };
-		73B4A88FB49B4ACC806216EB /* default-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "default-Icon-60x60@2x.png"; path = "DigitalBreak/DynamicAppIcons/default-Icon-60x60@2x.png"; sourceTree = "<group>"; };
-		94211B08F2C07A27A1D12217 /* Pods-DigitalBreak.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DigitalBreak.debug.xcconfig"; path = "Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak.debug.xcconfig"; sourceTree = "<group>"; };
+		198D0784FC474C098C73F689 /* light-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "light-Icon-60x60@3x.png"; path = "DigitalBreak/DynamicAppIcons/light-Icon-60x60@3x.png"; sourceTree = "<group>"; };
+		3BEC4D6F3BB54E17B075F712 /* dark-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "dark-Icon-60x60@3x.png"; path = "DigitalBreak/DynamicAppIcons/dark-Icon-60x60@3x.png"; sourceTree = "<group>"; };
+		5B00A36B4E0840D79E3AF5AB /* light-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "light-Icon-60x60@2x.png"; path = "DigitalBreak/DynamicAppIcons/light-Icon-60x60@2x.png"; sourceTree = "<group>"; };
+		7DBB9A00EC96454F825B242C /* dark-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "dark-Icon-60x60@2x.png"; path = "DigitalBreak/DynamicAppIcons/dark-Icon-60x60@2x.png"; sourceTree = "<group>"; };
+		841B0AC659ADE490044843F1 /* Pods-DigitalBreak.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DigitalBreak.release.xcconfig"; path = "Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = DigitalBreak/SplashScreen.storyboard; sourceTree = "<group>"; };
+		AB07A6ECA9B24971957CEE2E /* primary-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "primary-Icon-60x60@3x.png"; path = "DigitalBreak/DynamicAppIcons/primary-Icon-60x60@3x.png"; sourceTree = "<group>"; };
+		B13B52973B4CA8E870C2A8A4 /* libPods-DigitalBreak.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DigitalBreak.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E601B9A84050998CF5A4D58A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = DigitalBreak/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E3E1B504B5948D8563B9912F /* Pods-DigitalBreak.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DigitalBreak.debug.xcconfig"; path = "Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak.debug.xcconfig"; sourceTree = "<group>"; };
+		E7298A7B2BD54746A0C703DC /* primary-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "primary-Icon-60x60@2x.png"; path = "DigitalBreak/DynamicAppIcons/primary-Icon-60x60@2x.png"; sourceTree = "<group>"; };
+		ECB7A10D402001210CDAAFDC /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-DigitalBreak/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = undefined; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = DigitalBreak/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* DigitalBreak-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "DigitalBreak-Bridging-Header.h"; path = "DigitalBreak/DigitalBreak-Bridging-Header.h"; sourceTree = "<group>"; };
-		XX52A7DD74151AD05DE229XX /* DigitalBreak.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = DigitalBreak.swift; sourceTree = "<group>"; };
-		XX59503779CCCE2B7A6232XX /* AppIntents.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; fileEncoding = 4; includeInIndex = undefined; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
-		XX6F5C00774278EE8E7D93XX /* intents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; fileEncoding = 4; includeInIndex = 0; path = intents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		XXD678FA657E513B380AF0XX /* AppIntents.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; fileEncoding = 4; includeInIndex = undefined; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
-		XXDAE97E02F235C5B5E301XX /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		XXFF35EAE7C8900B877650XX /* OpenAppIntent.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = OpenAppIntent.swift; sourceTree = "<group>"; };
+		XX05E83E103BF49F57A457XX /* ShieldAction.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ShieldAction.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		XX1A4F99D7C8CC82656668XX /* FamilyControls.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = undefined; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = SDKROOT; };
+		XX321F6702B362BC6747B0XX /* DeviceActivityMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = DeviceActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		XX4B0399183C70A4AEB5CBXX /* ManagedSettings.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = undefined; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
+		XXB6D82409997898620841XX /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = undefined; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
+		XXCA68A9416C78B970D1D9XX /* DeviceActivity.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = undefined; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
+		XXEC8F4A23169846583657XX /* ShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		XX33774664CF5D6F768777XX /* Exceptions for "ShieldConfiguration" folder in "ShieldConfiguration" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				"expo-target.config.js",
+			);
+			target = XXB9498D9A0B983C34D1DAXX /* ShieldConfiguration */;
+		};
+		XXE8EDF43B6BB9E5C44730XX /* Exceptions for "DeviceActivityMonitor" folder in "DeviceActivityMonitor" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				"expo-target.config.js",
+			);
+			target = XX4AB28926E8BA653E7F53XX /* DeviceActivityMonitor */;
+		};
+		XXF7FA738C264354D276FCXX /* Exceptions for "ShieldAction" folder in "ShieldAction" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				"expo-target.config.js",
+			);
+			target = XX8FA5507CE4A84A6B8F9FXX /* ShieldAction */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		XX181F8A096C6C4E1BE217XX /* ShieldAction */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				XXF7FA738C264354D276FCXX /* Exceptions for "ShieldAction" folder in "ShieldAction" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = ShieldAction;
+			sourceTree = "<group>";
+		};
+		XX1A7CEC6310F378505A4AXX /* DeviceActivityMonitor */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				XXE8EDF43B6BB9E5C44730XX /* Exceptions for "DeviceActivityMonitor" folder in "DeviceActivityMonitor" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = DeviceActivityMonitor;
+			sourceTree = "<group>";
+		};
+		XXF01EB5DF8F355662899FXX /* ShieldConfiguration */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				XX33774664CF5D6F768777XX /* Exceptions for "ShieldConfiguration" folder in "ShieldConfiguration" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = ShieldConfiguration;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55CF9B944BC3E6E8B97A70FC /* libPods-DigitalBreak.a in Frameworks */,
+				5E690FD43D173DCB07747C16 /* libPods-DigitalBreak.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		XX327E9E6E562F284BD89AXX /* Frameworks */ = {
+		XX074B8811C1CF8E8A3D74XX /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				XXDC816F5571B199073CFCXX /* AppIntents.framework in Frameworks */,
+				XXD33E402502F114432AD3XX /* DeviceActivity.framework in Frameworks */,
+				XX57208438D18BA30AAA5BXX /* ManagedSettings.framework in Frameworks */,
+				XX8D07B2DC66AD960C9A1BXX /* FamilyControls.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		XXA94A5604E6B418CE81CFXX /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				XX076844FE118F6A5C1B01XX /* ManagedSettings.framework in Frameworks */,
+				XX329BC77451094B5EA999XX /* ManagedSettingsUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		XXBA6CDF0021ABEEEDFCFBXX /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				XX6988F97FDFE82C1F2737XX /* ManagedSettings.framework in Frameworks */,
+				XX44FC18D28196FBCB6075XX /* ManagedSettingsUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,8 +216,8 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				BD3657E9F9D849A59994B551 /* DynamicAppIcons */,
-				E601B9A84050998CF5A4D58A /* PrivacyInfo.xcprivacy */,
+				00834D79D6D14AB696334BE3 /* PrivacyInfo.xcprivacy */,
+				63F6B2AB654B46F89346CD49 /* DynamicAppIcons */,
 			);
 			name = DigitalBreak;
 			sourceTree = "<group>";
@@ -102,16 +226,51 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				XX59503779CCCE2B7A6232XX /* AppIntents.framework */,
-				57B0E7CE089BD3DFD8B2A796 /* libPods-DigitalBreak.a */,
+				XXCA68A9416C78B970D1D9XX /* DeviceActivity.framework */,
+				XX4B0399183C70A4AEB5CBXX /* ManagedSettings.framework */,
+				XX1A4F99D7C8CC82656668XX /* FamilyControls.framework */,
+				XXB6D82409997898620841XX /* ManagedSettingsUI.framework */,
+				B13B52973B4CA8E870C2A8A4 /* libPods-DigitalBreak.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		465302B1DE48E6B13A102487 /* ExpoModulesProviders */ = {
+		5623F4B32F6F9F394095DF89 /* DigitalBreak */ = {
 			isa = PBXGroup;
 			children = (
-				BC93A6F0A31798A6470A77B8 /* DigitalBreak */,
+				ECB7A10D402001210CDAAFDC /* ExpoModulesProvider.swift */,
+			);
+			name = DigitalBreak;
+			sourceTree = "<group>";
+		};
+		63F6B2AB654B46F89346CD49 /* DynamicAppIcons */ = {
+			isa = PBXGroup;
+			children = (
+				E7298A7B2BD54746A0C703DC /* primary-Icon-60x60@2x.png */,
+				AB07A6ECA9B24971957CEE2E /* primary-Icon-60x60@3x.png */,
+				5B00A36B4E0840D79E3AF5AB /* light-Icon-60x60@2x.png */,
+				198D0784FC474C098C73F689 /* light-Icon-60x60@3x.png */,
+				7DBB9A00EC96454F825B242C /* dark-Icon-60x60@2x.png */,
+				3BEC4D6F3BB54E17B075F712 /* dark-Icon-60x60@3x.png */,
+			);
+			name = DynamicAppIcons;
+			path = "";
+			sourceTree = "<group>";
+		};
+		6D097CEDECFFC89903AEC242 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E3E1B504B5948D8563B9912F /* Pods-DigitalBreak.debug.xcconfig */,
+				841B0AC659ADE490044843F1 /* Pods-DigitalBreak.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		73C8C666A0B9A37D5CFD3189 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				5623F4B32F6F9F394095DF89 /* DigitalBreak */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -126,13 +285,13 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				XXA5AB5DD76F3C047A10C4XX /* expo:targets */,
+				XX3E41C1850246162C0061XX /* expo:targets */,
 				13B07FAE1A68108700A75B9A /* DigitalBreak */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				E1CE90EF871AAFB4BD65D27D /* Pods */,
-				465302B1DE48E6B13A102487 /* ExpoModulesProviders */,
+				6D097CEDECFFC89903AEC242 /* Pods */,
+				73C8C666A0B9A37D5CFD3189 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -143,7 +302,9 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* DigitalBreak.app */,
-				XX6F5C00774278EE8E7D93XX /* intents.appex */,
+				XX321F6702B362BC6747B0XX /* DeviceActivityMonitor.appex */,
+				XX05E83E103BF49F57A457XX /* ShieldAction.appex */,
+				XXEC8F4A23169846583657XX /* ShieldConfiguration.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,55 +318,15 @@
 			path = DigitalBreak/Supporting;
 			sourceTree = "<group>";
 		};
-		BC93A6F0A31798A6470A77B8 /* DigitalBreak */ = {
+		XX3E41C1850246162C0061XX /* expo:targets */ = {
 			isa = PBXGroup;
 			children = (
-				25A508355DE000B6842617AA /* ExpoModulesProvider.swift */,
-			);
-			name = DigitalBreak;
-			sourceTree = "<group>";
-		};
-		BD3657E9F9D849A59994B551 /* DynamicAppIcons */ = {
-			isa = PBXGroup;
-			children = (
-				73B4A88FB49B4ACC806216EB /* default-Icon-60x60@2x.png */,
-				6DCBAEF081F643ABB091EE50 /* default-Icon-60x60@3x.png */,
-				53CD930741844010926B3764 /* light-Icon-60x60@2x.png */,
-				2410B82527F64D379D2AF083 /* light-Icon-60x60@3x.png */,
-				256069AE016E4011B5C8AF5D /* dark-Icon-60x60@2x.png */,
-				09A6EE81DC844A20BF24283E /* dark-Icon-60x60@3x.png */,
-			);
-			name = DynamicAppIcons;
-			path = "";
-			sourceTree = "<group>";
-		};
-		E1CE90EF871AAFB4BD65D27D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				94211B08F2C07A27A1D12217 /* Pods-DigitalBreak.debug.xcconfig */,
-				640081DC3B981C1C00946C8E /* Pods-DigitalBreak.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		XXA5AB5DD76F3C047A10C4XX /* expo:targets */ = {
-			isa = PBXGroup;
-			children = (
-				XXBDAFA57A876CF93C882FXX /* intents */,
+				XX1A7CEC6310F378505A4AXX /* DeviceActivityMonitor */,
+				XX181F8A096C6C4E1BE217XX /* ShieldAction */,
+				XXF01EB5DF8F355662899FXX /* ShieldConfiguration */,
 			);
 			name = "expo:targets";
-			sourceTree = "<group>";
-		};
-		XXBDAFA57A876CF93C882FXX /* intents */ = {
-			isa = PBXGroup;
-			children = (
-				XX52A7DD74151AD05DE229XX /* DigitalBreak.swift */,
-				XXFF35EAE7C8900B877650XX /* OpenAppIntent.swift */,
-				XXDAE97E02F235C5B5E301XX /* Info.plist */,
-			);
-			name = intents;
-			path = ../targets/intents;
+			path = ../targets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -216,40 +337,86 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DigitalBreak" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				FC850B688AE752DA23AC2613 /* [Expo] Configure project */,
+				A607E07F4A2544B72371DCA1 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				B29174D95245773CDB54D36D /* [CP] Embed Pods Frameworks */,
+				XX72A8CFBF0FBA13A79902XX /* Embed Foundation Extensions */,
+				D18A03FDA6C1475F34CBA65C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				XX9B52D6A18987DC068781XX /* PBXTargetDependency */,
+				XXDA03F53B531645C1C172XX /* PBXTargetDependency */,
+				XXA93B65806862EF2AA259XX /* PBXTargetDependency */,
+				XX57F4407954DDE80C1D80XX /* PBXTargetDependency */,
 			);
 			name = DigitalBreak;
 			productName = DigitalBreak;
 			productReference = 13B07F961A680F5B00A75B9A /* DigitalBreak.app */;
 			productType = "com.apple.product-type.application";
 		};
-		XX9FD13968CB554040B9A3XX /* intents */ = {
+		XX4AB28926E8BA653E7F53XX /* DeviceActivityMonitor */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = XX7B36B28949414C7161CCXX /* Build configuration list for PBXNativeTarget "intents" */;
+			buildConfigurationList = XXDE4918B4E76630073EE8XX /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */;
 			buildPhases = (
-				XXB014077391DFF0105477XX /* Sources */,
-				XX327E9E6E562F284BD89AXX /* Frameworks */,
-				XXD599414ECBD5294BF2AEXX /* Resources */,
+				XX074B8811C1CF8E8A3D74XX /* Frameworks */,
+				XXE45443DC38DCFE1DB622XX /* Sources */,
+				XXFA5A8CCDD805DF7AEF9CXX /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = intents;
-			productName = intents;
-			productReference = XX6F5C00774278EE8E7D93XX /* intents.appex */;
-			productType = "com.apple.product-type.extensionkit-extension";
+			fileSystemSynchronizedGroups = (
+				XX1A7CEC6310F378505A4AXX /* DeviceActivityMonitor */,
+			);
+			name = DeviceActivityMonitor;
+			productName = DeviceActivityMonitor;
+			productReference = XX321F6702B362BC6747B0XX /* DeviceActivityMonitor.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		XX8FA5507CE4A84A6B8F9FXX /* ShieldAction */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = XX4E1DE5326E3E4C862BFEXX /* Build configuration list for PBXNativeTarget "ShieldAction" */;
+			buildPhases = (
+				XXBA6CDF0021ABEEEDFCFBXX /* Frameworks */,
+				XXDC105B0E28F884B8E02DXX /* Sources */,
+				XXC55EF014B50CBDECCD15XX /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				XX181F8A096C6C4E1BE217XX /* ShieldAction */,
+			);
+			name = ShieldAction;
+			productName = ShieldAction;
+			productReference = XX05E83E103BF49F57A457XX /* ShieldAction.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		XXB9498D9A0B983C34D1DAXX /* ShieldConfiguration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = XX21F8DBF332EDE0A196C0XX /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */;
+			buildPhases = (
+				XXA94A5604E6B418CE81CFXX /* Frameworks */,
+				XXE5EC32CD2D09C6C886C7XX /* Sources */,
+				XX00779A11A1B70B580100XX /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				XXF01EB5DF8F355662899FXX /* ShieldConfiguration */,
+			);
+			name = ShieldConfiguration;
+			productName = ShieldConfiguration;
+			productReference = XXEC8F4A23169846583657XX /* ShieldConfiguration.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -262,14 +429,24 @@
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
 					};
-					XX9FD13968CB554040B9A3XX = {
+					XX4AB28926E8BA653E7F53XX = {
 						CreatedOnToolsVersion = 14.3;
-						DevelopmentTeam = 3X5J8LXMDM;
+						DevelopmentTeam = TNKF79KRP5;
+						ProvisioningStyle = Automatic;
+					};
+					XX8FA5507CE4A84A6B8F9FXX = {
+						CreatedOnToolsVersion = 14.3;
+						DevelopmentTeam = TNKF79KRP5;
+						ProvisioningStyle = Automatic;
+					};
+					XXB9498D9A0B983C34D1DAXX = {
+						CreatedOnToolsVersion = 14.3;
+						DevelopmentTeam = TNKF79KRP5;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "digitalbreak" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "DigitalBreak" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -283,7 +460,9 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* DigitalBreak */,
-				XX9FD13968CB554040B9A3XX /* intents */,
+				XX4AB28926E8BA653E7F53XX /* DeviceActivityMonitor */,
+				XX8FA5507CE4A84A6B8F9FXX /* ShieldAction */,
+				XXB9498D9A0B983C34D1DAXX /* ShieldConfiguration */,
 			);
 		};
 /* End PBXProject section */
@@ -296,17 +475,31 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				A22500900E1F4D8EBE455425 /* default-Icon-60x60@2x.png in Resources */,
-				848067E319014CF69EFAA1E7 /* default-Icon-60x60@3x.png in Resources */,
-				56922EA588D948B48155378F /* light-Icon-60x60@2x.png in Resources */,
-				7BB8462D7B3445BBA5D398EA /* light-Icon-60x60@3x.png in Resources */,
-				48AC804F74C849DFBBEE095B /* dark-Icon-60x60@2x.png in Resources */,
-				F48F809B0FEA4452AAC147D3 /* dark-Icon-60x60@3x.png in Resources */,
-				0C349D554F2A93463553ACFD /* PrivacyInfo.xcprivacy in Resources */,
+				A7E7D094EE284D7F8F63C3B5 /* PrivacyInfo.xcprivacy in Resources */,
+				2734DE9584534A99870E2EE9 /* primary-Icon-60x60@2x.png in Resources */,
+				31A90F6E246A48DB95A21DE0 /* primary-Icon-60x60@3x.png in Resources */,
+				667E262699BA43A49E79E435 /* light-Icon-60x60@2x.png in Resources */,
+				96C505A0BE744F758E75B193 /* light-Icon-60x60@3x.png in Resources */,
+				54CF2617CE154145BB46B0AA /* dark-Icon-60x60@2x.png in Resources */,
+				4C6A89DFF6BF4C139A6373DF /* dark-Icon-60x60@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		XXD599414ECBD5294BF2AEXX /* Resources */ = {
+		XX00779A11A1B70B580100XX /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		XXC55EF014B50CBDECCD15XX /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		XXFA5A8CCDD805DF7AEF9CXX /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -401,29 +594,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B29174D95245773CDB54D36D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FC850B688AE752DA23AC2613 /* [Expo] Configure project */ = {
+		A607E07F4A2544B72371DCA1 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -447,6 +618,28 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-DigitalBreak/expo-configure-project.sh\"\n";
 		};
+		D18A03FDA6C1475F34CBA65C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DigitalBreak/Pods-DigitalBreak-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -455,13 +648,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				XX3D4ED83F2F384DF79E08XX /* OpenAppIntent.swift in Sources */,
-				XX6AD9C35F954782D0194AXX /* DigitalBreak.swift in Sources */,
-				9664DD65A63A6C866B72AE12 /* ExpoModulesProvider.swift in Sources */,
+				FAED9AEAA1B72CA317FD8E8C /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		XXB014077391DFF0105477XX /* Sources */ = {
+		XXDC105B0E28F884B8E02DXX /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		XXE45443DC38DCFE1DB622XX /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		XXE5EC32CD2D09C6C886C7XX /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -471,23 +676,33 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		XX9B52D6A18987DC068781XX /* PBXTargetDependency */ = {
+		XX57F4407954DDE80C1D80XX /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = XX9FD13968CB554040B9A3XX /* intents */;
-			targetProxy = XX8ED47D68F8F72D94ED6DXX /* PBXContainerItemProxy */;
+			target = XXB9498D9A0B983C34D1DAXX /* ShieldConfiguration */;
+			targetProxy = XXB47774B9174B0DDC26ADXX /* PBXContainerItemProxy */;
+		};
+		XXA93B65806862EF2AA259XX /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = XX8FA5507CE4A84A6B8F9FXX /* ShieldAction */;
+			targetProxy = XX07F61876C08B2A8EB1FEXX /* PBXContainerItemProxy */;
+		};
+		XXDA03F53B531645C1C172XX /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = XX4AB28926E8BA653E7F53XX /* DeviceActivityMonitor */;
+			targetProxy = XXC79740733D5C250A9974XX /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 94211B08F2C07A27A1D12217 /* Pods-DigitalBreak.debug.xcconfig */;
+			baseConfigurationReference = E3E1B504B5948D8563B9912F /* Pods-DigitalBreak.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = DigitalBreak/DigitalBreak.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3X5J8LXMDM;
+				DEVELOPMENT_TEAM = TNKF79KRP5;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -506,7 +721,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukesthl.digitalbreak;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdesign.rehabbit;
 				PRODUCT_NAME = DigitalBreak;
 				SWIFT_OBJC_BRIDGING_HEADER = "DigitalBreak/DigitalBreak-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -518,13 +733,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 640081DC3B981C1C00946C8E /* Pods-DigitalBreak.release.xcconfig */;
+			baseConfigurationReference = 841B0AC659ADE490044843F1 /* Pods-DigitalBreak.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = DigitalBreak/DigitalBreak.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3X5J8LXMDM;
+				DEVELOPMENT_TEAM = TNKF79KRP5;
 				INFOPLIST_FILE = DigitalBreak/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -538,7 +753,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukesthl.digitalbreak;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdesign.rehabbit;
 				PRODUCT_NAME = DigitalBreak;
 				SWIFT_OBJC_BRIDGING_HEADER = "DigitalBreak/DigitalBreak-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -594,7 +809,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -650,7 +865,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -665,10 +880,9 @@
 			};
 			name = Release;
 		};
-		XX7D1A73170EF5DD2DEEA8XX /* Release */ = {
+		XX009A3BCADC3505FCF38CXX /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -676,83 +890,247 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldAction/generated.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 3X5J8LXMDM;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ../targets/intents/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = intents;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0.2;
-				MTL_FAST_MATH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukesthl.digitalbreak.intents;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		XXFCB329409BC70880F234XX /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 3X5J8LXMDM;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				DEVELOPMENT_TEAM = TNKF79KRP5;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ../targets/intents/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = intents;
+				INFOPLIST_FILE = ../targets/ShieldAction/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldAction;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukesthl.digitalbreak.intents;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdesign.rehabbit.ShieldAction;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		XX38121E908E1050F1A4A8XX /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ../targets/DeviceActivityMonitor/generated.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = TNKF79KRP5;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ../targets/DeviceActivityMonitor/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityMonitor;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.2;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdesign.rehabbit.DeviceActivityMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		XX5C2A846C57D18F2FEA87XX /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldConfiguration/generated.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = TNKF79KRP5;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ../targets/ShieldConfiguration/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldConfiguration;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdesign.rehabbit.ShieldConfiguration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		XX6F8645BCAE31B63AD5F1XX /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldConfiguration/generated.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = TNKF79KRP5;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ../targets/ShieldConfiguration/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldConfiguration;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.2;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdesign.rehabbit.ShieldConfiguration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		XXC5B7A490FEB784E7D323XX /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ../targets/DeviceActivityMonitor/generated.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = TNKF79KRP5;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ../targets/DeviceActivityMonitor/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityMonitor;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdesign.rehabbit.DeviceActivityMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		XXC5D319AD3E4AE31006FEXX /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldAction/generated.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = TNKF79KRP5;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ../targets/ShieldAction/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldAction;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.2;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdesign.rehabbit.ShieldAction;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -766,7 +1144,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "digitalbreak" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "DigitalBreak" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
@@ -775,11 +1153,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		XX7B36B28949414C7161CCXX /* Build configuration list for PBXNativeTarget "intents" */ = {
+		XX21F8DBF332EDE0A196C0XX /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				XXFCB329409BC70880F234XX /* Debug */,
-				XX7D1A73170EF5DD2DEEA8XX /* Release */,
+				XX5C2A846C57D18F2FEA87XX /* Debug */,
+				XX6F8645BCAE31B63AD5F1XX /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		XX4E1DE5326E3E4C862BFEXX /* Build configuration list for PBXNativeTarget "ShieldAction" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				XX009A3BCADC3505FCF38CXX /* Debug */,
+				XXC5D319AD3E4AE31006FEXX /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		XXDE4918B4E76630073EE8XX /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				XXC5B7A490FEB784E7D323XX /* Debug */,
+				XX38121E908E1050F1A4A8XX /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -6,6 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef } from "react";
 import { AppState, Platform } from "react-native";
 import { TamaguiProvider, useTheme as useThemeTamagui } from "tamagui";
+import { checkAndClearPendingUnlock } from "expo-app-blocker";
 
 import { ThemeProvider, useTheme } from "../components/theme-provider";
 import { BreakStore } from "../data/break.store";
@@ -42,6 +43,20 @@ export default function RootLayout() {
     if (Platform.OS === "android") {
       void SplashScreen.hideAsync();
       return;
+    }
+    if (Platform.OS === "ios") {
+      const openFocusTimerIfRequested = () => {
+        if (checkAndClearPendingUnlock()) router.replace("/blocked");
+      };
+      openFocusTimerIfRequested();
+      const subscription = AppState.addEventListener("change", (nextAppState) => {
+        if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+          openFocusTimerIfRequested();
+        }
+        appState.current = nextAppState;
+      });
+      void SplashScreen.hideAsync();
+      return () => subscription.remove();
     }
     const checkShortcut = () => {
       void listenForShortcut()
