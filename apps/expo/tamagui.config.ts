@@ -4,7 +4,7 @@ import { shorthands } from "@tamagui/shorthands";
 import { createTamagui } from "tamagui";
 
 import { createSatoshiFont } from "./components/font-satoshi";
-import * as themes from "./theme/theme-output";
+import { themes } from "./theme/theme-output";
 import { tokens } from "./theme/tokens";
 
 const animations = createAnimations({
@@ -58,28 +58,27 @@ const config = createTamagui({
   themes: {
     ...themes,
     light_Button: {
-      background: "#232323",
-      backgroundFocus: "#424242",
-      backgroundHover: "#282828",
-      backgroundPress: "#323232",
-      backgroundStrong: "#191919",
-      backgroundTransparent: "#151515",
+      background: "#2CCEFE",
+      backgroundFocus: "#4BB7FE",
+      backgroundHover: "#4BB7FE",
+      backgroundPress: "#1AE1FE",
+      backgroundStrong: "#0C8FD1",
+      backgroundTransparent: "#EFFBFD",
       color: "#fff",
-      colorFocus: "#a5a5a5",
-      colorHover: "#a5a5a5",
+      colorFocus: "#fff",
+      colorHover: "#fff",
       colorPress: "#fff",
-      colorTransparent: "#a5a5a5",
-      placeholderColor: "#424242",
+      colorTransparent: "#003B5C",
+      placeholderColor: "#48748A",
     },
     light_Input: {
-      ...themes.light_Input,
-      background: "#fff",
-      borderColor: "#cccccc",
-      borderColorFocus: "#a5a5a5",
+      background: "#FDFFFF",
+      borderColor: "#CFEBF0",
+      borderColorFocus: "#2CCEFE",
     },
     light_Checkbox: {
-      borderColor: "#cccccc",
-      background: "#fff",
+      borderColor: "#CFEBF0",
+      background: "#FDFFFF",
     },
   } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
   tokens,

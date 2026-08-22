@@ -1,168 +1,845 @@
-import { ArrowLeft, Briefcase, Check, Clock3, Focus, Moon, Plus, X } from "@tamagui/lucide-icons";
+import {
+  ArrowLeft,
+  Briefcase,
+  Check,
+  Clock3,
+  Focus,
+  Moon,
+  Plus,
+  ShieldBan,
+  X,
+} from "@tamagui/lucide-icons";
 import {
   AndroidBlockableApp,
   configureRewardBlockerPlans,
   getInstalledApps,
+  getPermissionStatus,
+  openOverlaySettings,
+  openUsageStatsSettings,
+  startMonitoring,
 } from "expo-app-blocker";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Alert, Image, Platform } from "react-native";
-import { Button, H4, Input, Paragraph, Sheet, SizableText, View, XStack, YStack } from "tamagui";
+import {
+  Button,
+  H3,
+  H4,
+  Input,
+  Paragraph,
+  ScrollView,
+  Sheet,
+  SizableText,
+  View,
+  XStack,
+  YStack,
+} from "tamagui";
 
-import { Container } from "../components/container";
+import { AppAvatarStack, GradientButton, ModeRadial } from "../components/mode-ui";
 import { ShadowCard } from "../components/shadow.card";
+import { Container } from "../components/container";
 import {
   AndroidRewardPlan,
+  PlanCategory,
+  PLAN_CATEGORY_COPY,
   createAndroidRewardPlan,
   formatPlanTime,
   loadAndroidRewardPlans,
-  PLAN_COPY,
-  RewardPlanMode,
+  nativeModeForCategory,
   saveAndroidRewardPlans,
   toNativeRewardPlansConfig,
 } from "../data/android-reward";
 
-const MODES: Array<{ mode: RewardPlanMode; Icon: typeof Focus }> = [
-  { mode: "focus", Icon: Focus },
-  { mode: "sleep", Icon: Moon },
-  { mode: "work", Icon: Briefcase },
-];
-const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
-const MINUTES = Array.from({ length: 60 }, (_, minute) => minute);
+const durationOptions = [15, 25, 45, 60];
+const phoneUseOptions = [1, 2, 4, 8];
+const categories: PlanCategory[] = ["focus", "exercise", "sleep", "meditation", "hobby"];
+const goals = ["Dejar redes", "Concentrar mas", "Dormir", "Hacer otra actividad", "Otro"];
+const objectiveOptions = ["Foco", "Ejercicio", "Dormir", "Meditacion", "Hobby"];
 
-function activeAt(plan: AndroidRewardPlan, minute: number) {
-  const { startMinute, endMinute } = plan.schedule;
-  return startMinute < endMinute ? minute >= startMinute && minute < endMinute : minute >= startMinute || minute < endMinute;
+type PickerTarget = "blocked" | "productive" | null;
+
+function categoryForGoal(goal: string): PlanCategory {
+  if (goal === "Dormir") return "sleep";
+  if (goal === "Hacer otra actividad") return "hobby";
+  return "focus";
 }
 
-function overlaps(first: AndroidRewardPlan, second: AndroidRewardPlan) {
-  return Array.from({ length: 1440 }, (_, minute) => minute).some((minute) => activeAt(first, minute) && activeAt(second, minute));
+function planHasOverlap(plan: AndroidRewardPlan, plans: AndroidRewardPlan[]) {
+  const start = plan.schedule.startMinute;
+  const end = plan.schedule.endMinute;
+
+  return plans.some((other) => {
+    if (other.id === plan.id || !other.enabled) return false;
+    const otherStart = other.schedule.startMinute;
+    const otherEnd = other.schedule.endMinute;
+    return start < otherEnd && end > otherStart;
+  });
 }
 
-function Section({ children, title, description }: { children: React.ReactNode; title: string; description: string }) {
-  return <YStack space="$3" paddingVertical="$3"><YStack space="$1"><H4 color="$text11">{title}</H4><Paragraph color="$text6">{description}</Paragraph></YStack>{children}</YStack>;
+function CategoryIcon({ category, size = 22 }: { category: PlanCategory; size?: number }) {
+  const props = { size, color: "$text11" as const };
+  if (category === "sleep") return <Moon {...props} />;
+  if (category === "work") return <Briefcase {...props} />;
+  return <Focus {...props} />;
 }
 
-export default function OnboardingPage() {
+function DurationChips({ value, onChange }: { value: number; onChange: (minutes: number) => void }) {
+  return (
+    <XStack flexWrap="wrap" gap="$2">
+      {durationOptions.map((minutes) => {
+        const selected = minutes === value;
+        return (
+          <Button
+            key={minutes}
+            unstyled
+            alignItems="center"
+            backgroundColor={selected ? "$blue8" : "$background2"}
+            borderColor={selected ? "$blue8" : "$borderColor"}
+            borderRadius="$10"
+            borderWidth={1}
+            justifyContent="center"
+            minWidth={64}
+            paddingHorizontal="$3"
+            paddingVertical="$2.5"
+            pressStyle={{ opacity: 0.8 }}
+            onPress={() => onChange(minutes)}
+          >
+            <SizableText color={selected ? "$text1" : "$text11"} fontWeight="700" size="$4">
+              {minutes} min
+            </SizableText>
+          </Button>
+        );
+      })}
+    </XStack>
+  );
+}
+
+function ProgressDots({ step }: { step: number }) {
+  return (
+    <XStack alignItems="center" gap={5} justifyContent="center">
+      {Array.from({ length: 11 }).map((_, index) => (
+        <View
+          key={index}
+          backgroundColor={index === step ? "$blue8" : "$borderColor"}
+          borderRadius={99}
+          height={6}
+          opacity={index > step ? 0.65 : 1}
+          width={index === step ? 20 : 6}
+        />
+      ))}
+    </XStack>
+  );
+}
+
+function AppIcon({ app, size = 44 }: { app: AndroidBlockableApp; size?: number }) {
+  if (app.iconBase64) {
+    return <Image source={{ uri: `data:image/png;base64,${app.iconBase64}` }} style={{ borderRadius: size / 2, height: size, width: size }} />;
+  }
+
+  return (
+    <View
+      alignItems="center"
+      backgroundColor="$blue3"
+      borderRadius={size / 2}
+      height={size}
+      justifyContent="center"
+      width={size}
+    >
+      <SizableText color="$text11" fontWeight="800">{app.name.slice(0, 1).toUpperCase()}</SizableText>
+    </View>
+  );
+}
+
+function AppSelectionList({
+  apps,
+  selectedPackages,
+  onToggle,
+}: {
+  apps: AndroidBlockableApp[];
+  selectedPackages: string[];
+  onToggle: (packageName: string) => void;
+}) {
+  if (apps.length === 0) {
+    return <Paragraph color="$text10">No se pudieron cargar las aplicaciones instaladas.</Paragraph>;
+  }
+
+  return (
+    <YStack gap="$2">
+      {apps.map((app) => {
+        const selected = selectedPackages.includes(app.packageName);
+        return (
+          <Button
+            key={app.packageName}
+            unstyled
+            alignItems="center"
+            backgroundColor={selected ? "$blue2" : "$background2"}
+            borderColor={selected ? "$blue8" : "$borderColor"}
+            borderRadius="$6"
+            borderWidth={1}
+            flexDirection="row"
+            gap="$3"
+            justifyContent="space-between"
+            padding="$3"
+            pressStyle={{ opacity: 0.75 }}
+            onPress={() => onToggle(app.packageName)}
+          >
+            <XStack alignItems="center" flex={1} gap="$3">
+              <AppIcon app={app} size={40} />
+              <SizableText color="$text11" flex={1} fontWeight="700" numberOfLines={1}>
+                {app.name}
+              </SizableText>
+            </XStack>
+            <View
+              alignItems="center"
+              backgroundColor={selected ? "$blue8" : "$background"}
+              borderColor={selected ? "$blue8" : "$borderColor"}
+              borderRadius={99}
+              borderWidth={1}
+              height={24}
+              justifyContent="center"
+              width={24}
+            >
+              {selected && <Check color="$text1" size={15} />}
+            </View>
+          </Button>
+        );
+      })}
+    </YStack>
+  );
+}
+
+function Header({ onBack, title }: { onBack: () => void; title?: string }) {
+  return (
+    <XStack alignItems="center" justifyContent="space-between" marginBottom="$5">
+      <Button
+        unstyled
+        alignItems="center"
+        backgroundColor="$background2"
+        borderColor="$borderColor"
+        borderRadius={99}
+        borderWidth={1}
+        height={42}
+        justifyContent="center"
+        pressStyle={{ opacity: 0.7 }}
+        width={42}
+        onPress={onBack}
+      >
+        <ArrowLeft color="$text11" size={21} />
+      </Button>
+      {title ? <SizableText color="$text11" fontWeight="800">{title}</SizableText> : <View width={42} />}
+      {title ? <View width={42} /> : <View width={42} />}
+    </XStack>
+  );
+}
+
+export default function OnboardingScreen() {
   const { planId } = useLocalSearchParams<{ planId?: string }>();
   const [apps, setApps] = useState<AndroidBlockableApp[]>([]);
-  const [plan, setPlan] = useState<AndroidRewardPlan>(() => createAndroidRewardPlan());
-  const [picker, setPicker] = useState<"blocked" | "productive" | null>(null);
+  const [plans, setPlans] = useState<AndroidRewardPlan[]>([]);
+  const [plan, setPlan] = useState<AndroidRewardPlan>(() => createAndroidRewardPlan("focus"));
+  const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
   const [timePicker, setTimePicker] = useState<"start" | "end" | null>(null);
-  const [search, setSearch] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const refresh = async () => {
-    setApps(await getInstalledApps());
-  };
+  const [step, setStep] = useState(planId ? 10 : 0);
+  const [phoneUse, setPhoneUse] = useState(2);
+  const [goal, setGoal] = useState("Concentrar mas");
+  const [customGoal, setCustomGoal] = useState("");
+  const [objectives, setObjectives] = useState<string[]>([]);
+  const [creating, setCreating] = useState(false);
+  const isEditing = Boolean(planId);
 
   useEffect(() => {
     if (Platform.OS !== "android") return;
-    void Promise.all([loadAndroidRewardPlans(), refresh()]).then(([plans]) => {
-      const existing = planId ? plans.find((item) => item.id === planId) : undefined;
-      if (existing) setPlan(existing);
-    }).catch((error) => console.warn("Unable to load Android plans", error));
+    void Promise.all([loadAndroidRewardPlans(), getInstalledApps(), getPermissionStatus()]).then(([savedPlans, installedApps]) => {
+      setPlans(savedPlans);
+      setApps(installedApps);
+      if (planId) {
+        const existing = savedPlans.find((entry) => entry.id === planId);
+        if (existing) setPlan(existing);
+      }
+    });
   }, [planId]);
 
-  if (Platform.OS !== "android") return null;
+  useEffect(() => {
+    if (step !== 9 || isEditing) return;
+    setCreating(true);
+    const timeout = setTimeout(() => {
+      setCreating(false);
+      setStep(10);
+    }, 1000);
+    return () => clearTimeout(timeout);
+  }, [isEditing, step]);
 
-  const pickerPackages = picker === "blocked" ? plan.blockedPackages : plan.productivePackages;
-  const selectedBlockedApps = apps.filter((app) => plan.blockedPackages.includes(app.packageName));
-  const selectedProductiveApps = apps.filter((app) => plan.productivePackages.includes(app.packageName));
-  const unavailablePackages = picker === "blocked" ? plan.productivePackages : plan.blockedPackages;
-  const filteredApps = apps.filter((app) => app.name.toLowerCase().includes(search.toLowerCase()) && !unavailablePackages.includes(app.packageName));
+  const selectedApps = (packages: string[]) => apps.filter((app) => packages.includes(app.packageName));
 
-  const setMode = (mode: RewardPlanMode) => setPlan((current) => ({ ...current, mode, name: current.name === PLAN_COPY[current.mode].name ? PLAN_COPY[mode].name : current.name }));
-  const toggleApp = (packageName: string) => setPlan((current) => {
-    const selectedKey = picker === "blocked" ? "blockedPackages" : "productivePackages";
-    const otherKey = picker === "blocked" ? "productivePackages" : "blockedPackages";
-    const selected = current[selectedKey].includes(packageName);
-    return {
-      ...current,
-      [selectedKey]: selected ? current[selectedKey].filter((item) => item !== packageName) : [...current[selectedKey], packageName],
-      [otherKey]: current[otherKey].filter((item) => item !== packageName),
-    };
-  });
-  const removeApp = (packageName: string, type: "blocked" | "productive") => setPlan((current) => ({
-    ...current,
-    [type === "blocked" ? "blockedPackages" : "productivePackages"]: current[type === "blocked" ? "blockedPackages" : "productivePackages"].filter((item) => item !== packageName),
-  }));
-  const setTimePart = (part: "hour" | "minute", value: number) => {
-    if (!timePicker) return;
-    setPlan((current) => ({
-      ...current,
-      schedule: {
-        ...current.schedule,
-        [timePicker === "start" ? "startMinute" : "endMinute"]: part === "hour"
-          ? value * 60 + current.schedule[timePicker === "start" ? "startMinute" : "endMinute"] % 60
-          : Math.floor(current.schedule[timePicker === "start" ? "startMinute" : "endMinute"] / 60) * 60 + value,
-      },
-    }));
+  const setCategory = (category: PlanCategory) => {
+    setPlan((current) => {
+      const defaultName = PLAN_CATEGORY_COPY[current.category].name;
+      const copy = PLAN_CATEGORY_COPY[category];
+      return {
+        ...current,
+        category,
+        mode: nativeModeForCategory(category),
+        name: current.name === defaultName ? copy.name : current.name,
+      };
+    });
   };
 
-  const save = async () => {
-    if (!plan.name.trim()) return Alert.alert("Agrega un nombre", "Dale un nombre corto a este plan.");
-    if (!plan.blockedPackages.length || !plan.productivePackages.length) return Alert.alert("Faltan apps", "Elige apps bloqueadas y apps de recuperación.");
-    if (plan.schedule.startMinute === plan.schedule.endMinute) return Alert.alert("Revisa el horario", "Elige una hora de inicio y otra de finalización.");
-    const nextPlan = { ...plan, enabled: true, name: plan.name.trim(), productiveMinutes: Math.max(1, Math.round(plan.productiveMinutes)), unlockMinutes: Math.max(1, Math.round(plan.unlockMinutes)) };
-    const savedPlans = await loadAndroidRewardPlans();
-    const nextPlans = planId ? savedPlans.map((item) => item.id === planId ? nextPlan : item) : [...savedPlans, nextPlan];
-    if (nextPlans.some((item) => item.id !== nextPlan.id && item.enabled && overlaps(nextPlan, item))) return Alert.alert("Horarios cruzados", "Cada plan necesita su propio horario.");
-    setSaving(true);
+  const togglePackages = (key: "blockedPackages" | "productivePackages", packageName: string) => {
+    const otherKey = key === "blockedPackages" ? "productivePackages" : "blockedPackages";
+    setPlan((current) => {
+      const values = current[key];
+      const next = values.includes(packageName)
+        ? values.filter((entry) => entry !== packageName)
+        : [...values, packageName];
+      return { ...current, [key]: next, [otherKey]: current[otherKey].filter((entry) => entry !== packageName) };
+    });
+  };
+
+  const savePlan = async (enabled: boolean) => {
+    if (!plan.name.trim()) {
+      Alert.alert("Agrega un nombre", "El modo necesita un nombre para poder guardarse.");
+      return;
+    }
+    if (plan.blockedPackages.length === 0) {
+      Alert.alert("Selecciona apps", "Elige al menos una app que quieras bloquear.");
+      return;
+    }
+    if (plan.schedule.startMinute >= plan.schedule.endMinute) {
+      Alert.alert("Revisa el horario", "La hora de inicio debe ser anterior a la hora de fin.");
+      return;
+    }
+
+    const nextPlan = { ...plan, enabled };
+    if (enabled && planHasOverlap(nextPlan, plans)) {
+      Alert.alert("Horario ocupado", "Ya existe otro modo activo en ese horario.");
+      return;
+    }
+
+    const nextPlans = plans.some((entry) => entry.id === nextPlan.id)
+      ? plans.map((entry) => (entry.id === nextPlan.id ? nextPlan : entry))
+      : [...plans, nextPlan];
+
     try {
-      configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
       await saveAndroidRewardPlans(nextPlans);
-      router.replace("/overview");
-    } catch (error) {
-      Alert.alert("No se pudo activar", error instanceof Error ? error.message : "Inténtalo otra vez.");
-    } finally {
-      setSaving(false);
+      await configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
+      if (enabled) await startMonitoring();
+      router.replace("/(tabs)/overview");
+    } catch {
+      Alert.alert("No se pudo guardar", "Intenta guardar el modo de nuevo.");
     }
   };
 
-  return <Container header={() => <PlanHeader title={planId ? "Editar plan" : "Nuevo plan"} />}><YStack space="$4" paddingTop="$2" paddingBottom="$4">
-    <ShadowCard padding="$4">
-      <YStack space="$1" paddingBottom="$2"><H4 color="$text11">{planId ? "Detalles del plan" : "Configura tu plan"}</H4><Paragraph color="$text6">Define el horario, las distracciones que pausarás y cómo recuperarás el acceso.</Paragraph></YStack>
-      <View height={1} backgroundColor="$grey3" />
-      <Section title="Nombre del plan" description="Usa un nombre que reconozcas fácilmente."><Input value={plan.name} onChangeText={(name) => setPlan((current) => ({ ...current, name }))} placeholder="Ej. Noche sin redes" /></Section>
-      <View height={1} backgroundColor="$grey3" />
-      <Section title="Modo" description="Cambia el mensaje de tu locker, no la mecánica del plan."><XStack space="$2">{MODES.map(({ mode, Icon }) => <Button key={mode} flex={1} size="$3" backgroundColor={plan.mode === mode ? "$primary4" : "$background1"} borderColor={plan.mode === mode ? "$primary8" : "$grey3"} borderWidth={1} color="$text11" icon={<Icon size={15} />} onPress={() => setMode(mode)}>{PLAN_COPY[mode].name}</Button>)}</XStack></Section>
-      <View height={1} backgroundColor="$grey3" />
-      <Section title="Horario" description="Elige la hora y el minuto en que este plan estará activo."><XStack space="$3"><TimeControl label="Empieza" value={plan.schedule.startMinute} onPress={() => setTimePicker("start")} /><TimeControl label="Termina" value={plan.schedule.endMinute} onPress={() => setTimePicker("end")} /></XStack></Section>
-      <View height={1} backgroundColor="$grey3" />
-      <Section title="Apps bloqueadas" description="Estas apps se pausarán mientras el plan esté activo."><XStack alignItems="center" justifyContent="space-between"><SizableText color="$text6">Seleccionadas: {selectedBlockedApps.length}</SizableText><Button circular size="$3" icon={<Plus size={17} />} onPress={() => { setSearch(""); setPicker("blocked"); }} /></XStack><SelectedApps apps={selectedBlockedApps} onRemove={(app) => removeApp(app.packageName, "blocked")} empty="Agrega las apps que quieres pausar." /><XStack alignItems="center" space="$2" paddingTop="$1"><SizableText color="$text6" flex={1}>Para recuperar estas apps, completa</SizableText><MinutesInput value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} /><SizableText color="$text6">min</SizableText></XStack></Section>
-      <View height={1} backgroundColor="$grey3" />
-      <Section title="Apps de reemplazo" description="El tiempo en estas apps hace avanzar tu contador."><XStack alignItems="center" justifyContent="space-between"><SizableText color="$text6">Seleccionadas: {selectedProductiveApps.length}</SizableText><Button circular size="$3" icon={<Plus size={17} />} onPress={() => { setSearch(""); setPicker("productive"); }} /></XStack><SelectedApps apps={selectedProductiveApps} onRemove={(app) => removeApp(app.packageName, "productive")} empty="Agrega las apps que usarás en su lugar." /><XStack alignItems="center" space="$2" paddingTop="$1"><SizableText color="$text6" flex={1}>Al completar, desbloqueas</SizableText><MinutesInput value={plan.unlockMinutes} onChange={(unlockMinutes) => setPlan((current) => ({ ...current, unlockMinutes }))} /><SizableText color="$text6">min</SizableText></XStack></Section>
-    </ShadowCard>
-    <Button size="$5" backgroundColor="$primary9" color="white" disabled={saving} icon={<Check size={18} />} onPress={() => void save()}>{saving ? "Guardando..." : planId ? "Guardar cambios" : "Activar plan"}</Button>
-    <TimePickerSheet open={timePicker !== null} target={timePicker} value={timePicker === "start" ? plan.schedule.startMinute : plan.schedule.endMinute} onChange={setTimePart} onClose={() => setTimePicker(null)} />
-    <AppPicker open={picker !== null} type={picker} apps={filteredApps} selectedPackages={pickerPackages} onToggle={toggleApp} onClose={() => setPicker(null)} search={search} onSearch={setSearch} />
-  </YStack></Container>;
+  const continueOnboarding = () => {
+    if (step === 3) setCategory(categoryForGoal(goal));
+    if (step === 4 && Platform.OS === "android") {
+      // Permission access is optional during exploration; Android validates it on activation.
+    }
+    setStep((current) => Math.min(current + 1, 10));
+  };
+
+  const goBack = () => {
+    if (isEditing) {
+      router.back();
+      return;
+    }
+    if (step === 0) router.back();
+    else setStep((current) => current - 1);
+  };
+
+  const updateTime = (key: "start" | "end", value: number) => {
+    setPlan((current) => {
+      if (key === "start") return { ...current, schedule: { ...current.schedule, startMinute: value * 60 } };
+      return { ...current, schedule: { ...current.schedule, endMinute: value * 60 } };
+    });
+  };
+
+  if (Platform.OS !== "android") {
+    return (
+      <Container>
+        <Paragraph>Esta experiencia esta disponible en Android.</Paragraph>
+      </Container>
+    );
+  }
+
+  if (isEditing) {
+    return (
+      <Editor
+        apps={apps}
+        pickerTarget={pickerTarget}
+        plan={plan}
+        setPickerTarget={setPickerTarget}
+        setPlan={setPlan}
+        setCategory={setCategory}
+        timePicker={timePicker}
+        setTimePicker={setTimePicker}
+        togglePackages={togglePackages}
+        selectedApps={selectedApps}
+        updateTime={updateTime}
+        onBack={() => router.back()}
+        onSave={savePlan}
+      />
+    );
+  }
+
+  return (
+    <Container scroll={false}>
+      <YStack flex={1} paddingTop="$3">
+        {step > 0 && <Header onBack={goBack} />}
+        {step > 0 && <ProgressDots step={step} />}
+        <View flex={1} marginTop={step > 0 ? "$5" : 0}>
+          {step === 0 && (
+            <WelcomeScreen onContinue={continueOnboarding} />
+          )}
+          {step === 1 && (
+            <QuestionScreen
+              body="Usaremos esta referencia para proponerte un plan inicial. Puedes cambiarlo despues."
+              title="Cuanto tiempo pasas en tu telefono?"
+            >
+              <XStack flexWrap="wrap" gap="$3">
+                {phoneUseOptions.map((hours) => (
+                  <ChoiceChip key={hours} selected={phoneUse === hours} label={`${hours} h`} onPress={() => setPhoneUse(hours)} />
+                ))}
+              </XStack>
+            </QuestionScreen>
+          )}
+          {step === 2 && (
+            <QuestionScreen body="Elige el primer periodo que quieres recuperar." title="Cuanto tiempo quieres dejar de usar el telefono?">
+              <DurationChips value={plan.unlockMinutes} onChange={(unlockMinutes) => setPlan((current) => ({ ...current, unlockMinutes }))} />
+            </QuestionScreen>
+          )}
+          {step === 3 && (
+            <QuestionScreen body="El plan se adapta a la intencion que elijas." title="Que quieres lograr?">
+              <YStack gap="$3">
+                {goals.map((option) => (
+                  <ChoiceRow key={option} selected={goal === option} label={option} onPress={() => setGoal(option)} />
+                ))}
+                {goal === "Otro" && (
+                  <Input
+                    autoFocus
+                    backgroundColor="$background2"
+                    borderColor="$borderColor"
+                    placeholder="Escribe tu objetivo"
+                    value={customGoal}
+                    onChangeText={setCustomGoal}
+                  />
+                )}
+              </YStack>
+            </QuestionScreen>
+          )}
+          {step === 4 && <PermissionsScreen />}
+          {step === 5 && (
+            <QuestionScreen body="Elige uno o varios objetivos para tu plan." title="Selecciona tus objetivos">
+              <YStack gap="$3">
+                {objectiveOptions.map((option) => (
+                  <ChoiceRow
+                    key={option}
+                    selected={objectives.includes(option)}
+                    label={option}
+                    onPress={() => setObjectives((current) => current.includes(option) ? current.filter((entry) => entry !== option) : [...current, option])}
+                  />
+                ))}
+              </YStack>
+            </QuestionScreen>
+          )}
+          {step === 6 && (
+            <QuestionScreen body="Podras ajustarlas cuando quieras." title="Que apps quisieras dejar de usar mas?">
+              <ScrollView height={330} showsVerticalScrollIndicator={false}>
+                <AppSelectionList apps={apps} selectedPackages={plan.blockedPackages} onToggle={(item) => togglePackages("blockedPackages", item)} />
+              </ScrollView>
+            </QuestionScreen>
+          )}
+          {step === 7 && (
+            <QuestionScreen body="Este es el tiempo que tendras para estar en tu estado antes de liberar las redes." title="Cuanto tiempo quieres dejar de usar esas apps?">
+              <ModeRadial duration={plan.productiveMinutes} label="tu estado" />
+              <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
+            </QuestionScreen>
+          )}
+          {step === 8 && (
+            <QuestionScreen body="Estas apps se habilitan mientras mantienes tu estado." title="Con que app te gustaria reemplazar ese tiempo?">
+              <ScrollView height={330} showsVerticalScrollIndicator={false}>
+                <AppSelectionList apps={apps} selectedPackages={plan.productivePackages} onToggle={(item) => togglePackages("productivePackages", item)} />
+              </ScrollView>
+            </QuestionScreen>
+          )}
+          {step === 9 && <CreatingScreen visible={creating} />}
+          {step === 10 && (
+            <PlanPreview
+              plan={plan}
+              selectedApps={selectedApps}
+              onEdit={() => setStep(1)}
+              onSave={() => void savePlan(false)}
+            />
+          )}
+        </View>
+        {step > 0 && step < 9 && (
+          <View marginTop="$4"><GradientButton onPress={continueOnboarding}>Continuar</GradientButton></View>
+        )}
+      </YStack>
+    </Container>
+  );
 }
 
-function PlanHeader({ title }: { title: string }) {
-  return <XStack alignItems="center" justifyContent="space-between" paddingHorizontal="$4" paddingVertical="$3" backgroundColor="$background1" borderBottomWidth={1} borderColor="$grey3"><Button circular chromeless size="$3" icon={<ArrowLeft size={20} />} onPress={() => router.back()} /><H4 color="$text11">{title}</H4><View width={36} /></XStack>;
+function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
+  return (
+    <YStack flex={1} justifyContent="space-between" paddingBottom="$5" paddingTop="$8">
+      <YStack alignItems="center" gap="$6">
+        <View
+          alignItems="center"
+          backgroundColor="$blue2"
+          borderColor="$borderColor"
+          borderRadius={99}
+          borderWidth={1}
+          height={92}
+          justifyContent="center"
+          width={92}
+        >
+          <Focus color="$text11" size={42} />
+        </View>
+        <YStack alignItems="center" gap="$3" paddingHorizontal="$4">
+          <H3 color="$text11" textAlign="center">Recupera tu atencion</H3>
+          <Paragraph color="$text10" fontSize="$5" lineHeight="$6" textAlign="center">
+            Crea un estado para bloquear distracciones y dedicar tiempo a lo que importa.
+          </Paragraph>
+        </YStack>
+      </YStack>
+      <GradientButton onPress={onContinue}>Empezar</GradientButton>
+    </YStack>
+  );
 }
 
-function TimeControl({ label, value, onPress }: { label: string; value: number; onPress: () => void }) {
-  return <YStack flex={1} space="$1"><SizableText color="$text6">{label}</SizableText><Button justifyContent="space-between" iconAfter={<Clock3 size={16} />} onPress={onPress}>{formatPlanTime(value)}</Button></YStack>;
+function QuestionScreen({ body, children, title }: { body: string; children: ReactNode; title: string }) {
+  return (
+    <YStack gap="$5">
+      <YStack gap="$2">
+        <H3 color="$text11" letterSpacing={-0.4}>{title}</H3>
+        <Paragraph color="$text10" fontSize="$5" lineHeight="$6">{body}</Paragraph>
+      </YStack>
+      {children}
+    </YStack>
+  );
 }
 
-function MinutesInput({ value, onChange }: { value: number; onChange: (value: number) => void }) {
-  return <Input width={58} textAlign="center" value={String(value)} onChangeText={(nextValue) => onChange(Number(nextValue.replace(/[^0-9]/g, "")) || 1)} keyboardType="number-pad" />;
+function ChoiceChip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
+  return (
+    <Button
+      unstyled
+      alignItems="center"
+      backgroundColor={selected ? "$blue8" : "$background2"}
+      borderColor={selected ? "$blue8" : "$borderColor"}
+      borderRadius="$10"
+      borderWidth={1}
+      justifyContent="center"
+      minWidth={72}
+      paddingHorizontal="$4"
+      paddingVertical="$3"
+      pressStyle={{ opacity: 0.75 }}
+      onPress={onPress}
+    >
+      <SizableText color={selected ? "$text1" : "$text11"} fontWeight="800">{label}</SizableText>
+    </Button>
+  );
 }
 
-function TimePickerSheet({ open, target, value, onChange, onClose }: { open: boolean; target: "start" | "end" | null; value: number; onChange: (part: "hour" | "minute", value: number) => void; onClose: () => void }) {
-  const hour = Math.floor(value / 60);
-  const minute = value % 60;
-  return <Sheet modal open={open} onOpenChange={(nextOpen: boolean) => { if (!nextOpen) onClose(); }} snapPoints={[85]} dismissOnSnapToBottom><Sheet.Overlay /><Sheet.Frame padding="$4" backgroundColor="$background1"><Sheet.Handle /><YStack space="$3" flex={1}><XStack alignItems="center" justifyContent="space-between"><YStack><H4 color="$text11">{target === "start" ? "Hora de inicio" : "Hora de finalización"}</H4><Paragraph color="$text6">{formatPlanTime(value)}</Paragraph></YStack><Button chromeless size="$3" onPress={onClose}>Listo</Button></XStack><Sheet.ScrollView><YStack space="$4" paddingBottom="$4"><YStack space="$2"><SizableText color="$text6" fontWeight="800">HORA</SizableText><XStack flexWrap="wrap">{HOURS.map((item) => <View key={item} width="16.66%" padding="$1"><Button size="$3" backgroundColor={item === hour ? "$primary4" : "$background1"} borderColor={item === hour ? "$primary8" : "$grey3"} borderWidth={1} color="$text11" onPress={() => onChange("hour", item)}>{String(item).padStart(2, "0")}</Button></View>)}</XStack></YStack><YStack space="$2"><SizableText color="$text6" fontWeight="800">MINUTO</SizableText><XStack flexWrap="wrap">{MINUTES.map((item) => <View key={item} width="16.66%" padding="$1"><Button size="$3" backgroundColor={item === minute ? "$primary4" : "$background1"} borderColor={item === minute ? "$primary8" : "$grey3"} borderWidth={1} color="$text11" onPress={() => onChange("minute", item)}>{String(item).padStart(2, "0")}</Button></View>)}</XStack></YStack></YStack></Sheet.ScrollView></YStack></Sheet.Frame></Sheet>;
+function ChoiceRow({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
+  return (
+    <Button
+      unstyled
+      alignItems="center"
+      backgroundColor={selected ? "$blue2" : "$background2"}
+      borderColor={selected ? "$blue8" : "$borderColor"}
+      borderRadius="$6"
+      borderWidth={1}
+      flexDirection="row"
+      justifyContent="space-between"
+      padding="$4"
+      pressStyle={{ opacity: 0.75 }}
+      onPress={onPress}
+    >
+      <SizableText color="$text11" fontWeight="700" size="$5">{label}</SizableText>
+      <View
+        alignItems="center"
+        backgroundColor={selected ? "$blue8" : "$background"}
+        borderColor={selected ? "$blue8" : "$borderColor"}
+        borderRadius={99}
+        borderWidth={1}
+        height={25}
+        justifyContent="center"
+        width={25}
+      >
+        {selected && <Check color="$text1" size={16} />}
+      </View>
+    </Button>
+  );
 }
 
-function SelectedApps({ apps, empty, onRemove }: { apps: AndroidBlockableApp[]; empty: string; onRemove: (app: AndroidBlockableApp) => void }) {
-  if (!apps.length) return <Paragraph color="$text6">{empty}</Paragraph>;
-  return <YStack space="$2">{apps.map((app) => <XStack key={app.packageName} alignItems="center" space="$2" backgroundColor="$grey1" borderRadius="$3" padding="$2">{app.iconBase64 ? <Image source={{ uri: `data:image/png;base64,${app.iconBase64}` }} style={{ width: 34, height: 34, borderRadius: 9 }} /> : <View width={34} height={34} borderRadius="$2" backgroundColor="$grey3" />}<SizableText flex={1} color="$text11" fontWeight="800" numberOfLines={1}>{app.name}</SizableText><Button circular chromeless size="$2" icon={<X size={15} />} onPress={() => onRemove(app)} /></XStack>)}</YStack>;
+function PermissionsScreen() {
+  return (
+    <YStack gap="$5">
+      <YStack gap="$2">
+        <H3 color="$text11">Permisos necesarios</H3>
+        <Paragraph color="$text10" fontSize="$5" lineHeight="$6">
+          Android necesita estos permisos para aplicar tu plan en el momento indicado.
+        </Paragraph>
+      </YStack>
+      <ShadowCard>
+        <YStack gap="$3">
+          <XStack alignItems="center" gap="$3">
+            <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={42} justifyContent="center" width={42}>
+              <ShieldBan color="$text11" size={20} />
+            </View>
+            <YStack flex={1} gap="$1">
+              <SizableText color="$text11" fontWeight="800">Acceso de uso</SizableText>
+              <SizableText color="$text10" size="$3">Para detectar las apps elegidas.</SizableText>
+            </YStack>
+          </XStack>
+          <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void openUsageStatsSettings()}>
+            Abrir ajustes
+          </Button>
+        </YStack>
+      </ShadowCard>
+      <ShadowCard>
+        <YStack gap="$3">
+          <XStack alignItems="center" gap="$3">
+            <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={42} justifyContent="center" width={42}>
+              <Focus color="$text11" size={20} />
+            </View>
+            <YStack flex={1} gap="$1">
+              <SizableText color="$text11" fontWeight="800">Mostrar sobre otras apps</SizableText>
+              <SizableText color="$text10" size="$3">Para mostrar el bloqueo cuando sea necesario.</SizableText>
+            </YStack>
+          </XStack>
+          <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void openOverlaySettings()}>
+            Abrir ajustes
+          </Button>
+        </YStack>
+      </ShadowCard>
+    </YStack>
+  );
 }
 
-function AppPicker({ open, type, apps, selectedPackages, search, onSearch, onToggle, onClose }: { open: boolean; type: "blocked" | "productive" | null; apps: AndroidBlockableApp[]; selectedPackages: string[]; search: string; onSearch: (value: string) => void; onToggle: (packageName: string) => void; onClose: () => void }) {
-  return <Sheet modal open={open} onOpenChange={(nextOpen: boolean) => { if (!nextOpen) onClose(); }} snapPoints={[85]} dismissOnSnapToBottom><Sheet.Overlay /><Sheet.Frame padding="$4" backgroundColor="$background1"><Sheet.Handle /><YStack space="$3" flex={1}><XStack alignItems="center" justifyContent="space-between"><YStack><H4 color="$text11">{type === "blocked" ? "Apps bloqueadas" : "Apps de reemplazo"}</H4><Paragraph color="$text6">Selecciona todas las que necesites.</Paragraph></YStack><Button chromeless size="$3" onPress={onClose}>Listo</Button></XStack><Input value={search} onChangeText={onSearch} placeholder="Buscar una app" /><Sheet.ScrollView>{apps.map((app) => { const selected = selectedPackages.includes(app.packageName); return <XStack key={app.packageName} alignItems="center" space="$3" paddingVertical="$2" borderBottomWidth={1} borderColor="$grey3" onPress={() => onToggle(app.packageName)}>{app.iconBase64 ? <Image source={{ uri: `data:image/png;base64,${app.iconBase64}` }} style={{ width: 40, height: 40, borderRadius: 10 }} /> : <View width={40} height={40} borderRadius="$2" backgroundColor="$grey3" />}<YStack flex={1}><SizableText color="$text11" fontWeight="800">{app.name}</SizableText><SizableText color="$text6" fontSize="$2" numberOfLines={1}>{app.packageName}</SizableText></YStack><View width={24} height={24} borderRadius={99} alignItems="center" justifyContent="center" backgroundColor={selected ? "$primary9" : "$grey3"}>{selected && <Check color="white" size={15} />}</View></XStack>; })}</Sheet.ScrollView></YStack></Sheet.Frame></Sheet>;
+function CreatingScreen({ visible }: { visible: boolean }) {
+  return (
+    <YStack alignItems="center" flex={1} gap="$5" justifyContent="center" paddingBottom="$8">
+      <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={82} justifyContent="center" width={82}>
+        <Clock3 color="$text11" size={38} />
+      </View>
+      <YStack alignItems="center" gap="$2">
+        <H3 color="$text11">Creando tu plan</H3>
+        <Paragraph color="$text10" textAlign="center">Estamos preparando tus limites y alternativas.</Paragraph>
+      </YStack>
+      {visible && <View backgroundColor="$blue8" borderRadius={99} height={8} width={160} />}
+    </YStack>
+  );
+}
+
+function PlanPreview({
+  plan,
+  selectedApps,
+  onEdit,
+  onSave,
+}: {
+  plan: AndroidRewardPlan;
+  selectedApps: (packages: string[]) => AndroidBlockableApp[];
+  onEdit: () => void;
+  onSave: () => void;
+}) {
+  const copy = PLAN_CATEGORY_COPY[plan.category];
+  return (
+    <YStack gap="$4">
+      <YStack gap="$2">
+        <H3 color="$text11">Tu plan esta listo</H3>
+        <Paragraph color="$text10">Revisalo antes de guardarlo. Quedara inactivo hasta que decidas activarlo.</Paragraph>
+      </YStack>
+      <ShadowCard>
+        <YStack gap="$4">
+          <XStack alignItems="center" gap="$3">
+            <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={46} justifyContent="center" width={46}>
+              <CategoryIcon category={plan.category} />
+            </View>
+            <YStack flex={1}>
+              <H4 color="$text11">{copy.name}</H4>
+              <SizableText color="$text10">Inactivo</SizableText>
+            </YStack>
+          </XStack>
+          <ModeRadial duration={plan.productiveMinutes} label={copy.name.toLowerCase()} size={184} />
+          <XStack alignItems="center" justifyContent="space-between">
+            <SizableText color="$text10">Bloquear</SizableText>
+            <AppAvatarStack apps={selectedApps(plan.blockedPackages)} />
+          </XStack>
+          <XStack alignItems="center" justifyContent="space-between">
+            <SizableText color="$text10">Rehabbit</SizableText>
+            <AppAvatarStack apps={selectedApps(plan.productivePackages)} />
+          </XStack>
+        </YStack>
+      </ShadowCard>
+      <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={onEdit}>Editar opciones</Button>
+      <GradientButton onPress={onSave}>Guardar modo</GradientButton>
+    </YStack>
+  );
+}
+
+function Editor({
+  apps,
+  pickerTarget,
+  plan,
+  setPickerTarget,
+  setPlan,
+  setCategory,
+  timePicker,
+  setTimePicker,
+  togglePackages,
+  selectedApps,
+  updateTime,
+  onBack,
+  onSave,
+}: {
+  apps: AndroidBlockableApp[];
+  pickerTarget: PickerTarget;
+  plan: AndroidRewardPlan;
+  setPickerTarget: (target: PickerTarget) => void;
+  setPlan: (update: (current: AndroidRewardPlan) => AndroidRewardPlan) => void;
+  setCategory: (category: PlanCategory) => void;
+  timePicker: "start" | "end" | null;
+  setTimePicker: (target: "start" | "end" | null) => void;
+  togglePackages: (key: "blockedPackages" | "productivePackages", packageName: string) => void;
+  selectedApps: (packages: string[]) => AndroidBlockableApp[];
+  updateTime: (key: "start" | "end", value: number) => void;
+  onBack: () => void;
+  onSave: (enabled: boolean) => Promise<void>;
+}) {
+  const copy = PLAN_CATEGORY_COPY[plan.category];
+  const currentTime = Math.floor((timePicker === "start" ? plan.schedule.startMinute : plan.schedule.endMinute) / 60);
+
+  return (
+    <Container scroll={false}>
+      <YStack flex={1} paddingTop="$3">
+        <Header title="Editar modo" onBack={onBack} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <YStack gap="$5" paddingBottom="$8">
+            <YStack alignItems="center" gap="$3">
+              <ModeRadial duration={plan.productiveMinutes} label={copy.name.toLowerCase()} />
+              <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
+            </YStack>
+
+            <YStack gap="$3">
+              <H4 color="$text11">Nombre del modo</H4>
+              <Input backgroundColor="$background2" borderColor="$borderColor" color="$text11" value={plan.name} onChangeText={(name) => setPlan((current) => ({ ...current, name }))} />
+            </YStack>
+
+            <YStack gap="$3">
+              <H4 color="$text11">Categoria</H4>
+              <XStack flexWrap="wrap" gap="$2">
+                {categories.map((category) => (
+                  <ChoiceChip
+                    key={category}
+                    label={PLAN_CATEGORY_COPY[category].name}
+                    selected={plan.category === category}
+                    onPress={() => setCategory(category)}
+                  />
+                ))}
+              </XStack>
+            </YStack>
+
+            <YStack gap="$3">
+              <H4 color="$text11">Horario</H4>
+              <ShadowCard>
+                <XStack alignItems="center" gap="$3">
+                  <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={44} justifyContent="center" width={44}>
+                    <Clock3 color="$text11" size={21} />
+                  </View>
+                  <YStack flex={1} gap="$1">
+                    <SizableText color="$text11" fontWeight="800">Todos los dias</SizableText>
+                    <SizableText color="$text10">{formatPlanTime(plan.schedule.startMinute)} - {formatPlanTime(plan.schedule.endMinute)}</SizableText>
+                  </YStack>
+                  <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" size="$3" onPress={() => setTimePicker("start")}>Editar</Button>
+                </XStack>
+              </ShadowCard>
+            </YStack>
+
+            <AppGroupCard
+              apps={selectedApps(plan.blockedPackages)}
+              description="Estas apps permanecen bloqueadas durante tu estado."
+              label="Bloquear"
+              onPress={() => setPickerTarget("blocked")}
+            />
+            <AppGroupCard
+              apps={selectedApps(plan.productivePackages)}
+              description="Apps para reemplazar el tiempo de scroll."
+              label="Rehabbit"
+              onPress={() => setPickerTarget("productive")}
+            />
+
+            <GradientButton onPress={() => void onSave(true)}>{plan.enabled ? "Guardar cambios" : "Activar modo"}</GradientButton>
+            {plan.enabled && <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void onSave(false)}>Guardar como inactivo</Button>}
+          </YStack>
+        </ScrollView>
+      </YStack>
+
+      <Sheet modal open={pickerTarget !== null} snapPointsMode="fit" onOpenChange={(open: boolean) => !open && setPickerTarget(null)}>
+        <Sheet.Overlay animation="quick" backgroundColor="rgba(0, 59, 92, 0.18)" />
+        <Sheet.Frame backgroundColor="$background" borderTopLeftRadius="$8" borderTopRightRadius="$8" padding="$4">
+          <YStack gap="$4" maxHeight="80%">
+            <XStack alignItems="center" justifyContent="space-between">
+              <H4 color="$text11">{pickerTarget === "blocked" ? "Apps bloqueadas" : "Apps Rehabbit"}</H4>
+              <Button unstyled onPress={() => setPickerTarget(null)}><X color="$text11" size={22} /></Button>
+            </XStack>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {pickerTarget && (
+                <AppSelectionList
+                  apps={apps}
+                  selectedPackages={pickerTarget === "blocked" ? plan.blockedPackages : plan.productivePackages}
+                  onToggle={(packageName) => togglePackages(pickerTarget === "blocked" ? "blockedPackages" : "productivePackages", packageName)}
+                />
+              )}
+            </ScrollView>
+          </YStack>
+        </Sheet.Frame>
+      </Sheet>
+
+      <Sheet modal open={timePicker !== null} snapPointsMode="fit" onOpenChange={(open: boolean) => !open && setTimePicker(null)}>
+        <Sheet.Overlay animation="quick" backgroundColor="rgba(0, 59, 92, 0.18)" />
+        <Sheet.Frame backgroundColor="$background" borderTopLeftRadius="$8" borderTopRightRadius="$8" padding="$4">
+          <YStack gap="$4">
+            <XStack alignItems="center" justifyContent="space-between">
+              <H4 color="$text11">{timePicker === "start" ? "Hora de inicio" : "Hora de fin"}</H4>
+              <Button unstyled onPress={() => setTimePicker(null)}><X color="$text11" size={22} /></Button>
+            </XStack>
+            <XStack flexWrap="wrap" gap="$2">
+              {Array.from({ length: 24 }).map((_, hour) => (
+                <ChoiceChip
+                  key={hour}
+                  label={`${String(hour).padStart(2, "0")}:00`}
+                  selected={currentTime === hour}
+                  onPress={() => timePicker && updateTime(timePicker, hour)}
+                />
+              ))}
+            </XStack>
+            <GradientButton onPress={() => setTimePicker(null)}>Confirmar hora</GradientButton>
+          </YStack>
+        </Sheet.Frame>
+      </Sheet>
+    </Container>
+  );
+}
+
+function AppGroupCard({ apps, description, label, onPress }: { apps: AndroidBlockableApp[]; description: string; label: string; onPress: () => void }) {
+  return (
+    <YStack gap="$3">
+      <H4 color="$text11">{label}</H4>
+      <ShadowCard
+        padding="$5"
+        pressStyle={{ opacity: 0.75 }}
+        tone={label === "Rehabbit" ? "mint" : "aqua"}
+        onPress={onPress}
+      >
+        <XStack alignItems="center" gap="$3" justifyContent="space-between">
+          <YStack flex={1} gap="$1">
+            <SizableText color="$text11" fontWeight="800">{apps.length ? `${apps.length} apps seleccionadas` : "Seleccionar apps"}</SizableText>
+            <SizableText color="$text10" size="$3">{description}</SizableText>
+          </YStack>
+          {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color="$text11" size={22} />}
+        </XStack>
+      </ShadowCard>
+    </YStack>
+  );
 }

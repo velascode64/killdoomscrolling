@@ -7,9 +7,11 @@ import type {
 export const ANDROID_REWARD_CONFIG_KEY = "android_reward_blocker_config";
 
 export type RewardPlanMode = "focus" | "sleep" | "work";
+export type PlanCategory = "focus" | "exercise" | "sleep" | "meditation" | "hobby" | "work";
 
 export interface AndroidRewardPlan extends AndroidRewardBlockerPlan {
   mode: RewardPlanMode;
+  category: PlanCategory;
   name: string;
 }
 
@@ -19,18 +21,35 @@ export const PLAN_COPY: Record<RewardPlanMode, { name: string; description: stri
   work: { name: "Work", description: "Crea espacio para el trabajo que importa." },
 };
 
+export const PLAN_CATEGORY_COPY: Record<PlanCategory, { name: string; description: string }> = {
+  focus: { name: "Focus", description: "Recupera tu atencion con apps que te hacen avanzar." },
+  exercise: { name: "Exercise", description: "Abre espacio para moverte antes de volver a las redes." },
+  sleep: { name: "Sleep", description: "Protege tu descanso y prepara una mejor noche." },
+  meditation: { name: "Meditation", description: "Toma una pausa antes de volver a las distracciones." },
+  hobby: { name: "Hobby", description: "Reserva tiempo para una actividad que disfrutas." },
+  work: { name: "Work", description: "Crea espacio para el trabajo que importa." },
+};
+
 const MODE_SCHEDULE: Record<RewardPlanMode, { startMinute: number; endMinute: number }> = {
   sleep: { startMinute: 22 * 60, endMinute: 7 * 60 },
   work: { startMinute: 9 * 60, endMinute: 17 * 60 },
   focus: { startMinute: 18 * 60, endMinute: 22 * 60 },
 };
 
-export function createAndroidRewardPlan(mode: RewardPlanMode = "focus"): AndroidRewardPlan {
+export function nativeModeForCategory(category: PlanCategory): RewardPlanMode {
+  if (category === "sleep") return "sleep";
+  if (category === "work") return "work";
+  return "focus";
+}
+
+export function createAndroidRewardPlan(category: PlanCategory = "focus"): AndroidRewardPlan {
+  const mode = nativeModeForCategory(category);
   return {
     id: `plan-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     mode,
-    name: PLAN_COPY[mode].name,
-    enabled: true,
+    category,
+    name: PLAN_CATEGORY_COPY[category].name,
+    enabled: false,
     blockedPackages: [],
     productivePackages: [],
     schedule: MODE_SCHEDULE[mode],
@@ -41,13 +60,15 @@ export function createAndroidRewardPlan(mode: RewardPlanMode = "focus"): Android
 
 function normalizePlan(value: Partial<AndroidRewardPlan>, index: number): AndroidRewardPlan {
   const mode = value.mode === "sleep" || value.mode === "work" ? value.mode : "focus";
-  const fallback = createAndroidRewardPlan(mode);
+  const category = value.category === "exercise" || value.category === "meditation" || value.category === "hobby" || value.category === "sleep" || value.category === "work" ? value.category : mode;
+  const fallback = createAndroidRewardPlan(category);
   return {
     ...fallback,
     ...value,
     id: value.id || `plan-legacy-${index}`,
-    name: value.name?.trim() || PLAN_COPY[mode].name,
+    name: value.name?.trim() || PLAN_CATEGORY_COPY[category].name,
     mode,
+    category,
     blockedPackages: value.blockedPackages ?? [],
     productivePackages: value.productivePackages ?? [],
     schedule: value.schedule ?? fallback.schedule,
@@ -69,9 +90,9 @@ export async function saveAndroidRewardPlans(plans: AndroidRewardPlan[]): Promis
 
 export function toNativeRewardPlansConfig(plans: AndroidRewardPlan[]): AndroidRewardBlockerPlansConfig {
   return {
-    plans: plans.map(({ id, mode, enabled, blockedPackages, productivePackages, schedule, productiveMinutes, unlockMinutes }) => ({
+    plans: plans.map(({ id, category, enabled, blockedPackages, productivePackages, schedule, productiveMinutes, unlockMinutes }) => ({
       id,
-      mode,
+      mode: nativeModeForCategory(category),
       enabled,
       blockedPackages,
       productivePackages,

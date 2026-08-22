@@ -1,30 +1,23 @@
+import { TrendingUp } from "@tamagui/lucide-icons";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import { SizableText, View, XStack, YStack } from "tamagui";
+
 import { OverviewStore } from "../data/overview.store";
 import { ShadowCard } from "./shadow.card";
-import "dayjs/locale/de";
-import { PercentageTrend } from "./percentage.trend";
 
 dayjs.extend(weekday);
-dayjs.locale("de");
 
-const calculateMaxHourSavedOnADay = () => {
-  const weekDays = Array.from({ length: 7 }).map((_, day) => {
-    const dayStart = dayjs().weekday(day).startOf("day").valueOf();
-    const dayEnd = dayjs().weekday(day).endOf("day").valueOf();
-    const timeSaved = OverviewStore.hoursSaved({
-      from: dayStart,
-      to: dayEnd,
-    });
-    return timeSaved;
-  });
-  return Math.max(...weekDays);
-};
+const DAY_LABELS = ["L", "M", "X", "J", "V", "S", "D"];
 
 export const WeeklySummary = () => {
-  const maxHourSavedOnADay = calculateMaxHourSavedOnADay();
-
+  const dailyValues = DAY_LABELS.map((_, day) => {
+    const dayStart = dayjs().weekday(day).startOf("day").valueOf();
+    const dayEnd = dayjs().weekday(day).endOf("day").valueOf();
+    return OverviewStore.hoursSaved({ from: dayStart, to: dayEnd });
+  });
+  const maxValue = Math.max(...dailyValues, 0);
+  const chartMaximum = Math.max(maxValue, 4);
   const savedThisWeek = OverviewStore.hoursSaved({
     from: dayjs().weekday(0).startOf("week").valueOf(),
     to: dayjs().valueOf(),
@@ -33,100 +26,59 @@ export const WeeklySummary = () => {
     from: dayjs().weekday(-7).startOf("week").valueOf(),
     to: dayjs().weekday(-7).endOf("week").valueOf(),
   });
-  const difference = savedThisWeek - savedLastWeek;
-  const savedThisWeekInPercentage =
-    difference !== 0 && savedLastWeek !== 0
-      ? (difference / savedLastWeek) * 100
-      : 0;
+  const trend = savedLastWeek > 0 ? ((savedThisWeek - savedLastWeek) / savedLastWeek) * 100 : 0;
+
   return (
-    <ShadowCard>
-      <XStack justifyContent="space-between">
-        <SizableText color="$text11" fontWeight={"bold"} fontSize={"$5"}>
-          {OverviewStore.stillCollectingData || savedThisWeek === 0
-            ? "Weekly summary"
-            : `Saved ${savedThisWeek}h this week`}
-        </SizableText>
-        <SizableText color="$text11" fontWeight={"bold"} fontSize={"$5"}>
-          {savedThisWeekInPercentage !== 0 && (
-            <PercentageTrend
-              percentage={savedThisWeekInPercentage}
-              affix="hours saved"
-              hideIcon
-            />
-          )}
-        </SizableText>
-      </XStack>
-      <XStack space="$2" marginTop="$3">
-        <YStack
-          alignItems="center"
-          justifyContent={maxHourSavedOnADay > 0 ? "space-between" : "flex-end"}
-          marginTop={"$2"}
-          marginBottom={maxHourSavedOnADay > 0 ? "$4" : "$5"}
-        >
-          {maxHourSavedOnADay > 0 && (
-            <SizableText color="$grey7">
-              {maxHourSavedOnADay.toFixed(1)}h
-            </SizableText>
-          )}
-          {maxHourSavedOnADay > 0 && (
-            <SizableText color="$grey7">
-              {(maxHourSavedOnADay / 2).toFixed(1)}h
-            </SizableText>
-          )}
-          <SizableText color="$grey7">{0}h</SizableText>
-        </YStack>
-        <XStack space="$2.5" flex={1} width={"100%"}>
-          {Array.from({ length: 7 }).map((_, day) => {
-            const dayStart = dayjs().weekday(day).startOf("day").valueOf();
-            const dayEnd = dayjs().weekday(day).endOf("day").valueOf();
-            const timeSaved = OverviewStore.hoursSaved({
-              from: dayStart,
-              to: dayEnd,
-            });
-            const padding = 5;
-            const height =
-              timeSaved === 0
-                ? 0
-                : (timeSaved / maxHourSavedOnADay) * (100 - padding);
-            const isToday = dayjs().weekday(day).isSame(dayjs(), "day");
-            const inFuture = dayjs().weekday(day).isAfter();
-            return (
-              <YStack key={day} flex={1} space="$1.5">
-                <View
-                  height={100}
-                  backgroundColor={inFuture ? "$grey2" : "$grey3"}
-                  borderRadius={"$2"}
-                  position="relative"
-                  pressStyle={{ backgroundColor: "$grey1" }}
-                >
+    <ShadowCard padding="$5" tone="aqua">
+      <YStack gap="$4">
+        <XStack gap="$3" height={142}>
+          <YStack justifyContent="space-between" paddingBottom={25} width={30}>
+            <SizableText color="$text6" fontSize="$2">{chartMaximum.toFixed(0)}h</SizableText>
+            <SizableText color="$text6" fontSize="$2">{(chartMaximum / 2).toFixed(0)}h</SizableText>
+            <SizableText color="$text6" fontSize="$2">0h</SizableText>
+          </YStack>
+          <XStack alignItems="flex-end" flex={1} gap="$2">
+            {dailyValues.map((value, day) => {
+              const isToday = dayjs().weekday(day).isSame(dayjs(), "day");
+              const barHeight = Math.max(3, (value / chartMaximum) * 104);
+              return (
+                <YStack alignItems="center" flex={1} gap="$2" justifyContent="flex-end" key={DAY_LABELS[day]}>
                   <View
-                    height={height}
-                    backgroundColor={"$grey4"}
-                    borderTopLeftRadius={"$1"}
-                    borderTopRightRadius={"$1"}
-                    borderBottomRightRadius={"$2"}
-                    borderBottomLeftRadius={"$2"}
-                    position="absolute"
-                    bottom={0}
-                    left={0}
-                    right={0}
-                    zIndex={1}
+                    backgroundColor={isToday ? "$blue9" : "$blue4"}
+                    borderRadius={99}
+                    height={barHeight}
+                    minHeight={3}
+                    width={8}
                   />
-                </View>
-                <SizableText
-                  color={isToday ? "$grey10" : "$grey7"}
-                  alignSelf="center"
-                  fontWeight={isToday ? "bold" : undefined}
-                >
-                  {dayjs()
-                    .day(day + 1)
-                    .format("dd")}
-                </SizableText>
-              </YStack>
-            );
-          })}
+                  <SizableText color={isToday ? "$text11" : "$text6"} fontSize="$2" fontWeight={isToday ? "900" : "600"}>
+                    {DAY_LABELS[day]}
+                  </SizableText>
+                </YStack>
+              );
+            })}
+          </XStack>
         </XStack>
-      </XStack>
+
+        <View backgroundColor="$borderColor" height={1} />
+
+        <XStack alignItems="flex-end" justifyContent="space-between">
+          <YStack gap="$1">
+            <SizableText color="$text6" fontSize="$2">Total enfocado</SizableText>
+            <SizableText color="$text11" fontSize="$7" fontWeight="900">
+              {`${Math.floor(savedThisWeek)}h ${Math.round((savedThisWeek % 1) * 60)}m`}
+            </SizableText>
+          </YStack>
+          <YStack alignItems="flex-end" gap="$1">
+            <SizableText color="$text6" fontSize="$2">Tendencia</SizableText>
+            <XStack alignItems="center" gap="$1">
+              <TrendingUp color="$primary11" size={17} />
+              <SizableText color="$primary11" fontSize="$6" fontWeight="900">
+                {`${trend >= 0 ? "+" : ""}${Math.round(trend)}%`}
+              </SizableText>
+            </XStack>
+          </YStack>
+        </XStack>
+      </YStack>
     </ShadowCard>
   );
 };

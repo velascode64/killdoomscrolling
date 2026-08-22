@@ -16,7 +16,13 @@ Before changing any UI:
 4. For a new flow, enumerate its screens and states before editing: empty, loading, configured, active, completed, error, and permission-denied when relevant.
 5. Verify on the target Android device or emulator after implementation. A UI change is not complete based only on TypeScript passing.
 
-Design references belong in `docs/design/` (Figma links, screenshots, and written interaction rules). Treat them as source of truth when present. Do not reinterpret them into a generic dashboard or card layout.
+## Product Flow and Visual Reference
+
+Before changing onboarding, mode creation/editing, schedule selection, blocked/replacement apps, or dashboard cards, read `project-description/appflow-ui-system.md`.
+
+- This file is the source of truth for the current Android product flow, active screenshots, light-only theme, brand gradient, component behavior, and screen states.
+- Its source images are in `project-description/ui-references/`. Do not use deleted or unlisted images as visual references.
+- Do not reinterpret the documented flow into a generic dashboard, plan card, or onboarding sequence. If a requested UI conflicts with the document, update the document with an approved reference before implementing it.
 
 ## Existing UI System: Source of Truth
 
