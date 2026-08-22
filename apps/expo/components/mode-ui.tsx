@@ -12,6 +12,18 @@ export const MODE_INK = "#003B5C";
 export const MODE_MUTED = "#36586F";
 export const MODE_BORDER = "#CFEBF0";
 
+export function BrandGradientFill() {
+  return (
+    <LinearGradient
+      colors={brandGradient}
+      end={{ x: 1, y: 1 }}
+      pointerEvents="none"
+      start={{ x: 0, y: 0 }}
+      style={StyleSheet.absoluteFill}
+    />
+  );
+}
+
 export function GradientButton({
   children,
   disabled = false,
@@ -33,12 +45,7 @@ export function GradientButton({
       disabled={disabled}
       onPress={onPress}
     >
-      <LinearGradient
-        colors={brandGradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
+      <BrandGradientFill />
       <XStack flex={1} alignItems="center" justifyContent="center" space="$2">
         {icon}
         <SizableText color="white" fontWeight="900" fontSize="$5">
@@ -56,7 +63,7 @@ export function ModeRadial({
   size = 252,
 }: {
   duration: number;
-  label: string;
+  label?: string;
   progress?: number;
   size?: number;
 }) {
@@ -122,9 +129,11 @@ export function ModeRadial({
         >
           {`${duration}:00`}
         </SizableText>
-        <SizableText color={MODE_MUTED} fontSize="$5" fontWeight="700" maxFontSizeMultiplier={1.1}>
-          {label}
-        </SizableText>
+        {label ? (
+          <SizableText color={MODE_MUTED} fontSize="$5" fontWeight="700" maxFontSizeMultiplier={1.1}>
+            {label}
+          </SizableText>
+        ) : null}
       </YStack>
     </View>
   );

@@ -8,11 +8,24 @@ export const ANDROID_REWARD_CONFIG_KEY = "android_reward_blocker_config";
 
 export type RewardPlanMode = "focus" | "sleep" | "work";
 export type PlanCategory = "focus" | "exercise" | "sleep" | "meditation" | "hobby" | "work";
+export type PlanWeekday = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type PlanCustomCategoryIcon = "briefcase" | "book" | "heart" | "music" | "star";
+
+export interface PlanCustomCategory {
+  id: string;
+  label: string;
+  icon: PlanCustomCategoryIcon;
+}
+
+export const ALL_PLAN_WEEKDAYS: PlanWeekday[] = [1, 2, 3, 4, 5, 6, 7];
 
 export interface AndroidRewardPlan extends AndroidRewardBlockerPlan {
   mode: RewardPlanMode;
   category: PlanCategory;
   name: string;
+  weekdays: PlanWeekday[];
+  customCategories: PlanCustomCategory[];
+  selectedCategoryId: string;
 }
 
 export const PLAN_COPY: Record<RewardPlanMode, { name: string; description: string }> = {
@@ -53,6 +66,9 @@ export function createAndroidRewardPlan(category: PlanCategory = "focus"): Andro
     blockedPackages: [],
     productivePackages: [],
     schedule: MODE_SCHEDULE[mode],
+    weekdays: [...ALL_PLAN_WEEKDAYS],
+    customCategories: [],
+    selectedCategoryId: category,
     productiveMinutes: 5,
     unlockMinutes: 5,
   };
@@ -62,16 +78,25 @@ function normalizePlan(value: Partial<AndroidRewardPlan>, index: number): Androi
   const mode = value.mode === "sleep" || value.mode === "work" ? value.mode : "focus";
   const category = value.category === "exercise" || value.category === "meditation" || value.category === "hobby" || value.category === "sleep" || value.category === "work" ? value.category : mode;
   const fallback = createAndroidRewardPlan(category);
+  const id = value.id?.trim();
+  const name = value.name?.trim();
+  const customCategories = value.customCategories?.filter((entry) => entry.id && entry.label.trim()) ?? [];
+  const selectedCategoryId = value.selectedCategoryId && (
+    value.selectedCategoryId in PLAN_CATEGORY_COPY || customCategories.some((entry) => entry.id === value.selectedCategoryId)
+  ) ? value.selectedCategoryId : category;
   return {
     ...fallback,
     ...value,
-    id: value.id || `plan-legacy-${index}`,
-    name: value.name?.trim() || PLAN_CATEGORY_COPY[category].name,
+    id: id ? id : `plan-legacy-${index}`,
+    name: name ? name : PLAN_CATEGORY_COPY[category].name,
     mode,
     category,
     blockedPackages: value.blockedPackages ?? [],
     productivePackages: value.productivePackages ?? [],
     schedule: value.schedule ?? fallback.schedule,
+    weekdays: value.weekdays?.filter((day): day is PlanWeekday => ALL_PLAN_WEEKDAYS.includes(day)) ?? [...ALL_PLAN_WEEKDAYS],
+    customCategories,
+    selectedCategoryId,
   };
 }
 
@@ -90,13 +115,13 @@ export async function saveAndroidRewardPlans(plans: AndroidRewardPlan[]): Promis
 
 export function toNativeRewardPlansConfig(plans: AndroidRewardPlan[]): AndroidRewardBlockerPlansConfig {
   return {
-    plans: plans.map(({ id, category, enabled, blockedPackages, productivePackages, schedule, productiveMinutes, unlockMinutes }) => ({
+    plans: plans.map(({ id, category, enabled, blockedPackages, productivePackages, schedule, weekdays, productiveMinutes, unlockMinutes }) => ({
       id,
       mode: nativeModeForCategory(category),
       enabled,
       blockedPackages,
       productivePackages,
-      schedule,
+      schedule: { ...schedule, weekdays },
       productiveMinutes,
       unlockMinutes,
     })),

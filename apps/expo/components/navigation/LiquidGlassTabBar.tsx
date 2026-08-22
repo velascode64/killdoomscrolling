@@ -9,7 +9,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LiquidTabItem } from "./LiquidTabItem";
 
 const BAR_MARGIN = 20;
-const BAR_HEIGHT = 78;
+export const LIQUID_TAB_BAR_HEIGHT = 78;
+export const LIQUID_TAB_BAR_BOTTOM_GAP = 10;
+export const LIQUID_TAB_BAR_MIN_SAFE_BOTTOM = 12;
 const INNER_PADDING = 8;
 
 export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -43,7 +45,7 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
       style={[
         styles.positioner,
         {
-          bottom: Math.max(insets.bottom, 12) + 10,
+          bottom: Math.max(insets.bottom, LIQUID_TAB_BAR_MIN_SAFE_BOTTOM) + LIQUID_TAB_BAR_BOTTOM_GAP,
           left: BAR_MARGIN,
           right: BAR_MARGIN,
         },
@@ -123,13 +125,13 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
 
 const styles = StyleSheet.create({
   positioner: {
-    height: BAR_HEIGHT,
+    height: LIQUID_TAB_BAR_HEIGHT,
     position: "absolute",
   },
   shadowShell: {
     borderRadius: 34,
     elevation: 14,
-    height: BAR_HEIGHT,
+    height: LIQUID_TAB_BAR_HEIGHT,
     shadowColor: "#1D7FA7",
     shadowOffset: { height: 8, width: 0 },
     shadowOpacity: Platform.OS === "android" ? 0.2 : 0.13,

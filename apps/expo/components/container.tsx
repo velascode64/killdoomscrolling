@@ -5,6 +5,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { ScrollView, View } from "tamagui";
 
+import {
+  LIQUID_TAB_BAR_BOTTOM_GAP,
+  LIQUID_TAB_BAR_HEIGHT,
+  LIQUID_TAB_BAR_MIN_SAFE_BOTTOM,
+} from "./navigation/LiquidGlassTabBar";
+
 export const Container = ({
   children,
   scroll = true,
@@ -21,7 +27,14 @@ export const Container = ({
   const insets = useSafeAreaInsets();
 
   const tabBarHeight = useContext(BottomTabBarHeightContext);
-  const bottomInset = tabBarHeight && insets.bottom ? tabBarHeight - insets.bottom : tabBarHeight ?? insets.bottom;
+  const floatingTabClearance =
+    LIQUID_TAB_BAR_HEIGHT +
+    Math.max(insets.bottom, LIQUID_TAB_BAR_MIN_SAFE_BOTTOM) +
+    LIQUID_TAB_BAR_BOTTOM_GAP +
+    16;
+  const bottomInset = tabBarHeight === undefined
+    ? insets.bottom
+    : Math.max(tabBarHeight, floatingTabClearance);
 
   return (
     <View flex={1} backgroundColor="#F8FDFE">
@@ -35,7 +48,6 @@ export const Container = ({
       {scroll ? (
         <ScrollView
           paddingTop={!header ? insets.top : undefined}
-          paddingBottom={bottomInset}
           showsVerticalScrollIndicator={false}
           flex={1}
           backgroundColor="transparent"
@@ -65,7 +77,7 @@ export const Container = ({
         <View
           paddingHorizontal="$4"
           paddingTop={insets.top}
-          paddingBottom={tabBarHeight ?? insets.bottom}
+          paddingBottom={bottomInset}
           flex={1}
           backgroundColor="transparent"
           $gtSm={{
@@ -74,7 +86,7 @@ export const Container = ({
           }}
           {...viewProps}
         >
-          <View flex={1} paddingBottom={tabBarHeight ?? insets.bottom}>
+          <View flex={1}>
             {children}
           </View>
         </View>

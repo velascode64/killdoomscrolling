@@ -1,16 +1,12 @@
 import {
   ArrowLeft,
-  Briefcase,
   Check,
   Clock3,
   Focus,
-  Moon,
   Plus,
   ShieldBan,
-  X,
 } from "@tamagui/lucide-icons";
 import {
-  AndroidBlockableApp,
   configureRewardBlockerPlans,
   getInstalledApps,
   getPermissionStatus,
@@ -18,10 +14,12 @@ import {
   openUsageStatsSettings,
   startMonitoring,
 } from "expo-app-blocker";
+import type { AndroidBlockableApp } from "expo-app-blocker";
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState, type ReactNode } from "react";
-import { Alert, Image, Platform } from "react-native";
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { Alert, Image, Modal, Platform, Pressable, StyleSheet } from "react-native";
 import {
   Button,
   H3,
@@ -29,28 +27,28 @@ import {
   Input,
   Paragraph,
   ScrollView,
-  Sheet,
   SizableText,
   View,
   XStack,
   YStack,
 } from "tamagui";
 
-import { AppAvatarStack, GradientButton, ModeRadial } from "../components/mode-ui";
+import { AppAvatarStack, BrandGradientFill, GradientButton, ModeRadial } from "../components/mode-ui";
 import { AppPickerSheet } from "../components/app-picker-sheet";
+import { CategoryGlyph, CategorySelector } from "../components/category-selector";
+import type { CategoryOption } from "../components/category-selector";
+import { GlassMinutePicker, ScheduleCard } from "../components/schedule-card";
 import { ShadowCard } from "../components/shadow.card";
 import { Container } from "../components/container";
 import {
-  AndroidRewardPlan,
-  PlanCategory,
   PLAN_CATEGORY_COPY,
   createAndroidRewardPlan,
-  formatPlanTime,
   loadAndroidRewardPlans,
   nativeModeForCategory,
   saveAndroidRewardPlans,
   toNativeRewardPlansConfig,
 } from "../data/android-reward";
+import type { AndroidRewardPlan, PlanCategory, PlanCustomCategory } from "../data/android-reward";
 
 const durationOptions = [15, 25, 60];
 const phoneUseOptions = [1, 2, 4, 8];
@@ -67,36 +65,29 @@ function categoryForGoal(goal: string): PlanCategory {
 }
 
 function planHasOverlap(plan: AndroidRewardPlan, plans: AndroidRewardPlan[]) {
-  const start = plan.schedule.startMinute;
-  const end = plan.schedule.endMinute;
-
   return plans.some((other) => {
     if (other.id === plan.id || !other.enabled) return false;
-    const otherStart = other.schedule.startMinute;
-    const otherEnd = other.schedule.endMinute;
-    return start < otherEnd && end > otherStart;
+    return [1, 2, 3, 4, 5, 6, 7].some((weekday) =>
+      Array.from({ length: 1440 }).some((_, minute) =>
+        planIsActiveAt(plan, weekday, minute) && planIsActiveAt(other, weekday, minute),
+      ),
+    );
   });
 }
 
-function CategoryIcon({ category, size = 22 }: { category: PlanCategory; size?: number }) {
-  const props = { size, color: "$text11" as const };
-  if (category === "sleep") return <Moon {...props} />;
-  if (category === "work") return <Briefcase {...props} />;
-  return <Focus {...props} />;
+function planIsActiveAt(plan: AndroidRewardPlan, weekday: number, minute: number) {
+  const { startMinute, endMinute } = plan.schedule;
+  if (startMinute < endMinute) {
+    return plan.weekdays.includes(weekday as 1 | 2 | 3 | 4 | 5 | 6 | 7) && minute >= startMinute && minute < endMinute;
+  }
+  const scheduleWeekday = minute >= startMinute ? weekday : weekday === 1 ? 7 : weekday - 1;
+  return plan.weekdays.includes(scheduleWeekday as 1 | 2 | 3 | 4 | 5 | 6 | 7) && (minute >= startMinute || minute < endMinute);
 }
 
 function DurationChips({ value, onChange }: { value: number; onChange: (minutes: number) => void }) {
   const [customOpen, setCustomOpen] = useState(false);
-  const [customValue, setCustomValue] = useState("");
   const customSelected = !durationOptions.includes(value);
-  const parsedCustomValue = Number.parseInt(customValue, 10);
-  const customIsValid = Number.isInteger(parsedCustomValue) && parsedCustomValue > 0;
-
-  const applyCustomValue = () => {
-    if (!customIsValid) return;
-    onChange(parsedCustomValue);
-    setCustomOpen(false);
-  };
+  const customActive = customOpen || customSelected;
 
   return (
     <YStack gap="$2" width="100%">
@@ -108,13 +99,14 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
               key={minutes}
               unstyled
               alignItems="center"
-              backgroundColor={selected ? "$blue8" : "$background2"}
+              backgroundColor={selected ? "transparent" : "$background2"}
               borderColor={selected ? "$blue8" : "$borderColor"}
               borderRadius="$10"
               borderWidth={1}
               flex={1}
               justifyContent="center"
               minWidth={0}
+              overflow="hidden"
               paddingHorizontal="$1"
               paddingVertical="$2.5"
               pressStyle={{ opacity: 0.8 }}
@@ -123,8 +115,9 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
                 onChange(minutes);
               }}
             >
+              {selected ? <BrandGradientFill /> : null}
               <SizableText
-                color={selected ? "$text1" : "$text11"}
+                color={selected ? "white" : "$text11"}
                 fontWeight="700"
                 maxFontSizeMultiplier={1.1}
                 size="$4"
@@ -137,59 +130,46 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
         <Button
           unstyled
           alignItems="center"
-          backgroundColor={customSelected ? "$blue8" : "$background2"}
-          borderColor={customSelected ? "$blue8" : "$borderColor"}
+          backgroundColor={customActive ? "transparent" : "$background2"}
+          borderColor={customActive ? "$blue8" : "$borderColor"}
           borderRadius="$10"
           borderWidth={1}
           flex={1}
           justifyContent="center"
           minWidth={0}
+          overflow="hidden"
           paddingHorizontal="$1"
           paddingVertical="$2.5"
           pressStyle={{ opacity: 0.8 }}
           onPress={() => {
-            setCustomValue(customSelected ? String(value) : "");
-            setCustomOpen(true);
+            setCustomOpen((open) => !open);
           }}
         >
+          {customActive ? <BrandGradientFill /> : null}
           <SizableText
-            color={customSelected ? "$text1" : "$text11"}
+            color={customActive ? "white" : "$text11"}
             fontWeight="700"
             maxFontSizeMultiplier={1.1}
             size="$4"
           >
-            Custom
+            {customSelected ? `${value} min` : "Custom"}
           </SizableText>
         </Button>
       </XStack>
 
-      {customOpen && (
-        <XStack alignItems="center" gap="$2" width="100%">
-          <Input
-            backgroundColor="$background2"
-            borderColor="$borderColor"
-            color="$text11"
-            flex={1}
-            keyboardType="number-pad"
-            maxLength={3}
-            placeholder="Minutos"
-            returnKeyType="done"
-            value={customValue}
-            onChangeText={(nextValue) => setCustomValue(nextValue.replace(/[^0-9]/g, ""))}
-            onSubmitEditing={applyCustomValue}
-          />
-          <Button
-            backgroundColor="$blue8"
-            borderColor="$blue8"
-            color="white"
-            disabled={!customIsValid}
-            opacity={customIsValid ? 1 : 0.45}
-            onPress={applyCustomValue}
-          >
-            Aplicar
-          </Button>
-        </XStack>
-      )}
+      <Modal
+        animationType="fade"
+        statusBarTranslucent
+        transparent
+        visible={customOpen}
+        onRequestClose={() => setCustomOpen(false)}
+      >
+        <Pressable style={durationPickerStyles.backdrop} onPress={() => setCustomOpen(false)}>
+          <Pressable onPress={(event) => event.stopPropagation()}>
+            <GlassMinutePicker value={value} onChange={onChange} />
+          </Pressable>
+        </Pressable>
+      </Modal>
     </YStack>
   );
 }
@@ -318,7 +298,6 @@ export default function OnboardingScreen() {
   const [plans, setPlans] = useState<AndroidRewardPlan[]>([]);
   const [plan, setPlan] = useState<AndroidRewardPlan>(() => createAndroidRewardPlan("focus"));
   const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
-  const [timePicker, setTimePicker] = useState<"start" | "end" | null>(null);
   const [step, setStep] = useState(planId ? 10 : 0);
   const [phoneUse, setPhoneUse] = useState(2);
   const [goal, setGoal] = useState("Concentrar mas");
@@ -353,15 +332,36 @@ export default function OnboardingScreen() {
 
   const setCategory = (category: PlanCategory) => {
     setPlan((current) => {
-      const defaultName = PLAN_CATEGORY_COPY[current.category].name;
       const copy = PLAN_CATEGORY_COPY[category];
       return {
         ...current,
         category,
         mode: nativeModeForCategory(category),
-        name: current.name === defaultName ? copy.name : current.name,
+        name: copy.name,
+        selectedCategoryId: category,
       };
     });
+  };
+
+  const selectCustomCategory = (category: PlanCustomCategory) => {
+    setPlan((current) => ({
+      ...current,
+      category: "focus",
+      mode: "focus",
+      name: category.label,
+      selectedCategoryId: category.id,
+    }));
+  };
+
+  const addCustomCategory = (category: PlanCustomCategory) => {
+    setPlan((current) => ({
+      ...current,
+      category: "focus",
+      customCategories: [...current.customCategories, category],
+      mode: "focus",
+      name: category.label,
+      selectedCategoryId: category.id,
+    }));
   };
 
   const togglePackages = (key: "blockedPackages" | "productivePackages", packageName: string) => {
@@ -384,8 +384,8 @@ export default function OnboardingScreen() {
       Alert.alert("Selecciona apps", "Elige al menos una app que quieras bloquear.");
       return;
     }
-    if (plan.schedule.startMinute >= plan.schedule.endMinute) {
-      Alert.alert("Revisa el horario", "La hora de inicio debe ser anterior a la hora de fin.");
+    if (plan.schedule.startMinute === plan.schedule.endMinute) {
+      Alert.alert("Revisa el horario", "La hora de inicio y la hora de fin deben ser diferentes.");
       return;
     }
 
@@ -401,8 +401,8 @@ export default function OnboardingScreen() {
 
     try {
       await saveAndroidRewardPlans(nextPlans);
-      await configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
-      if (enabled) await startMonitoring();
+      configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
+      if (enabled) startMonitoring();
       router.replace("/(tabs)/overview");
     } catch {
       Alert.alert("No se pudo guardar", "Intenta guardar el modo de nuevo.");
@@ -428,8 +428,8 @@ export default function OnboardingScreen() {
 
   const updateTime = (key: "start" | "end", value: number) => {
     setPlan((current) => {
-      if (key === "start") return { ...current, schedule: { ...current.schedule, startMinute: value * 60 } };
-      return { ...current, schedule: { ...current.schedule, endMinute: value * 60 } };
+      if (key === "start") return { ...current, schedule: { ...current.schedule, startMinute: value } };
+      return { ...current, schedule: { ...current.schedule, endMinute: value } };
     });
   };
 
@@ -450,8 +450,8 @@ export default function OnboardingScreen() {
         setPickerTarget={setPickerTarget}
         setPlan={setPlan}
         setCategory={setCategory}
-        timePicker={timePicker}
-        setTimePicker={setTimePicker}
+        addCustomCategory={addCustomCategory}
+        selectCustomCategory={selectCustomCategory}
         togglePackages={togglePackages}
         selectedApps={selectedApps}
         updateTime={updateTime}
@@ -496,7 +496,6 @@ export default function OnboardingScreen() {
                 ))}
                 {goal === "Otro" && (
                   <Input
-                    autoFocus
                     backgroundColor="$background2"
                     borderColor="$borderColor"
                     placeholder="Escribe tu objetivo"
@@ -605,18 +604,20 @@ function ChoiceChip({ label, selected, onPress }: { label: string; selected: boo
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "$blue8" : "$background2"}
+      backgroundColor={selected ? "transparent" : "$background2"}
       borderColor={selected ? "$blue8" : "$borderColor"}
       borderRadius="$10"
       borderWidth={1}
       justifyContent="center"
       minWidth={72}
+      overflow="hidden"
       paddingHorizontal="$4"
       paddingVertical="$3"
       pressStyle={{ opacity: 0.75 }}
       onPress={onPress}
     >
-      <SizableText color={selected ? "$text1" : "$text11"} fontWeight="800">{label}</SizableText>
+      {selected ? <BrandGradientFill /> : null}
+      <SizableText color={selected ? "white" : "$text11"} fontWeight="800">{label}</SizableText>
     </Button>
   );
 }
@@ -626,28 +627,30 @@ function ChoiceRow({ label, selected, onPress }: { label: string; selected: bool
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "$blue2" : "$background2"}
+      backgroundColor={selected ? "transparent" : "$background2"}
       borderColor={selected ? "$blue8" : "$borderColor"}
       borderRadius="$6"
       borderWidth={1}
       flexDirection="row"
       justifyContent="space-between"
+      overflow="hidden"
       padding="$4"
       pressStyle={{ opacity: 0.75 }}
       onPress={onPress}
     >
-      <SizableText color="$text11" fontWeight="700" size="$5">{label}</SizableText>
+      {selected ? <BrandGradientFill /> : null}
+      <SizableText color={selected ? "white" : "$text11"} fontWeight="700" size="$5">{label}</SizableText>
       <View
         alignItems="center"
-        backgroundColor={selected ? "$blue8" : "$background"}
-        borderColor={selected ? "$blue8" : "$borderColor"}
+        backgroundColor={selected ? "rgba(255, 255, 255, 0.78)" : "$background"}
+        borderColor={selected ? "rgba(255, 255, 255, 0.94)" : "$borderColor"}
         borderRadius={99}
         borderWidth={1}
         height={25}
         justifyContent="center"
         width={25}
       >
-        {selected && <Check color="$text1" size={16} />}
+        {selected && <Check color="$blue9" size={16} />}
       </View>
     </Button>
   );
@@ -725,6 +728,9 @@ function PlanPreview({
   onSave: () => void;
 }) {
   const copy = PLAN_CATEGORY_COPY[plan.category];
+  const customCategory = plan.customCategories.find((category) => category.id === plan.selectedCategoryId);
+  const categoryLabel = customCategory?.label ?? copy.name;
+  const categoryIcon = customCategory?.icon ?? plan.category;
   return (
     <YStack gap="$4">
       <YStack gap="$2">
@@ -735,14 +741,14 @@ function PlanPreview({
         <YStack gap="$4">
           <XStack alignItems="center" gap="$3">
             <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={46} justifyContent="center" width={46}>
-              <CategoryIcon category={plan.category} />
+              <CategoryGlyph icon={categoryIcon} size={22} />
             </View>
             <YStack flex={1}>
-              <H4 color="$text11">{copy.name}</H4>
+              <H4 color="$text11">{categoryLabel}</H4>
               <SizableText color="$text10">Inactivo</SizableText>
             </YStack>
           </XStack>
-          <ModeRadial duration={plan.productiveMinutes} label={copy.name.toLowerCase()} size={184} />
+          <ModeRadial duration={plan.productiveMinutes} label={categoryLabel.toLowerCase()} size={184} />
           <XStack alignItems="center" justifyContent="space-between">
             <SizableText color="$text10">Bloquear</SizableText>
             <AppAvatarStack apps={selectedApps(plan.blockedPackages)} />
@@ -766,8 +772,8 @@ function Editor({
   setPickerTarget,
   setPlan,
   setCategory,
-  timePicker,
-  setTimePicker,
+  addCustomCategory,
+  selectCustomCategory,
   togglePackages,
   selectedApps,
   updateTime,
@@ -780,16 +786,26 @@ function Editor({
   setPickerTarget: (target: PickerTarget) => void;
   setPlan: (update: (current: AndroidRewardPlan) => AndroidRewardPlan) => void;
   setCategory: (category: PlanCategory) => void;
-  timePicker: "start" | "end" | null;
-  setTimePicker: (target: "start" | "end" | null) => void;
+  addCustomCategory: (category: PlanCustomCategory) => void;
+  selectCustomCategory: (category: PlanCustomCategory) => void;
   togglePackages: (key: "blockedPackages" | "productivePackages", packageName: string) => void;
   selectedApps: (packages: string[]) => AndroidBlockableApp[];
   updateTime: (key: "start" | "end", value: number) => void;
   onBack: () => void;
   onSave: (enabled: boolean) => Promise<void>;
 }) {
-  const copy = PLAN_CATEGORY_COPY[plan.category];
-  const currentTime = Math.floor((timePicker === "start" ? plan.schedule.startMinute : plan.schedule.endMinute) / 60);
+  const categoryOptions: CategoryOption[] = [
+    ...categories.map((category) => ({
+      icon: category,
+      id: category,
+      label: PLAN_CATEGORY_COPY[category].name,
+    })),
+    ...plan.customCategories.map((category) => ({
+      icon: category.icon,
+      id: category.id,
+      label: category.label,
+    })),
+  ];
 
   return (
     <Container scroll={false}>
@@ -799,44 +815,23 @@ function Editor({
         <ScrollView showsVerticalScrollIndicator={false}>
           <YStack gap="$5" paddingBottom="$8">
             <YStack alignItems="center" gap="$3">
-              <ModeRadial duration={plan.productiveMinutes} label={copy.name.toLowerCase()} size={214} />
+              <ModeRadial duration={plan.productiveMinutes} size={214} />
               <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
             </YStack>
 
-            <YStack gap="$3">
-              <H4 color="$text11">Nombre del modo</H4>
-              <Input backgroundColor="$background2" borderColor="$borderColor" color="$text11" value={plan.name} onChangeText={(name) => setPlan((current) => ({ ...current, name }))} />
-            </YStack>
-
-            <YStack gap="$3">
-              <H4 color="$text11">Categoria</H4>
-              <XStack flexWrap="wrap" gap="$2">
-                {categories.map((category) => (
-                  <ChoiceChip
-                    key={category}
-                    label={PLAN_CATEGORY_COPY[category].name}
-                    selected={plan.category === category}
-                    onPress={() => setCategory(category)}
-                  />
-                ))}
-              </XStack>
-            </YStack>
-
-            <YStack gap="$3">
-              <H4 color="$text11">Horario</H4>
-              <ShadowCard>
-                <XStack alignItems="center" gap="$3">
-                  <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={44} justifyContent="center" width={44}>
-                    <Clock3 color="$text11" size={21} />
-                  </View>
-                  <YStack flex={1} gap="$1">
-                    <SizableText color="$text11" fontWeight="800">Todos los dias</SizableText>
-                    <SizableText color="$text10">{formatPlanTime(plan.schedule.startMinute)} - {formatPlanTime(plan.schedule.endMinute)}</SizableText>
-                  </YStack>
-                  <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" size="$3" onPress={() => setTimePicker("start")}>Editar</Button>
-                </XStack>
-              </ShadowCard>
-            </YStack>
+            <CategorySelector
+              options={categoryOptions}
+              selectedId={plan.selectedCategoryId}
+              onAdd={addCustomCategory}
+              onSelect={(option) => {
+                const predefined = categories.find((category) => category === option.id);
+                if (predefined) setCategory(predefined);
+                else {
+                  const custom = plan.customCategories.find((category) => category.id === option.id);
+                  if (custom) selectCustomCategory(custom);
+                }
+              }}
+            />
 
             <AppGroupCard
               apps={selectedApps(plan.blockedPackages)}
@@ -851,8 +846,18 @@ function Editor({
               onPress={() => setPickerTarget("productive")}
             />
 
+            <YStack gap="$3">
+              <H4 color="$text11">Hora</H4>
+              <ScheduleCard
+                endMinute={plan.schedule.endMinute}
+                startMinute={plan.schedule.startMinute}
+                weekdays={plan.weekdays}
+                onTimeChange={updateTime}
+                onWeekdaysChange={(weekdays) => setPlan((current) => ({ ...current, weekdays }))}
+              />
+            </YStack>
+
             <GradientButton onPress={() => void onSave(true)}>{plan.enabled ? "Guardar cambios" : "Activar modo"}</GradientButton>
-            {plan.enabled && <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void onSave(false)}>Guardar como inactivo</Button>}
           </YStack>
         </ScrollView>
       </YStack>
@@ -869,28 +874,6 @@ function Editor({
         }}
       />
 
-      <Sheet modal open={timePicker !== null} snapPointsMode="fit" onOpenChange={(open: boolean) => !open && setTimePicker(null)}>
-        <Sheet.Overlay animation="quick" backgroundColor="rgba(0, 59, 92, 0.18)" />
-        <Sheet.Frame backgroundColor="$background" borderTopLeftRadius="$8" borderTopRightRadius="$8" padding="$4">
-          <YStack gap="$4">
-            <XStack alignItems="center" justifyContent="space-between">
-              <H4 color="$text11">{timePicker === "start" ? "Hora de inicio" : "Hora de fin"}</H4>
-              <Button unstyled onPress={() => setTimePicker(null)}><X color="$text11" size={22} /></Button>
-            </XStack>
-            <XStack flexWrap="wrap" gap="$2">
-              {Array.from({ length: 24 }).map((_, hour) => (
-                <ChoiceChip
-                  key={hour}
-                  label={`${String(hour).padStart(2, "0")}:00`}
-                  selected={currentTime === hour}
-                  onPress={() => timePicker && updateTime(timePicker, hour)}
-                />
-              ))}
-            </XStack>
-            <GradientButton onPress={() => setTimePicker(null)}>Confirmar hora</GradientButton>
-          </YStack>
-        </Sheet.Frame>
-      </Sheet>
     </Container>
   );
 }
@@ -916,3 +899,13 @@ function AppGroupCard({ apps, description, label, onPress }: { apps: AndroidBloc
     </YStack>
   );
 }
+
+const durationPickerStyles = StyleSheet.create({
+  backdrop: {
+    alignItems: "center",
+    backgroundColor: "rgba(0, 59, 92, 0.2)",
+    flex: 1,
+    justifyContent: "center",
+    padding: 24,
+  },
+});
