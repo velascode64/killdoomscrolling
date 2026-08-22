@@ -43,7 +43,7 @@ const OverviewLayout = () => {
         name="overview"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <YStack alignItems="center" gap="$1">
+            <YStack alignItems="center" gap="$1" width={88}>
               <BarChart2 size={21} color={color} strokeWidth={focused ? 2.6 : 2} />
               <SizableText color={color} fontSize="$2" fontWeight={focused ? "900" : "600"} lineHeight={13}>
                 Overview
@@ -57,7 +57,7 @@ const OverviewLayout = () => {
         name="apps"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <YStack alignItems="center" gap="$1">
+            <YStack alignItems="center" gap="$1" width={88}>
               <LayoutGrid size={21} color={color} strokeWidth={focused ? 2.6 : 2} />
               <SizableText color={color} fontSize="$2" fontWeight={focused ? "900" : "600"} lineHeight={13}>
                 Apps
