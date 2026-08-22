@@ -52,7 +52,7 @@ export function GradientButton({
 export function ModeRadial({
   duration,
   label,
-  progress = 0.72,
+  progress,
   size = 252,
 }: {
   duration: number;
@@ -63,8 +63,10 @@ export function ModeRadial({
   const strokeWidth = 13;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const clampedProgress = Math.max(0, Math.min(1, progress));
+  const durationProgress = duration / 60;
+  const clampedProgress = Math.max(0.05, Math.min(1, progress ?? durationProgress));
   const offset = circumference * (1 - clampedProgress);
+  const durationFontSize = size >= 230 ? 52 : 44;
 
   return (
     <View alignSelf="center" width={size} height={size} alignItems="center" justifyContent="center">
@@ -106,10 +108,21 @@ export function ModeRadial({
         />
       </Svg>
       <YStack position="absolute" alignItems="center" space="$1">
-        <SizableText color={MODE_INK} fontSize="$11" fontWeight="900" letterSpacing={-2}>
+        <SizableText
+          adjustsFontSizeToFit
+          color={MODE_INK}
+          fontFamily="SatoshiBlack"
+          fontSize={durationFontSize}
+          letterSpacing={-1}
+          lineHeight={durationFontSize + 6}
+          maxFontSizeMultiplier={1}
+          numberOfLines={1}
+          textAlign="center"
+          width={size - 52}
+        >
           {`${duration}:00`}
         </SizableText>
-        <SizableText color={MODE_MUTED} fontSize="$5" fontWeight="700">
+        <SizableText color={MODE_MUTED} fontSize="$5" fontWeight="700" maxFontSizeMultiplier={1.1}>
           {label}
         </SizableText>
       </YStack>

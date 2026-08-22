@@ -19,6 +19,7 @@ import {
   startMonitoring,
 } from "expo-app-blocker";
 import { router, useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useState, type ReactNode } from "react";
 import { Alert, Image, Platform } from "react-native";
 import {
@@ -51,7 +52,7 @@ import {
   toNativeRewardPlansConfig,
 } from "../data/android-reward";
 
-const durationOptions = [15, 25, 45, 60];
+const durationOptions = [15, 25, 60];
 const phoneUseOptions = [1, 2, 4, 8];
 const categories: PlanCategory[] = ["focus", "exercise", "sleep", "meditation", "hobby"];
 const goals = ["Dejar redes", "Concentrar mas", "Dormir", "Hacer otra actividad", "Otro"];
@@ -85,33 +86,111 @@ function CategoryIcon({ category, size = 22 }: { category: PlanCategory; size?: 
 }
 
 function DurationChips({ value, onChange }: { value: number; onChange: (minutes: number) => void }) {
+  const [customOpen, setCustomOpen] = useState(false);
+  const [customValue, setCustomValue] = useState("");
+  const customSelected = !durationOptions.includes(value);
+  const parsedCustomValue = Number.parseInt(customValue, 10);
+  const customIsValid = Number.isInteger(parsedCustomValue) && parsedCustomValue > 0;
+
+  const applyCustomValue = () => {
+    if (!customIsValid) return;
+    onChange(parsedCustomValue);
+    setCustomOpen(false);
+  };
+
   return (
-    <XStack flexWrap="wrap" gap="$2">
-      {durationOptions.map((minutes) => {
-        const selected = minutes === value;
-        return (
-          <Button
-            key={minutes}
-            unstyled
-            alignItems="center"
-            backgroundColor={selected ? "$blue8" : "$background2"}
-            borderColor={selected ? "$blue8" : "$borderColor"}
-            borderRadius="$10"
-            borderWidth={1}
-            justifyContent="center"
-            minWidth={64}
-            paddingHorizontal="$3"
-            paddingVertical="$2.5"
-            pressStyle={{ opacity: 0.8 }}
-            onPress={() => onChange(minutes)}
+    <YStack gap="$2" width="100%">
+      <XStack gap="$2" width="100%">
+        {durationOptions.map((minutes) => {
+          const selected = minutes === value;
+          return (
+            <Button
+              key={minutes}
+              unstyled
+              alignItems="center"
+              backgroundColor={selected ? "$blue8" : "$background2"}
+              borderColor={selected ? "$blue8" : "$borderColor"}
+              borderRadius="$10"
+              borderWidth={1}
+              flex={1}
+              justifyContent="center"
+              minWidth={0}
+              paddingHorizontal="$1"
+              paddingVertical="$2.5"
+              pressStyle={{ opacity: 0.8 }}
+              onPress={() => {
+                setCustomOpen(false);
+                onChange(minutes);
+              }}
+            >
+              <SizableText
+                color={selected ? "$text1" : "$text11"}
+                fontWeight="700"
+                maxFontSizeMultiplier={1.1}
+                size="$4"
+              >
+                {minutes} min
+              </SizableText>
+            </Button>
+          );
+        })}
+        <Button
+          unstyled
+          alignItems="center"
+          backgroundColor={customSelected ? "$blue8" : "$background2"}
+          borderColor={customSelected ? "$blue8" : "$borderColor"}
+          borderRadius="$10"
+          borderWidth={1}
+          flex={1}
+          justifyContent="center"
+          minWidth={0}
+          paddingHorizontal="$1"
+          paddingVertical="$2.5"
+          pressStyle={{ opacity: 0.8 }}
+          onPress={() => {
+            setCustomValue(customSelected ? String(value) : "");
+            setCustomOpen(true);
+          }}
+        >
+          <SizableText
+            color={customSelected ? "$text1" : "$text11"}
+            fontWeight="700"
+            maxFontSizeMultiplier={1.1}
+            size="$4"
           >
-            <SizableText color={selected ? "$text1" : "$text11"} fontWeight="700" size="$4">
-              {minutes} min
-            </SizableText>
+            Custom
+          </SizableText>
+        </Button>
+      </XStack>
+
+      {customOpen && (
+        <XStack alignItems="center" gap="$2" width="100%">
+          <Input
+            backgroundColor="$background2"
+            borderColor="$borderColor"
+            color="$text11"
+            flex={1}
+            keyboardType="number-pad"
+            maxLength={3}
+            placeholder="Minutos"
+            returnKeyType="done"
+            value={customValue}
+            onChangeText={(nextValue) => setCustomValue(nextValue.replace(/[^0-9]/g, ""))}
+            onSubmitEditing={applyCustomValue}
+          />
+          <Button
+            backgroundColor="$blue8"
+            borderColor="$blue8"
+            color="white"
+            disabled={!customIsValid}
+            opacity={customIsValid ? 1 : 0.45}
+            onPress={applyCustomValue}
+          >
+            Aplicar
           </Button>
-        );
-      })}
-    </XStack>
+        </XStack>
+      )}
+    </YStack>
   );
 }
 
@@ -384,6 +463,7 @@ export default function OnboardingScreen() {
 
   return (
     <Container scroll={false}>
+      <StatusBar style="dark" />
       <YStack flex={1} paddingTop="$3">
         {step > 0 && <Header onBack={goBack} />}
         {step > 0 && <ProgressDots step={step} />}
@@ -713,12 +793,13 @@ function Editor({
 
   return (
     <Container scroll={false}>
+      <StatusBar style="dark" />
       <YStack flex={1} paddingTop="$3">
         <Header title="Editar modo" onBack={onBack} />
         <ScrollView showsVerticalScrollIndicator={false}>
           <YStack gap="$5" paddingBottom="$8">
             <YStack alignItems="center" gap="$3">
-              <ModeRadial duration={plan.productiveMinutes} label={copy.name.toLowerCase()} />
+              <ModeRadial duration={plan.productiveMinutes} label={copy.name.toLowerCase()} size={214} />
               <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
             </YStack>
 
