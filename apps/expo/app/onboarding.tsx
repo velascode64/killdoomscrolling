@@ -36,6 +36,7 @@ import {
 } from "tamagui";
 
 import { AppAvatarStack, GradientButton, ModeRadial } from "../components/mode-ui";
+import { AppPickerSheet } from "../components/app-picker-sheet";
 import { ShadowCard } from "../components/shadow.card";
 import { Container } from "../components/container";
 import {
@@ -775,26 +776,17 @@ function Editor({
         </ScrollView>
       </YStack>
 
-      <Sheet modal open={pickerTarget !== null} snapPointsMode="fit" onOpenChange={(open: boolean) => !open && setPickerTarget(null)}>
-        <Sheet.Overlay animation="quick" backgroundColor="rgba(0, 59, 92, 0.18)" />
-        <Sheet.Frame backgroundColor="$background" borderTopLeftRadius="$8" borderTopRightRadius="$8" padding="$4">
-          <YStack gap="$4" maxHeight="80%">
-            <XStack alignItems="center" justifyContent="space-between">
-              <H4 color="$text11">{pickerTarget === "blocked" ? "Apps bloqueadas" : "Apps Rehabbit"}</H4>
-              <Button unstyled onPress={() => setPickerTarget(null)}><X color="$text11" size={22} /></Button>
-            </XStack>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {pickerTarget && (
-                <AppSelectionList
-                  apps={apps}
-                  selectedPackages={pickerTarget === "blocked" ? plan.blockedPackages : plan.productivePackages}
-                  onToggle={(packageName) => togglePackages(pickerTarget === "blocked" ? "blockedPackages" : "productivePackages", packageName)}
-                />
-              )}
-            </ScrollView>
-          </YStack>
-        </Sheet.Frame>
-      </Sheet>
+      <AppPickerSheet
+        apps={apps}
+        open={pickerTarget !== null}
+        selectedPackages={pickerTarget === "blocked" ? plan.blockedPackages : plan.productivePackages}
+        title={pickerTarget === "blocked" ? "Apps bloqueadas" : "Apps Rehabbit"}
+        onOpenChange={(open) => !open && setPickerTarget(null)}
+        onToggle={(packageName) => {
+          if (!pickerTarget) return;
+          togglePackages(pickerTarget === "blocked" ? "blockedPackages" : "productivePackages", packageName);
+        }}
+      />
 
       <Sheet modal open={timePicker !== null} snapPointsMode="fit" onOpenChange={(open: boolean) => !open && setTimePicker(null)}>
         <Sheet.Overlay animation="quick" backgroundColor="rgba(0, 59, 92, 0.18)" />
