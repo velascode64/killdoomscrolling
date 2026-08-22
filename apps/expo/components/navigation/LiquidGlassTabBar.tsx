@@ -1,4 +1,5 @@
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import { useEffect } from "react";
 import { Platform, StyleSheet, View } from "react-native";
@@ -15,6 +16,8 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
   const insets = useSafeAreaInsets();
   const activeIndex = useSharedValue(state.index);
   const itemWidth = useSharedValue(0);
+  const activeRoute = state.routes[state.index];
+  const nestedRouteName = activeRoute ? getFocusedRouteNameFromRoute(activeRoute) : undefined;
 
   useEffect(() => {
     activeIndex.value = withSpring(state.index, {
@@ -29,6 +32,10 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
     transform: [{ translateX: activeIndex.value * itemWidth.value }],
     width: itemWidth.value,
   }));
+
+  if (activeRoute?.name === "tips" && nestedRouteName && nestedRouteName !== "index") {
+    return null;
+  }
 
   return (
     <View

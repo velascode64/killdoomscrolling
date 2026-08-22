@@ -30,6 +30,15 @@ const OverviewLayout = () => (
         ),
       }}
     />
+    <Tabs.Screen
+      name="tips"
+      options={{
+        title: "Tips",
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons color={color} name="lightbulb-on-outline" size={size} />
+        ),
+      }}
+    />
   </Tabs>
 );
 
