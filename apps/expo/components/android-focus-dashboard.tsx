@@ -72,7 +72,10 @@ export function AndroidFocusDashboard() {
                 <H4 color="$text11">Start Your Journey</H4>
                 <Paragraph color="$text10">Crea tu primer modo para pausar distracciones y recuperar tu tiempo.</Paragraph>
               </YStack>
-              <GradientButton icon={<Plus color="white" size={19} />} onPress={() => router.push("/onboarding")}>
+              <GradientButton
+                icon={<Plus color="white" size={19} />}
+                onPress={() => router.push({ pathname: "/onboarding", params: { mode: "create" } })}
+              >
                 Crear mi primer modo
               </GradientButton>
             </YStack>
@@ -155,7 +158,7 @@ function CreateModeCard() {
       padding="$4"
       pressStyle={{ opacity: 0.82 }}
       tone="surface"
-      onPress={() => router.push("/onboarding")}
+      onPress={() => router.push({ pathname: "/onboarding", params: { mode: "create" } })}
     >
       <XStack alignItems="center" gap="$3">
         <View
@@ -187,7 +190,7 @@ function PermissionsSheet({ visible, permissions }: { visible: boolean; permissi
             <Settings color="$text11" size={22} />
           </View>
           <YStack gap="$1">
-            <H4 color="$text11">Activa los permisos para usar Reghabbit</H4>
+            <H4 color="$text11">Activa los permisos para usar Rehabbit</H4>
             <Paragraph color="$text10">Android necesita acceso de uso y permiso para mostrarse sobre otras apps.</Paragraph>
           </YStack>
           {!permissions.usageStats && <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void openUsageStatsSettings()}>Activar acceso de uso</Button>}

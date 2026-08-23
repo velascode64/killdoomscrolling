@@ -50,6 +50,7 @@ import {
   toNativeRewardPlansConfig,
 } from "../data/android-reward";
 import type { AndroidRewardPlan, PlanCategory, PlanCustomCategory } from "../data/android-reward";
+import { markOnboardingCompleted } from "../data/onboarding-state";
 
 const durationOptions = [15, 25, 60];
 const phoneUseOptions = [1, 2, 4, 8];
@@ -294,18 +295,20 @@ function Header({ onBack, title }: { onBack: () => void; title?: string }) {
 }
 
 export default function OnboardingScreen() {
-  const { planId } = useLocalSearchParams<{ planId?: string }>();
+  const { mode, planId } = useLocalSearchParams<{ mode?: string; planId?: string }>();
   const [apps, setApps] = useState<AndroidBlockableApp[]>([]);
   const [plans, setPlans] = useState<AndroidRewardPlan[]>([]);
   const [plan, setPlan] = useState<AndroidRewardPlan>(() => createAndroidRewardPlan("focus"));
   const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
-  const [step, setStep] = useState(planId ? 10 : 0);
+  const [step, setStep] = useState(Boolean(planId) || mode === "create" ? 10 : 0);
   const [phoneUse, setPhoneUse] = useState(2);
   const [goal, setGoal] = useState("Concentrar mas");
   const [customGoal, setCustomGoal] = useState("");
   const [objectives, setObjectives] = useState<string[]>([]);
   const [creating, setCreating] = useState(false);
   const isEditing = Boolean(planId);
+  const isCreatingMode = mode === "create";
+  const isDirectEditor = isEditing || isCreatingMode;
 
   useEffect(() => {
     if (Platform.OS !== "android") return;
@@ -325,14 +328,14 @@ export default function OnboardingScreen() {
   }, [planId]);
 
   useEffect(() => {
-    if (step !== 9 || isEditing) return;
+    if (step !== 9 || isDirectEditor) return;
     setCreating(true);
     const timeout = setTimeout(() => {
       setCreating(false);
       setStep(10);
     }, 1000);
     return () => clearTimeout(timeout);
-  }, [isEditing, step]);
+  }, [isDirectEditor, step]);
 
   const selectedApps = (packages: string[]) => apps.filter((app) => packages.includes(app.packageName));
 
@@ -407,6 +410,7 @@ export default function OnboardingScreen() {
 
     try {
       await saveAndroidRewardPlans(nextPlans);
+      if (!isDirectEditor) await markOnboardingCompleted();
       configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
       if (enabled) startMonitoring();
       router.replace("/(tabs)/overview");
@@ -424,7 +428,7 @@ export default function OnboardingScreen() {
   };
 
   const goBack = () => {
-    if (isEditing) {
+    if (isDirectEditor) {
       router.back();
       return;
     }
@@ -447,7 +451,7 @@ export default function OnboardingScreen() {
     );
   }
 
-  if (isEditing) {
+  if (isDirectEditor) {
     return (
       <Editor
         apps={apps}
@@ -461,6 +465,7 @@ export default function OnboardingScreen() {
         togglePackages={togglePackages}
         selectedApps={selectedApps}
         updateTime={updateTime}
+        title={isCreatingMode ? "Crear modo" : "Editar modo"}
         onBack={() => router.back()}
         onSave={savePlan}
       />
@@ -760,7 +765,7 @@ function PlanPreview({
             <AppAvatarStack apps={selectedApps(plan.blockedPackages)} />
           </XStack>
           <XStack alignItems="center" justifyContent="space-between">
-            <SizableText color="$text10">Reghabbit</SizableText>
+            <SizableText color="$text10">Rehabbit</SizableText>
             <AppAvatarStack apps={selectedApps(plan.productivePackages)} />
           </XStack>
         </YStack>
@@ -783,6 +788,7 @@ function Editor({
   togglePackages,
   selectedApps,
   updateTime,
+  title,
   onBack,
   onSave,
 }: {
@@ -797,6 +803,7 @@ function Editor({
   togglePackages: (key: "blockedPackages" | "productivePackages", packageName: string) => void;
   selectedApps: (packages: string[]) => AndroidBlockableApp[];
   updateTime: (key: "start" | "end", value: number) => void;
+  title: string;
   onBack: () => void;
   onSave: (enabled: boolean) => Promise<void>;
 }) {
@@ -817,7 +824,7 @@ function Editor({
     <Container scroll={false}>
       <StatusBar style="dark" />
       <YStack flex={1} paddingTop="$3">
-        <Header title="Editar modo" onBack={onBack} />
+        <Header title={title} onBack={onBack} />
         <ScrollView showsVerticalScrollIndicator={false}>
           <YStack gap="$5" paddingBottom="$8">
             <YStack alignItems="center" gap="$3">
@@ -848,7 +855,7 @@ function Editor({
             <AppGroupCard
               apps={selectedApps(plan.productivePackages)}
               description="Apps para reemplazar el tiempo de scroll."
-              label="Reghabbit"
+              label="Rehabbit"
               onPress={() => setPickerTarget("productive")}
             />
 
@@ -872,7 +879,7 @@ function Editor({
         apps={apps}
         open={pickerTarget !== null}
         selectedPackages={pickerTarget === "blocked" ? plan.blockedPackages : plan.productivePackages}
-        title={pickerTarget === "blocked" ? "Apps bloqueadas" : "Apps Reghabbit"}
+        title={pickerTarget === "blocked" ? "Apps bloqueadas" : "Apps Rehabbit"}
         onOpenChange={(open) => !open && setPickerTarget(null)}
         onToggle={(packageName) => {
           if (!pickerTarget) return;
@@ -891,7 +898,7 @@ function AppGroupCard({ apps, description, label, onPress }: { apps: AndroidBloc
       <ShadowCard
         padding="$5"
         pressStyle={{ opacity: 0.75 }}
-        tone={label === "Reghabbit" ? "mint" : "aqua"}
+        tone={label === "Rehabbit" ? "mint" : "aqua"}
         onPress={onPress}
       >
         <XStack alignItems="center" gap="$3" justifyContent="space-between">

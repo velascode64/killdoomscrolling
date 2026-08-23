@@ -144,7 +144,7 @@ Referencia: `Screenshot 2026-08-17 at 16.19.59.png`.
 
 - Pregunta: con que app te gustaria reemplazar.
 - Lista seleccionable de aplicaciones instaladas con icono y nombre.
-- La seleccion se convierte en el grupo `Apps Reghabbit` del plan.
+- La seleccion se convierte en el grupo `Apps Rehabbit` del plan.
 
 ### 10. Onboarding: creando el plan
 
@@ -155,7 +155,7 @@ Referencia: `Screenshot 2026-08-17 at 16.19.59.png`.
 ### 11. Onboarding: revision del plan creado
 
 - Muestra el plan creado a partir de las opciones seleccionadas, pero permanece inactivo.
-- La pantalla presenta el modo, la duracion, las apps bloqueadas, las apps Reghabbit y cualquier horario seleccionado.
+- La pantalla presenta el modo, la duracion, las apps bloqueadas, las apps Rehabbit y cualquier horario seleccionado.
 - Incluye una accion para confirmar el plan y otra para volver a cambiar sus opciones.
 - El plan no empieza ni libera redes hasta que la persona lo confirme o lo active despues.
 
@@ -205,11 +205,11 @@ Referencia: `card-time-selector.png`.
 
 Referencia tecnica: [Expo DateTimePicker para SDK 54](https://docs.expo.dev/versions/v54.0.0/sdk/date-time-picker/).
 
-### 15. Apps bloqueadas y apps Reghabbit
+### 15. Apps bloqueadas y apps Rehabbit
 
 Referencia: `blocked_replaceapps.png`.
 
-- El editor de modo contiene dos secciones separadas: `Apps bloqueadas` y `Apps Reghabbit`.
+- El editor de modo contiene dos secciones separadas: `Apps bloqueadas` y `Apps Rehabbit`.
 - Cada seccion se representa con una tarjeta clara y el resumen de sus apps mediante avatares circulares superpuestos.
 - El ultimo avatar muestra `+N` cuando existen aplicaciones adicionales.
 - Al tocar una tarjeta se abre una lista para seleccionar apps nuevas o eliminar las ya incluidas.
@@ -231,7 +231,7 @@ Referencia: `dashboard_card_mode.png`.
 - La tarjeta muestra el nombre del modo como titulo.
 - Debajo del titulo aparecen los avatares circulares de sus aplicaciones.
 - La tarjeta muestra el horario del modo y los dias de repeticion.
-- Incluir las etiquetas `Bloqueadas` y `Reghabbit` para identificar los dos grupos de apps.
+- Incluir las etiquetas `Bloqueadas` y `Rehabbit` para identificar los dos grupos de apps.
 - La tarjeta debe poder abrir la edicion del modo al tocarla.
 - El dashboard puede conservar sus metricas y resumen semanal actuales, pero las tarjetas por app individuales se sustituyen visualmente por estas tarjetas por modo.
 
@@ -240,4 +240,4 @@ Referencia: `dashboard_card_mode.png`.
 - Priorizar onboarding, editor de modo, horario, selector horario y tarjetas de modo.
 - Mantener el tema blanco en todas las pantallas.
 - Aplicar `#1AE1FE` -> `#2CCEFE` -> `#4BB7FE` en los elementos activos, no como fondo permanente de toda la aplicacion.
-- Los avatares de Apps bloqueadas y Apps Reghabbit se muestran como grupos circulares superpuestos y abren una lista de seleccion al tocarlos.
+- Los avatares de Apps bloqueadas y Apps Rehabbit se muestran como grupos circulares superpuestos y abren una lista de seleccion al tocarlos.

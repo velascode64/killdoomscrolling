@@ -50,7 +50,7 @@ export const Header = ({ isSticky, ...props }: React.ComponentProps<typeof XStac
           {/* <Coffee color="$text11" size={24} /> */}
           {/* <Hourglass color="$text11" size={24} strokeWidth={2} /> */}
         </Button>
-        <Heading color="$text11">Reghabbit</Heading>
+        <Heading color="$text11">Rehabbit</Heading>
       </XStack>
       <Button
         backgroundColor={"$background1"}

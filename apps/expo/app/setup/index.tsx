@@ -99,7 +99,7 @@ const Setup = observer(() => {
                   onPress={() => {
                     void Linking.openURL(
                       `mailto:luke@lukestahl.de?subject=${encodeURIComponent(
-                        `Reghabbit: App Request ${search}`
+                        `Rehabbit: App Request ${search}`
                       )}&body=${encodeURIComponent(
                         `Please add ${search} to the app list. Thanks!`
                       )}`

@@ -158,7 +158,7 @@ const Settings = observer(() => {
               }}
             >
               <ListItem.Text>
-                {"Share Reghabbit with friends"}
+                {"Share Rehabbit with friends"}
               </ListItem.Text>
             </ListItem>
           </YGroup.Item>
@@ -268,7 +268,7 @@ const Settings = observer(() => {
                 );
               }}
             >
-              <ListItem.Text>{"Contribute to Reghabbit"}</ListItem.Text>
+              <ListItem.Text>{"Contribute to Rehabbit"}</ListItem.Text>
             </ListItem>
           </YGroup.Item>
           <YGroup.Item>

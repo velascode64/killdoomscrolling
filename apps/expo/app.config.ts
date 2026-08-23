@@ -2,7 +2,7 @@ import type { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "Reghabbit",
+  name: "Rehabbit",
   slug: "digitalbreak",
   version: "1.0.2",
   orientation: "portrait",

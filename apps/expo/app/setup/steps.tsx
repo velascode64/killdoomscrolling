@@ -321,7 +321,7 @@ const Setup = observer(() => {
                   {searchParams.appName} and see what happens.
                 </Paragraph>
                 <Paragraph color="$text11" lineHeight={20}>
-                  The App will be displayed in Reghabbit Overview after the
+                  The App will be displayed in Rehabbit Overview after the
                   first time you open it.
                 </Paragraph>
               </View>
