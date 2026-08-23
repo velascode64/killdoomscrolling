@@ -24,6 +24,7 @@ const OverviewLayout = () => (
     <Tabs.Screen
       name="apps"
       options={{
+        href: null,
         title: "Apps",
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons color={color} name="view-grid-outline" size={size} />

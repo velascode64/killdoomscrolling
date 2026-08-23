@@ -158,7 +158,7 @@ const Settings = observer(() => {
               }}
             >
               <ListItem.Text>
-                {"Share Digital Break with friends"}
+                {"Share Reghabbit with friends"}
               </ListItem.Text>
             </ListItem>
           </YGroup.Item>
@@ -268,7 +268,7 @@ const Settings = observer(() => {
                 );
               }}
             >
-              <ListItem.Text>{"Constribute to Digital Break"}</ListItem.Text>
+              <ListItem.Text>{"Contribute to Reghabbit"}</ListItem.Text>
             </ListItem>
           </YGroup.Item>
           <YGroup.Item>

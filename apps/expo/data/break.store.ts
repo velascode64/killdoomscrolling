@@ -37,8 +37,8 @@ const funnyBreakMessages = [
   "Pause. Breathe. Remember: every cat video is better after a deep breath.",
   "You're not missing out – you're just breathing in.",
   "A breath a day keeps the FOMO at bay.",
-  "Ready for a 'Digital Break'? Inhale, exhale, and forget those tabs for a second!",
-  "With 'Digital Break', every breath is a step back from the digital rush.",
+  "Ready for a Reghabbit break? Inhale, exhale, and forget those tabs for a second!",
+  "With Reghabbit, every breath is a step back from the digital rush.",
 ];
 
 export class BreakStoreSingleton {

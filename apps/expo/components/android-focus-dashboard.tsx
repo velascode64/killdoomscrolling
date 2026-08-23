@@ -16,6 +16,8 @@ import { Button, H4, Paragraph, Sheet, SizableText, View, XStack, YStack } from 
 import {
   formatPlanTime,
   loadAndroidRewardPlans,
+  pruneUnavailablePlanApps,
+  saveAndroidRewardPlans,
   toNativeRewardPlansConfig,
 } from "../data/android-reward";
 import type { AndroidRewardPlan } from "../data/android-reward";
@@ -36,13 +38,17 @@ export function AndroidFocusDashboard() {
         getInstalledApps(),
         getPermissionStatus(),
       ]);
-      setPlans(savedPlans);
+      const currentPlans = pruneUnavailablePlanApps(savedPlans, apps.map((app) => app.packageName));
+      if (currentPlans.some((plan, index) => plan !== savedPlans[index])) {
+        await saveAndroidRewardPlans(currentPlans);
+      }
+      setPlans(currentPlans);
       setInstalledApps(apps);
       if (permissionStatus.details.platform === "android") {
         setPermissions({ overlay: permissionStatus.details.overlay, usageStats: permissionStatus.details.usageStats });
       }
-      configureRewardBlockerPlans(toNativeRewardPlansConfig(savedPlans));
-      if (savedPlans.some((plan) => plan.enabled)) startMonitoring();
+      configureRewardBlockerPlans(toNativeRewardPlansConfig(currentPlans));
+      if (currentPlans.some((plan) => plan.enabled)) startMonitoring();
     };
 
     void refresh().catch((error) => console.warn("Unable to load Android plans", error));
@@ -181,7 +187,7 @@ function PermissionsSheet({ visible, permissions }: { visible: boolean; permissi
             <Settings color="$text11" size={22} />
           </View>
           <YStack gap="$1">
-            <H4 color="$text11">Activa los permisos para usar Rehabbit</H4>
+            <H4 color="$text11">Activa los permisos para usar Reghabbit</H4>
             <Paragraph color="$text10">Android necesita acceso de uso y permiso para mostrarse sobre otras apps.</Paragraph>
           </YStack>
           {!permissions.usageStats && <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void openUsageStatsSettings()}>Activar acceso de uso</Button>}

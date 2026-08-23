@@ -113,6 +113,26 @@ export async function saveAndroidRewardPlans(plans: AndroidRewardPlan[]): Promis
   await AsyncStorage.setItem(ANDROID_REWARD_CONFIG_KEY, JSON.stringify({ version: 2, plans }));
 }
 
+export function pruneUnavailablePlanApps(
+  plans: AndroidRewardPlan[],
+  installedPackageNames: Iterable<string>,
+): AndroidRewardPlan[] {
+  const installedPackages = new Set(installedPackageNames);
+  if (installedPackages.size === 0) return plans;
+
+  return plans.map((plan) => {
+    const blockedPackages = plan.blockedPackages.filter((packageName) => installedPackages.has(packageName));
+    const productivePackages = plan.productivePackages.filter((packageName) => installedPackages.has(packageName));
+    const enabled = plan.enabled && blockedPackages.length > 0 && productivePackages.length > 0;
+    const unchanged =
+      enabled === plan.enabled &&
+      blockedPackages.length === plan.blockedPackages.length &&
+      productivePackages.length === plan.productivePackages.length;
+
+    return unchanged ? plan : { ...plan, blockedPackages, enabled, productivePackages };
+  });
+}
+
 export function toNativeRewardPlansConfig(plans: AndroidRewardPlan[]): AndroidRewardBlockerPlansConfig {
   return {
     plans: plans.map(({ id, category, enabled, blockedPackages, productivePackages, schedule, weekdays, productiveMinutes, unlockMinutes }) => ({

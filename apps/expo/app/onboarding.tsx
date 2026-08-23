@@ -45,6 +45,7 @@ import {
   createAndroidRewardPlan,
   loadAndroidRewardPlans,
   nativeModeForCategory,
+  pruneUnavailablePlanApps,
   saveAndroidRewardPlans,
   toNativeRewardPlansConfig,
 } from "../data/android-reward";
@@ -308,11 +309,16 @@ export default function OnboardingScreen() {
 
   useEffect(() => {
     if (Platform.OS !== "android") return;
-    void Promise.all([loadAndroidRewardPlans(), getInstalledApps(), getPermissionStatus()]).then(([savedPlans, installedApps]) => {
-      setPlans(savedPlans);
+    void Promise.all([loadAndroidRewardPlans(), getInstalledApps(), getPermissionStatus()]).then(async ([savedPlans, installedApps]) => {
+      const currentPlans = pruneUnavailablePlanApps(savedPlans, installedApps.map((app) => app.packageName));
+      if (currentPlans.some((savedPlan, index) => savedPlan !== savedPlans[index])) {
+        await saveAndroidRewardPlans(currentPlans);
+        configureRewardBlockerPlans(toNativeRewardPlansConfig(currentPlans));
+      }
+      setPlans(currentPlans);
       setApps(installedApps);
       if (planId) {
-        const existing = savedPlans.find((entry) => entry.id === planId);
+        const existing = currentPlans.find((entry) => entry.id === planId);
         if (existing) setPlan(existing);
       }
     });
@@ -754,7 +760,7 @@ function PlanPreview({
             <AppAvatarStack apps={selectedApps(plan.blockedPackages)} />
           </XStack>
           <XStack alignItems="center" justifyContent="space-between">
-            <SizableText color="$text10">Rehabbit</SizableText>
+            <SizableText color="$text10">Reghabbit</SizableText>
             <AppAvatarStack apps={selectedApps(plan.productivePackages)} />
           </XStack>
         </YStack>
@@ -842,7 +848,7 @@ function Editor({
             <AppGroupCard
               apps={selectedApps(plan.productivePackages)}
               description="Apps para reemplazar el tiempo de scroll."
-              label="Rehabbit"
+              label="Reghabbit"
               onPress={() => setPickerTarget("productive")}
             />
 
@@ -866,7 +872,7 @@ function Editor({
         apps={apps}
         open={pickerTarget !== null}
         selectedPackages={pickerTarget === "blocked" ? plan.blockedPackages : plan.productivePackages}
-        title={pickerTarget === "blocked" ? "Apps bloqueadas" : "Apps Rehabbit"}
+        title={pickerTarget === "blocked" ? "Apps bloqueadas" : "Apps Reghabbit"}
         onOpenChange={(open) => !open && setPickerTarget(null)}
         onToggle={(packageName) => {
           if (!pickerTarget) return;
@@ -885,7 +891,7 @@ function AppGroupCard({ apps, description, label, onPress }: { apps: AndroidBloc
       <ShadowCard
         padding="$5"
         pressStyle={{ opacity: 0.75 }}
-        tone={label === "Rehabbit" ? "mint" : "aqua"}
+        tone={label === "Reghabbit" ? "mint" : "aqua"}
         onPress={onPress}
       >
         <XStack alignItems="center" gap="$3" justifyContent="space-between">

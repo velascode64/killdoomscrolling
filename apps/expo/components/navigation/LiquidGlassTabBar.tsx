@@ -16,19 +16,24 @@ const INNER_PADDING = 8;
 
 export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  const activeIndex = useSharedValue(state.index);
+  const visibleRoutes = state.routes.filter((route) => {
+    const itemStyle = StyleSheet.flatten(descriptors[route.key]?.options.tabBarItemStyle);
+    return itemStyle?.display !== "none";
+  });
+  const visibleActiveIndex = Math.max(0, visibleRoutes.findIndex((route) => route.key === state.routes[state.index]?.key));
+  const activeIndex = useSharedValue(visibleActiveIndex);
   const itemWidth = useSharedValue(0);
   const activeRoute = state.routes[state.index];
   const nestedRouteName = activeRoute ? getFocusedRouteNameFromRoute(activeRoute) : undefined;
 
   useEffect(() => {
-    activeIndex.value = withSpring(state.index, {
+    activeIndex.value = withSpring(visibleActiveIndex, {
       damping: 24,
       mass: 0.78,
       overshootClamping: true,
       stiffness: 210,
     });
-  }, [activeIndex, state.index]);
+  }, [activeIndex, visibleActiveIndex]);
 
   const indicatorStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: activeIndex.value * itemWidth.value }],
@@ -67,18 +72,18 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
           <View
             style={styles.tabs}
             onLayout={(event) => {
-              itemWidth.value = (event.nativeEvent.layout.width - INNER_PADDING * 2) / state.routes.length;
+              itemWidth.value = (event.nativeEvent.layout.width - INNER_PADDING * 2) / visibleRoutes.length;
             }}
           >
             <Animated.View pointerEvents="none" style={[styles.activePill, indicatorStyle]}>
               <View style={styles.pillHighlight} />
             </Animated.View>
 
-            {state.routes.map((route, index) => {
+            {visibleRoutes.map((route) => {
               const descriptor = descriptors[route.key];
               if (!descriptor) return null;
               const { options } = descriptor;
-              const focused = state.index === index;
+              const focused = state.routes[state.index]?.key === route.key;
               const color = focused ? "#003B5C" : "#6F8E9F";
               const label =
                 typeof options.tabBarLabel === "string"
