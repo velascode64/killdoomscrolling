@@ -1,4 +1,4 @@
-# FocusGuard - Sistema visual de referencia
+# Rehabbit - Sistema visual de referencia
 
 ## Alcance
 
@@ -13,53 +13,62 @@ Este documento define las pantallas y componentes que permanecen como referencia
 - `ui-references/card-time-selector.png` - selector horario de iOS.
 - `ui-references/blocked_replaceapps.png` - resumen de aplicaciones bloqueadas mediante avatares circulares.
 - `ui-references/dashboard_card_mode.png` - tarjeta de modo en el dashboard.
-- `ui-references/modes-white.png` - referencia de color, gradiente, superficies claras y jerarquia del editor de modo.
+- `ui-references/modes-white.png` - referencia de composicion, superficies claras y jerarquia del editor de modo.
 
 ## Tema claro unico
 
-- Fondo principal: blanco azulado `#F8FDFE`.
-- Tarjetas elevadas: blanco `#FDFFFF`.
-- Borde tenue: azul muy claro `#CFEBF0`.
-- Texto principal: azul marino `#003B5C`.
-- Texto secundario: gris azulado `#36586F`.
-- Halo o malla de fondo: `#67DDFC` y `#A2E4FA` con opacidad baja.
+- Fondo principal: blanco calido `#FAF9FA`.
+- Tarjetas elevadas: blanco `#FFFFFF`.
+- Borde tenue: rosa grisaceo `#E9E3E7`.
+- Texto principal: negro calido `#211B20`.
+- Texto secundario: gris calido `#71656D`.
+- Halo ambiental: rosa brillante `#F21A68` y fucsia `#DF117B` con opacidad muy baja.
 - No se implementa tema oscuro por ahora.
 - Las referencias visuales oscuras se interpretan solo como estructura, jerarquia y composicion; sus superficies se implementan claras.
 
 ## Marca y gradiente
 
-- Gradiente de marca diagonal: `#1AE1FE` -> `#2CCEFE` -> `#4BB7FE`.
-- Usar el gradiente en CTA principales, progreso radial, chips seleccionados, dias activos y resplandores suaves de iconos.
-- El trazo inactivo del radial usa `#CFEBF0`.
-- No usar violeta ni azul marino como relleno de accion principal.
-- Los elementos inactivos usan tarjetas `#FDFFFF`, borde `#CFEBF0` y texto `#003B5C`.
+- Gradiente de marca organico: `#F21A68` -> `#DF117B` -> `#CC068A`. El punto brillante se concentra hacia la parte superior derecha; el magenta profundo da profundidad en bordes o parte inferior.
+- Usar el gradiente solo en CTA principales, progreso radial, hero de onboarding, momentos de tiempo recuperado, estados de exito y acentos de la ilustracion del conejo.
+- El trazo inactivo del radial usa `#E9E3E7`.
+- No usar azul como relleno de accion principal ni aplicar el gradiente a cada tarjeta, chip, input o elemento de navegacion.
+- Los elementos inactivos usan blanco, borde `#E9E3E7` y texto `#211B20`.
+- Los estados seleccionados usan una superficie rosa muy clara, borde rosa de baja opacidad y texto fucsia oscuro `#B90869`; no usan el gradiente completo.
+
+## Tipografia y lenguaje visual
+
+- Usar Plus Jakarta Sans: peso 600-700 en titulos, 500-600 en etiquetas de interfaz y 400-500 en texto de apoyo.
+- La tipografia debe mantenerse limpia y moderna para equilibrar el caracter jugueton del icono.
+- Reutilizar la geometria del icono: rectangulos redondeados, curvas suaves, lineas continuas y contornos simples.
+- La personalidad es Soft Pop e indie: un coach amistoso que ayuda a escapar del scroll, nunca una herramienta corporativa ni de control parental.
 
 ## Componentes reutilizables
 
 ### Estructura y navegacion
 
-- Pantalla de altura completa, fondo `#F8FDFE` y contenido en una columna vertical con espaciado generoso.
-- Aplicar halos cian/azul de baja opacidad solo como profundidad ambiental, nunca como superficie principal.
-- Barra inferior `#FDFFFF` con borde superior `#CFEBF0`.
+- Pantalla de altura completa, fondo `#FAF9FA` y contenido en una columna vertical con espaciado generoso.
+- Aplicar halos rosa/fucsia de baja opacidad solo como profundidad ambiental, nunca como superficie principal.
+- Barra inferior de vidrio blanco semitransparente con borde `#E9E3E7`.
 - La navegacion queda limitada a las rutas que existan en la aplicacion.
 
 ### Tarjeta clara
 
-- Fondo `#FDFFFF` o vidrio blanco semitransparente, borde `#CFEBF0` y esquinas redondeadas grandes.
-- Espaciado interno consistente.
+- Fondo blanco o vidrio blanco semitransparente, borde `#E9E3E7`, radio de `16px` y sombra minima o inexistente.
+- Espaciado interno generoso y consistente.
 - Se usa para modos, horario, grupos de apps, resumen semanal, metricas y estados vacios.
 
 ### CTA principal
 
 - Boton de ancho completo y esquinas redondeadas.
-- Relleno con `#1AE1FE` -> `#2CCEFE` -> `#4BB7FE`.
+- Relleno con `#F21A68` -> `#DF117B` -> `#CC068A`.
 - Etiqueta e icono blancos.
+- Radio entre `14px` y `16px`, sombra rosa suave y estado presionado con escala cercana a `0.98`.
 
 ### Controles secundarios
 
-- Chips y botones `#FDFFFF` con borde `#CFEBF0`.
-- El control seleccionado usa el gradiente de marca y texto blanco.
-- Las acciones terciarias usan texto `#003B5C`, sin superficie de boton.
+- Chips y botones blancos o blanco calido, con borde `#E9E3E7`.
+- El control seleccionado usa rosa muy claro, borde rosa tenue y texto fucsia oscuro. Puede tener un resplandor rosa minimo.
+- Las acciones terciarias usan texto `#B90869`, sin superficie de boton.
 
 ### Avatar circular de app
 
@@ -74,7 +83,7 @@ Este documento define las pantallas y componentes que permanecen como referencia
 
 Referencia: `Screenshot 2026-08-17 at 16.19.59.png`.
 
-- Icono geometrico de escudo azul centrado, con resplandor `#67DDFC` suave.
+- Ilustracion o icono de un conejo saliendo de la pantalla de un telefono, centrado y con resplandor rosa/fucsia suave. Comunica escapar del scroll y recuperar tiempo; debe ser amistoso, no infantil.
 - Titulo grande centrado y texto descriptivo debajo.
 - Indicador de progreso del flujo de onboarding.
 - Boton de gradiente `Continue` de ancho completo en el pie.
@@ -86,7 +95,7 @@ Referencia: `Screenshot 2026-08-17 at 16.19.59.png`.
 - Desde la pantalla 2 hasta la pantalla 9, cada paso usa una sola pregunta por pantalla.
 - Cada pantalla contiene titulo de pregunta, texto auxiliar cuando sea necesario, un unico bloque de seleccion y CTA `Continue` de ancho completo en el pie.
 - El indicador de progreso refleja el paso actual del onboarding.
-- Los controles seleccionados usan el gradiente de marca y texto blanco.
+- Los controles seleccionados usan rosa muy claro, borde rosa tenue y texto fucsia oscuro.
 
 ### 2. Onboarding: uso actual del telefono
 
@@ -125,13 +134,13 @@ Referencia: `Screenshot 2026-08-17 at 16.19.59.png`.
 
 - Titulo de pregunta e instruccion breve, centrados.
 - Seis chips redondeados seleccionables en una cuadricula de dos columnas y tres filas.
-- El chip seleccionado usa el gradiente de marca y texto blanco.
+- El chip seleccionado usa rosa muy claro, borde rosa tenue y texto fucsia oscuro.
 
 ### 7. Onboarding: apps que quiere dejar de usar
 
 - Pregunta: que apps quisieras dejar de usar mas.
 - Lista seleccionable de aplicaciones instaladas con icono y nombre.
-- Cada aplicacion seleccionada muestra su estado activo usando el gradiente de marca.
+- Cada aplicacion seleccionada muestra una superficie rosa muy clara, borde rosa tenue y texto fucsia oscuro.
 - La seleccion se convierte en el grupo `Apps bloqueadas` del plan.
 
 ### 8. Onboarding: tiempo sin usar las apps
@@ -150,7 +159,7 @@ Referencia: `Screenshot 2026-08-17 at 16.19.59.png`.
 
 - Pantalla intermedia sin acciones de usuario.
 - Muestra un loader centrado durante un segundo mientras se crea el plan.
-- Mantiene fondo `#F8FDFE` y usa el gradiente de marca para el indicador de carga.
+- Mantiene fondo `#FAF9FA` y usa el gradiente de marca para el indicador de carga.
 
 ### 11. Onboarding: revision del plan creado
 
@@ -166,11 +175,11 @@ Referencia: `modes.png`.
 - Esta pantalla reemplaza la tarjeta actual de plan como lugar principal para crear y editar estados.
 - El titulo identifica el modo que se esta creando o editando.
 - Un radial central muestra la duracion elegida. El tiempo dentro del radial indica cuanto debe durar el estado antes de liberar las redes.
-- El anillo radial usa `#1AE1FE` -> `#2CCEFE` -> `#4BB7FE`; el trazo restante usa `#CFEBF0`.
+- El anillo radial usa `#F21A68` -> `#DF117B` -> `#CC068A`; el trazo restante usa `#E9E3E7`.
 - Debajo del radial aparece un grupo `Duration` con accesos rapidos de duracion y un boton de ajuste para un valor personalizado.
 - Debajo aparece `Category`, en una cuadricula de dos columnas con botones de icono y etiqueta.
 - Las categorias disponibles son: Focus, Exercise, Sleep, Meditation y Hobby.
-- La categoria seleccionada usa el gradiente de marca y texto blanco.
+- La categoria seleccionada usa rosa muy claro, borde rosa tenue y texto fucsia oscuro.
 - El modo activo conserva el radial, el tiempo restante, una accion `Pause` delineada y una accion secundaria para terminarlo.
 
 ### 13. Horario del modo
@@ -183,7 +192,7 @@ Referencia: `card-time.png`.
 - Un divisor tenue separa Inicio y Fin.
 - Debajo se muestra una fila de siete botones circulares para los dias L, M, M, J, V, S y D.
 - Debajo de los dias se muestra el resumen de repeticion, por ejemplo `Todos los dias`.
-- El valor seleccionado, los dias activos y el foco de interaccion usan el gradiente de marca.
+- El valor seleccionado, los dias activos y el foco de interaccion usan rosa muy claro, borde rosa tenue y texto fucsia oscuro. El gradiente queda reservado para la accion principal de guardar.
 
 ### 14. Selector de hora
 
@@ -192,7 +201,7 @@ Referencia: `card-time-selector.png`.
 - Al tocar la pildora de Inicio o Fin se abre un selector horario encima de la tarjeta.
 - El selector usa tres columnas de rueda: hora, minutos y a.m./p.m.
 - La fila seleccionada queda centrada sobre una banda redondeada semitransparente.
-- La hora seleccionada de la tarjeta usa `#003B5C`; el estado activo del selector usa el gradiente de marca.
+- La hora seleccionada de la tarjeta usa `#211B20`; el estado activo del selector usa rosa muy claro, borde rosa tenue y texto fucsia oscuro.
 - En iOS se debe usar el selector nativo tipo rueda, no una simulacion manual.
 
 #### Implementacion del selector
@@ -239,5 +248,6 @@ Referencia: `dashboard_card_mode.png`.
 
 - Priorizar onboarding, editor de modo, horario, selector horario y tarjetas de modo.
 - Mantener el tema blanco en todas las pantallas.
-- Aplicar `#1AE1FE` -> `#2CCEFE` -> `#4BB7FE` en los elementos activos, no como fondo permanente de toda la aplicacion.
+- Usar el gradiente `#F21A68` -> `#DF117B` -> `#CC068A` como firma de marca, no como fondo permanente ni como estado de seleccion por defecto.
+- Mantener tarjetas, inputs, chips normales y navegacion mayormente neutros para que el gradiente tenga significado.
 - Los avatares de Apps bloqueadas y Apps Rehabbit se muestran como grupos circulares superpuestos y abren una lista de seleccion al tocarlos.
