@@ -1,13 +1,12 @@
 import type { ReactNode } from "react";
 import { useEffect } from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 export function LiquidTabItem({
   accessibilityLabel,
   focused,
   icon,
-  label,
   onLongPress,
   onPress,
   testID,
@@ -15,7 +14,6 @@ export function LiquidTabItem({
   accessibilityLabel?: string;
   focused: boolean;
   icon: ReactNode;
-  label: string;
   onLongPress: () => void;
   onPress: () => void;
   testID?: string;
@@ -43,9 +41,6 @@ export function LiquidTabItem({
     >
       <Animated.View style={[styles.content, animatedContentStyle]}>
         {icon}
-        <Text numberOfLines={1} style={[styles.label, focused && styles.activeLabel]}>
-          {label}
-        </Text>
       </Animated.View>
     </Pressable>
   );
@@ -60,18 +55,6 @@ const styles = StyleSheet.create({
   },
   content: {
     alignItems: "center",
-    gap: 4,
     justifyContent: "center",
-    minWidth: 82,
-  },
-  label: {
-    color: "#5D7C8E",
-    fontFamily: "Satoshi",
-    fontSize: 12,
-    lineHeight: 14,
-  },
-  activeLabel: {
-    color: "#003B5C",
-    fontFamily: "SatoshiBold",
   },
 });

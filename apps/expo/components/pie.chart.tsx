@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { PieChart as PieChartGifted } from "react-native-gifted-charts";
 import { H4, Paragraph, SizableText, useTheme, View, YStack } from "tamagui";
 
+import { chartColors } from "../theme/colors";
+
 export const PieChart = ({
   data,
   dummy,
@@ -18,9 +20,14 @@ export const PieChart = ({
 }) => {
   const theme = useTheme();
   const grey4 = theme.grey4?.val as string;
-  const [focusedData, setFocusedData] = useState<(typeof data)[0] | null>(null);
+  const chartData = data.map((entry, index) => ({
+    ...entry,
+    color: [chartColors.primary, chartColors.secondary, chartColors.accent, chartColors.label][index % 4] ?? chartColors.primary,
+    gradientCenterColor: chartColors.track,
+  }));
+  const [focusedData, setFocusedData] = useState<(typeof chartData)[0] | null>(null);
   useEffect(() => {
-    setFocusedData(data.find((d) => d.focused) ?? data[0] ?? null);
+    setFocusedData(chartData.find((d) => d.focused) ?? chartData[0] ?? null);
   }, [data]);
   return (
     <View position="relative">
@@ -49,13 +56,13 @@ export const PieChart = ({
         </View>
       )}
       <PieChartGifted
-        data={data}
+        data={chartData}
         donut
         showGradient
         toggleFocusOnPress={false}
         sectionAutoFocus
         innerCircleColor={focusedData?.color ?? grey4}
-        onPress={(focused: (typeof data)[0]) => {
+        onPress={(focused: (typeof chartData)[0]) => {
           setFocusedData(focused);
         }}
         innerCircleBorderColor={focusedData?.color ?? grey4}

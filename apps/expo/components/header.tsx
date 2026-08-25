@@ -40,7 +40,7 @@ export const Header = ({ isSticky, ...props }: React.ComponentProps<typeof XStac
           <Image
             source={
               // eslint-disable-next-line @typescript-eslint/no-var-requires
-              require("../assets/images/digital-break-hourglass-icon.png") as ImageSourcePropType
+              require("../assets/images/rehabbit-logo.png") as ImageSourcePropType
             }
             //source={require("../assets/images/default.png") as any}
             width={26}

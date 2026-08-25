@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { Button, H4, Input, Sheet, SizableText, View, XStack, YStack } from "tamagui";
 
 import type { PlanCustomCategory, PlanCustomCategoryIcon } from "../data/android-reward";
-import { BrandGradientFill, GradientButton } from "./mode-ui";
+import { GradientButton } from "./mode-ui";
 
 export type CategoryIconName = "focus" | "exercise" | "sleep" | "meditation" | "hobby" | "work" | PlanCustomCategoryIcon;
 
@@ -84,7 +84,7 @@ export function CategorySelector({
             unstyled
             alignItems="center"
             backgroundColor="rgba(255, 255, 255, 0.72)"
-            borderColor="rgba(162, 228, 250, 0.78)"
+            borderColor="rgba(79, 70, 229, 0.2)"
             borderRadius={99}
             borderWidth={1}
             height={38}
@@ -109,10 +109,10 @@ export function CategorySelector({
       </YStack>
 
       <Sheet modal open={sheetOpen} snapPointsMode="fit" onOpenChange={setSheetOpen}>
-        <Sheet.Overlay animation="quick" backgroundColor="rgba(0, 59, 92, 0.2)" />
+        <Sheet.Overlay animation="quick" backgroundColor="rgba(33, 27, 32, 0.2)" />
         <Sheet.Frame
-          backgroundColor="#F8FDFE"
-          borderColor="rgba(162, 228, 250, 0.78)"
+          backgroundColor="#F8FAFC"
+          borderColor="#E2E8F0"
           borderTopLeftRadius={30}
           borderTopRightRadius={30}
           borderWidth={1}
@@ -143,18 +143,16 @@ export function CategorySelector({
                       key={option}
                       unstyled
                       alignItems="center"
-                      backgroundColor={selected ? "transparent" : "$background2"}
-                      borderColor={selected ? "$blue8" : "$borderColor"}
+                      backgroundColor={selected ? "$primary9" : "$background2"}
+                      borderColor={selected ? "$primary9" : "$borderColor"}
                       borderRadius={16}
                       borderWidth={1}
                       flex={1}
                       height={48}
                       justifyContent="center"
-                      overflow="hidden"
                       pressStyle={{ opacity: 0.72 }}
                       onPress={() => setIcon(option)}
                     >
-                      {selected ? <BrandGradientFill /> : null}
                       <CategoryGlyph color={selected ? "white" : "$text11"} icon={option} />
                     </Button>
                   );
@@ -174,20 +172,18 @@ function CategoryChip({ option, selected, onPress }: { option: CategoryOption; s
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "transparent" : "rgba(255, 255, 255, 0.72)"}
-      borderColor={selected ? "$blue8" : "rgba(162, 228, 250, 0.78)"}
+      backgroundColor={selected ? "$primary9" : "rgba(255, 255, 255, 0.72)"}
+      borderColor={selected ? "$primary9" : "#E2E8F0"}
       borderRadius={18}
       borderWidth={1}
       flexDirection="row"
       gap="$2"
       height={48}
-      overflow="hidden"
       paddingHorizontal="$3"
       pressStyle={{ opacity: 0.72 }}
       width="48.5%"
       onPress={onPress}
     >
-      {selected ? <BrandGradientFill /> : null}
       <View position="relative"><CategoryGlyph color={selected ? "white" : "$text11"} icon={option.icon} /></View>
       <SizableText color={selected ? "white" : "$text11"} flexShrink={1} fontWeight="800" numberOfLines={1}>
         {option.label}

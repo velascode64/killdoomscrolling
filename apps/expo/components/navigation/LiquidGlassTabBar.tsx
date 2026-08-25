@@ -1,18 +1,21 @@
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import { Plus } from "@tamagui/lucide-icons";
 import { BlurView } from "expo-blur";
+import { router } from "expo-router";
 import { useEffect } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, Pressable, StyleSheet, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { colors } from "../../theme/colors";
 import { LiquidTabItem } from "./LiquidTabItem";
 
-const BAR_MARGIN = 20;
-export const LIQUID_TAB_BAR_HEIGHT = 78;
+const BAR_MARGIN = 18;
+export const LIQUID_TAB_BAR_HEIGHT = 64;
 export const LIQUID_TAB_BAR_BOTTOM_GAP = 10;
 export const LIQUID_TAB_BAR_MIN_SAFE_BOTTOM = 12;
-const INNER_PADDING = 8;
+const INNER_PADDING = 5;
 
 export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
@@ -75,23 +78,14 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
               itemWidth.value = (event.nativeEvent.layout.width - INNER_PADDING * 2) / visibleRoutes.length;
             }}
           >
-            <Animated.View pointerEvents="none" style={[styles.activePill, indicatorStyle]}>
-              <View style={styles.pillHighlight} />
-            </Animated.View>
+            <Animated.View pointerEvents="none" style={[styles.activePill, indicatorStyle]} />
 
             {visibleRoutes.map((route) => {
               const descriptor = descriptors[route.key];
               if (!descriptor) return null;
               const { options } = descriptor;
               const focused = state.routes[state.index]?.key === route.key;
-              const color = focused ? "#003B5C" : "#6F8E9F";
-              const label =
-                typeof options.tabBarLabel === "string"
-                  ? options.tabBarLabel
-                  : typeof options.title === "string"
-                    ? options.title
-                    : route.name;
-
+              const color = focused ? colors.primary.light.primary9 : colors.text.light.text6;
               const onPress = () => {
                 const event = navigation.emit({
                   canPreventDefault: true,
@@ -114,7 +108,6 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
                   focused={focused}
                   icon={options.tabBarIcon?.({ color, focused, size: 23 })}
                   key={route.key}
-                  label={label}
                   testID={options.tabBarButtonTestID}
                   onLongPress={onLongPress}
                   onPress={onPress}
@@ -124,34 +117,58 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
           </View>
         </View>
       </View>
+      <View style={styles.createShadow}>
+        <View style={styles.createGlassClip}>
+          <BlurView
+            blurReductionFactor={4}
+            experimentalBlurMethod="dimezisBlurView"
+            intensity={55}
+            pointerEvents="none"
+            style={StyleSheet.absoluteFill}
+            tint="systemUltraThinMaterialLight"
+          />
+          <View pointerEvents="none" style={styles.createOverlay} />
+          <Pressable
+            accessibilityLabel="Crear nuevo modo"
+            accessibilityRole="button"
+            style={styles.createButton}
+            onPress={() => router.push({ pathname: "/onboarding", params: { mode: "create" } })}
+          >
+            <Plus color={colors.primary.light.primary9} size={28} strokeWidth={2.2} />
+          </Pressable>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   positioner: {
+    flexDirection: "row",
+    gap: 12,
     height: LIQUID_TAB_BAR_HEIGHT,
     position: "absolute",
   },
   shadowShell: {
-    borderRadius: 34,
-    elevation: 14,
+    borderRadius: 32,
+    elevation: 10,
+    flex: 1,
     height: LIQUID_TAB_BAR_HEIGHT,
-    shadowColor: "#1D7FA7",
+    shadowColor: colors.grey.light.grey5,
     shadowOffset: { height: 8, width: 0 },
-    shadowOpacity: Platform.OS === "android" ? 0.2 : 0.13,
+    shadowOpacity: Platform.OS === "android" ? 0.16 : 0.11,
     shadowRadius: 18,
   },
   glassClip: {
-    borderColor: "rgba(255,255,255,0.8)",
-    borderRadius: 34,
+    borderColor: "rgba(255,255,255,0.82)",
+    borderRadius: 32,
     borderWidth: 1,
     flex: 1,
     overflow: "hidden",
   },
   translucentOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(235, 250, 253, 0.68)",
+    backgroundColor: "rgba(255,255,255,0.2)",
   },
   topHighlight: {
     backgroundColor: "rgba(255,255,255,0.86)",
@@ -168,8 +185,8 @@ const styles = StyleSheet.create({
     padding: INNER_PADDING,
   },
   activePill: {
-    backgroundColor: "rgba(255,255,255,0.68)",
-    borderColor: "rgba(255,255,255,0.92)",
+    backgroundColor: "rgba(255,255,255,0.72)",
+    borderColor: "rgba(255,255,255,0.88)",
     borderRadius: 27,
     borderWidth: 1,
     bottom: INNER_PADDING,
@@ -177,18 +194,36 @@ const styles = StyleSheet.create({
     left: INNER_PADDING,
     overflow: "hidden",
     position: "absolute",
-    shadowColor: "#5FCFE8",
+    shadowColor: colors.grey.light.grey5,
     shadowOffset: { height: 3, width: 0 },
-    shadowOpacity: 0.14,
+    shadowOpacity: 0.12,
     shadowRadius: 8,
     top: INNER_PADDING,
   },
-  pillHighlight: {
-    backgroundColor: "rgba(255,255,255,0.82)",
-    height: 1,
-    left: 14,
-    position: "absolute",
-    right: 14,
-    top: 1,
+  createShadow: {
+    borderRadius: 32,
+    elevation: 10,
+    height: LIQUID_TAB_BAR_HEIGHT,
+    shadowColor: colors.grey.light.grey5,
+    shadowOffset: { height: 8, width: 0 },
+    shadowOpacity: Platform.OS === "android" ? 0.16 : 0.11,
+    shadowRadius: 18,
+    width: LIQUID_TAB_BAR_HEIGHT,
+  },
+  createGlassClip: {
+    borderColor: "rgba(255,255,255,0.86)",
+    borderRadius: 32,
+    borderWidth: 1,
+    flex: 1,
+    overflow: "hidden",
+  },
+  createOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.46)",
+  },
+  createButton: {
+    alignItems: "center",
+    flex: 1,
+    justifyContent: "center",
   },
 });

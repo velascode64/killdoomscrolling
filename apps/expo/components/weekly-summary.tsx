@@ -51,7 +51,7 @@ export const WeeklySummary = observer(() => {
                 return (
                   <YStack alignItems="center" flex={1} gap="$2" justifyContent="flex-end" key={DAY_LABELS[day]}>
                     <View
-                      backgroundColor={isToday ? "$blue9" : "$blue4"}
+                      backgroundColor={isToday ? "$primary9" : "$primary5"}
                       borderRadius={99}
                       height={barHeight}
                       minHeight={3}
@@ -86,7 +86,7 @@ export const WeeklySummary = observer(() => {
         {!hasData && (
           <YStack
             alignItems="center"
-            backgroundColor="rgba(240, 251, 253, 0.46)"
+            backgroundColor="rgba(248, 250, 252, 0.72)"
             borderRadius={22}
             bottom={0}
             justifyContent="center"

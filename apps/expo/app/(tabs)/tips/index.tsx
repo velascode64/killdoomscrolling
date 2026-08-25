@@ -20,7 +20,7 @@ export default function TipsScreen() {
     <View style={styles.screen}>
       <StatusBar style="dark" />
       <LinearGradient
-        colors={["#F8FDFE", "#ECFAFD", "#F8FDFE"]}
+        colors={["#F8FAFC", "#F2F5FF", "#F8FAFC"]}
         locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFill}
       />
@@ -70,7 +70,7 @@ export default function TipsScreen() {
 
 const styles = StyleSheet.create({
   screen: {
-    backgroundColor: "#F8FDFE",
+    backgroundColor: "#F8FAFC",
     flex: 1,
   },
   content: {
@@ -80,13 +80,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   eyebrow: {
-    color: "#0C8FD1",
+    color: "#4F46E5",
     fontFamily: "SatoshiBold",
     fontSize: 10,
     letterSpacing: 1.8,
   },
   heading: {
-    color: "#003B5C",
+    color: "#1F2430",
     fontFamily: "SatoshiBlack",
     fontSize: 52,
     letterSpacing: -2,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   intro: {
-    color: "#48748A",
+    color: "#707785",
     fontFamily: "Satoshi",
     fontSize: 16,
     lineHeight: 22,
@@ -110,10 +110,10 @@ const styles = StyleSheet.create({
   },
   chip: {
     backgroundColor: "rgba(255,255,255,0.72)",
-    borderColor: "#CFEBF0",
+    borderColor: "#E2E8F0",
     borderRadius: 999,
     borderWidth: 1,
-    color: "#48748A",
+    color: "#707785",
     fontFamily: "SatoshiBold",
     fontSize: 12,
     overflow: "hidden",
@@ -121,9 +121,9 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
   },
   activeChip: {
-    backgroundColor: "#003B5C",
-    borderColor: "#003B5C",
-    color: "#FFFFFF",
+    backgroundColor: "#EEF2FF",
+    borderColor: "rgba(79, 70, 229, 0.24)",
+    color: "#4F46E5",
   },
   feed: {
     gap: 16,

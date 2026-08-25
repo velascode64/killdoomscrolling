@@ -10,7 +10,6 @@ import { Button, SizableText, View, XStack, YStack } from "tamagui";
 
 import { ALL_PLAN_WEEKDAYS } from "../data/android-reward";
 import type { PlanWeekday } from "../data/android-reward";
-import { BrandGradientFill } from "./mode-ui";
 import { ShadowCard } from "./shadow.card";
 
 type TimeTarget = "start" | "end";
@@ -74,19 +73,17 @@ function TimeChip({ active, value, onPress }: { active: boolean; value: number; 
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={active ? "transparent" : "rgba(255, 255, 255, 0.72)"}
-      borderColor={active ? "#2CCEFE" : "rgba(162, 228, 250, 0.8)"}
+      backgroundColor={active ? "#4F46E5" : "rgba(255, 255, 255, 0.72)"}
+      borderColor={active ? "#4F46E5" : "#E2E8F0"}
       borderRadius={99}
       borderWidth={1}
       justifyContent="center"
       minWidth={112}
-      overflow="hidden"
       paddingHorizontal="$3"
       paddingVertical="$2.5"
       pressStyle={{ opacity: 0.74 }}
       onPress={onPress}
     >
-      {active ? <BrandGradientFill /> : null}
       <SizableText color={active ? "white" : "$text11"} fontWeight="800" size="$4">
         {formatTime(value)}
       </SizableText>
@@ -283,19 +280,17 @@ export function ScheduleCard({
                 key={day}
                 unstyled
                 alignItems="center"
-                backgroundColor={selected ? "transparent" : "rgba(255, 255, 255, 0.7)"}
-                borderColor={selected ? "$blue8" : "rgba(162, 228, 250, 0.8)"}
+                backgroundColor={selected ? "$primary9" : "rgba(255, 255, 255, 0.7)"}
+                borderColor={selected ? "$primary9" : "#E2E8F0"}
                 borderRadius={99}
                 borderWidth={1}
                 flex={1}
                 height={36}
                 justifyContent="center"
                 maxWidth={38}
-                overflow="hidden"
                 pressStyle={{ opacity: 0.72 }}
                 onPress={() => toggleWeekday(day)}
               >
-                {selected ? <BrandGradientFill /> : null}
                 <SizableText color={selected ? "white" : "$text11"} fontWeight="800" size="$3">
                   {DAY_LABELS[day]}
                 </SizableText>
@@ -342,7 +337,7 @@ const styles = StyleSheet.create({
   },
   pickerOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(237, 250, 253, 0.76)",
+    backgroundColor: "rgba(238, 242, 255, 0.76)",
   },
   pickerHighlight: {
     backgroundColor: "rgba(255, 255, 255, 0.94)",

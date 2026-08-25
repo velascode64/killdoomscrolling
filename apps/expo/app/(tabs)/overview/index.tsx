@@ -91,7 +91,7 @@ const Overview = observer(() => {
             >
               <ShieldBan color="#FE5E2A" strokeWidth={2.25} />
             </View>
-            <Paragraph color="#797979" marginTop="$1">
+            <Paragraph color="#707785" marginTop="$1">
               Opened
             </Paragraph>
             <H1 color="$text11" lineHeight={50} marginBottom={-6}>
@@ -107,7 +107,7 @@ const Overview = observer(() => {
             >
               <Check color="#67D65D" strokeWidth={3} />
             </View>
-            <Paragraph color="#797979" marginTop="$1">
+            <Paragraph color="#707785" marginTop="$1">
               Blocked
             </Paragraph>
             <H1 color="$text11" lineHeight={50} marginBottom={-6}>
@@ -174,7 +174,7 @@ const Overview = observer(() => {
                   >
                     {OverviewStore.hoursSavedByApp(app)}h
                   </H2>
-                  <Paragraph color="#797979">Saved</Paragraph>
+                  <Paragraph color="#707785">Saved</Paragraph>
                 </YStack>
                 <Divider />
                 <YStack>
@@ -186,7 +186,7 @@ const Overview = observer(() => {
                   >
                     {OverviewStore.interruptionByApp(app)}x
                   </H2>
-                  <Paragraph color="#797979">Opened</Paragraph>
+                  <Paragraph color="#707785">Opened</Paragraph>
                 </YStack>
                 <Divider />
                 <YStack>
@@ -198,7 +198,7 @@ const Overview = observer(() => {
                   >
                     {OverviewStore.preventedByAppInPercentage(app)}%
                   </H2>
-                  <Paragraph color="#797979">Blocked</Paragraph>
+                  <Paragraph color="#707785">Blocked</Paragraph>
                 </YStack>
                 <View
                   alignSelf="center"
@@ -206,7 +206,7 @@ const Overview = observer(() => {
                   flexDirection="row"
                   flex={1}
                 >
-                  <ChevronRight color="#797979" />
+                  <ChevronRight color="#707785" />
                 </View>
               </XStack>
             </ShadowCard>
@@ -228,7 +228,7 @@ const Overview = observer(() => {
             borderStyle="dashed"
           >
             <XStack justifyContent="center" alignItems="center" space="$2">
-              <Plus color="#797979" />
+              <Plus color="#707785" />
               <YStack>
                 <SizableText
                   color="$text11"
@@ -237,7 +237,7 @@ const Overview = observer(() => {
                 >
                   Add app
                 </SizableText>
-                <Paragraph color="#797979">
+                <Paragraph color="#707785">
                   Block apps to stay focused
                 </Paragraph>
               </YStack>

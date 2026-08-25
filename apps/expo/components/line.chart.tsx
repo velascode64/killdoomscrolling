@@ -1,8 +1,9 @@
 import type { Text as ReactNativeText } from "react-native";
 import { LineChart as LineChartGifted } from "react-native-gifted-charts";
-import { H4, Paragraph, Text, useTheme, View, YStack } from "tamagui";
+import { H4, Paragraph, Text, View, YStack } from "tamagui";
 
 import { useTheme as useThemeBase } from "./theme-provider";
+import { chartColors } from "../theme/colors";
 
 export const LineChart = ({
   data,
@@ -18,10 +19,7 @@ export const LineChart = ({
   labelSuffix?: string;
   dummy?: boolean;
 }) => {
-  const theme = useTheme();
   const themeBase = useThemeBase();
-  const grey3 = theme.grey3?.val as string;
-  const grey4 = theme.grey4?.val as string;
   return (
     <View position="relative">
       {dummy && (
@@ -53,20 +51,20 @@ export const LineChart = ({
         data={data}
         hideDataPoints
         spacing={20}
-        color="#797979"
+        color={chartColors.primary}
         thickness={3}
         height={130}
-        startFillColor={grey4}
-        endFillColor={grey3}
+        startFillColor={chartColors.secondary}
+        endFillColor={chartColors.track}
         startOpacity={0.9}
         endOpacity={0.2}
         initialSpacing={0}
         noOfSections={2}
-        yAxisColor={grey3}
+        yAxisColor={chartColors.grid}
         yAxisThickness={1}
         rulesType="dashed"
-        rulesColor={grey3}
-        yAxisTextStyle={{ color: "#797979", fontFamily: "Satoshi", fontSize: 12 }}
+        rulesColor={chartColors.grid}
+        yAxisTextStyle={{ color: chartColors.label, fontFamily: "Satoshi", fontSize: 12 }}
         yAxisLabelSuffix={labelSuffix}
         yAxisLabelWidth={30}
         scrollToEnd
@@ -74,15 +72,15 @@ export const LineChart = ({
         yAxisTextNumberOfLines={3}
         rulesThickness={1}
         dataPointLabelShiftX={2}
-        horizontalRulesStyle={{ color: "#121212" }}
-        xAxisColor={grey3}
+        horizontalRulesStyle={{ color: chartColors.grid }}
+        xAxisColor={chartColors.grid}
         animationDuration={1000}
         isAnimated
         pointerConfig={{
           pointerStripHeight: 160,
-          pointerStripColor: "#797979",
+          pointerStripColor: chartColors.secondary,
           pointerStripWidth: 2,
-          pointerColor: "#797979",
+          pointerColor: chartColors.primary,
           radius: 6,
           pointerLabelWidth: 100,
           pointerLabelHeight: 90,
@@ -98,7 +96,7 @@ export const LineChart = ({
                   marginTop: -30,
                   marginLeft: -40,
                 }}
-                backgroundColor={grey4}
+                backgroundColor={chartColors.primary}
               >
                 <Text style={{ color: "white", fontSize: 14, marginBottom: 6, textAlign: "center" }}>
                   {items[0].date}

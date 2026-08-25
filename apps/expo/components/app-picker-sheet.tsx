@@ -44,10 +44,10 @@ export function AppPickerSheet({
       onOpenChange={onOpenChange}
       onPositionChange={setPosition}
     >
-      <Sheet.Overlay animation="quick" backgroundColor="rgba(0, 59, 92, 0.2)" />
+      <Sheet.Overlay animation="quick" backgroundColor="rgba(33, 27, 32, 0.2)" />
       <Sheet.Frame
-        backgroundColor="#F8FDFE"
-        borderColor="rgba(162, 228, 250, 0.72)"
+        backgroundColor="#F8FAFC"
+        borderColor="#E2E8F0"
         borderTopLeftRadius={32}
         borderTopRightRadius={32}
         borderWidth={1}
@@ -66,7 +66,7 @@ export function AppPickerSheet({
             <Button
               unstyled
               alignItems="center"
-              backgroundColor="$blue2"
+              backgroundColor="$primary3"
               borderRadius={99}
               height={38}
               justifyContent="center"
@@ -151,8 +151,8 @@ function AppPickerRow({
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "$blue2" : "$background2"}
-      borderColor={selected ? "$blue8" : "rgba(207, 235, 240, 0.8)"}
+      backgroundColor={selected ? "$primary9" : "$background2"}
+      borderColor={selected ? "$primary9" : "$borderColor"}
       borderRadius={20}
       borderWidth={1}
       flexDirection="row"
@@ -166,14 +166,14 @@ function AppPickerRow({
     >
       <XStack alignItems="center" flex={1} gap="$3">
         <AppIcon app={app} />
-        <SizableText color="$text11" flex={1} fontWeight="700" numberOfLines={1}>
+        <SizableText color={selected ? "white" : "$text11"} flex={1} fontWeight="700" numberOfLines={1}>
           {app.name}
         </SizableText>
       </XStack>
       <View
         alignItems="center"
-        backgroundColor={selected ? "$blue9" : "$background"}
-        borderColor={selected ? "$blue9" : "$borderColor"}
+        backgroundColor={selected ? "rgba(255,255,255,0.18)" : "$background"}
+        borderColor={selected ? "rgba(255,255,255,0.72)" : "$borderColor"}
         borderRadius={99}
         borderWidth={1}
         height={25}

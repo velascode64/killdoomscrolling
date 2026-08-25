@@ -37,9 +37,9 @@ export const Container = ({
     : Math.max(tabBarHeight, floatingTabClearance);
 
   return (
-    <View flex={1} backgroundColor="#F8FDFE">
+    <View flex={1} backgroundColor="#F8FAFC">
       <LinearGradient
-        colors={["#F8FDFE", "#F8FDFE", "#EAFBFE", "#F8FDFE"]}
+        colors={["#F8FAFC", "#F8FAFC", "#F2F5FF", "#F8FAFC"]}
         locations={[0, 0.28, 0.72, 1]}
         start={{ x: 0.08, y: 0 }}
         end={{ x: 0.92, y: 1 }}

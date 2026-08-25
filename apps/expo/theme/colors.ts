@@ -1,18 +1,18 @@
 export const colors = {
   primary: {
     light: {
-      primary1: "#F8FDFE",
-      primary2: "#FDFFFF",
-      primary3: "#EFFBFD",
-      primary4: "#CFEBF0",
-      primary5: "#A2E4FA",
-      primary6: "#67DDFC",
-      primary7: "#4ED1FD",
-      primary8: "#4BB7FE",
-      primary9: "#2CCEFE",
-      primary10: "#1AE1FE",
-      primary11: "#0C8FD1",
-      primary12: "#003B5C",
+      primary1: "#F8FAFC",
+      primary2: "#FFFFFF",
+      primary3: "#EEF2FF",
+      primary4: "#E2E8F0",
+      primary5: "#C7D2FE",
+      primary6: "#A5B4FC",
+      primary7: "#818CF8",
+      primary8: "#6366F1",
+      primary9: "#4F46E5",
+      primary10: "#4338CA",
+      primary11: "#3730A3",
+      primary12: "#1F2430",
     },
     dark: {
       primary1: "hsl(212, 35.0%, 9.2%)",
@@ -31,17 +31,17 @@ export const colors = {
   },
   text: {
     light: {
-      text1: "#F8FDFE",
-      text2: "#E7F5F8",
-      text3: "#CFEBF0",
-      text4: "#A2E4FA",
-      text5: "#98ADBA",
-      text6: "#48748A",
-      text7: "#36586F",
-      text8: "#234960",
-      text9: "#163E58",
-      text10: "#0C4A70",
-      text11: "#003B5C",
+      text1: "#F8FAFC",
+      text2: "#F1F5F9",
+      text3: "#E2E8F0",
+      text4: "#C7D2FE",
+      text5: "#A1A8B3",
+      text6: "#878F9B",
+      text7: "#707785",
+      text8: "#565E6B",
+      text9: "#414854",
+      text10: "#303641",
+      text11: "#1F2430",
     },
     dark: {
       text1: "#212121",
@@ -59,17 +59,17 @@ export const colors = {
   },
   background: {
     light: {
-      background1: "#F8FDFE",
-      background2: "#FDFFFF",
-      background3: "#EFFBFD",
-      background4: "#CFEBF0",
-      background5: "#A2E4FA",
-      background6: "#98ADBA",
-      background7: "#48748A",
-      background8: "#36586F",
-      background9: "#234960",
-      background10: "#163E58",
-      background11: "#003B5C",
+      background1: "#F8FAFC",
+      background2: "#FFFFFF",
+      background3: "#EEF2FF",
+      background4: "#E2E8F0",
+      background5: "#C7D2FE",
+      background6: "#A5B4FC",
+      background7: "#818CF8",
+      background8: "#707785",
+      background9: "#565E6B",
+      background10: "#414854",
+      background11: "#1F2430",
     },
     dark: {
       background1: "#141414",
@@ -87,17 +87,17 @@ export const colors = {
   },
   grey: {
     light: {
-      grey1: "#FDFFFF",
-      grey2: "#F8FDFE",
-      grey3: "#CFEBF0",
-      grey4: "#D0D8DE",
-      grey5: "#98ADBA",
-      grey6: "#48748A",
-      grey7: "#36586F",
-      grey8: "#234960",
-      grey9: "#163E58",
-      grey10: "#0C4A70",
-      grey11: "#003B5C",
+      grey1: "#FFFFFF",
+      grey2: "#F8FAFC",
+      grey3: "#E2E8F0",
+      grey4: "#CBD5E1",
+      grey5: "#A1A8B3",
+      grey6: "#878F9B",
+      grey7: "#707785",
+      grey8: "#565E6B",
+      grey9: "#414854",
+      grey10: "#303641",
+      grey11: "#1F2430",
     },
     dark: {
       grey1: "#363636",
@@ -116,12 +116,19 @@ export const colors = {
 };
 
 export const logoColors = {
-  "Berkeley Blue": "#012D59",
-  "Blue Green": "#02A2D4",
-  Cerulean: "#037DA6",
-  "Oxford Blue": "#002751",
-  "Indigo dye": "#00517F",
+  "Electric Indigo": "#4F46E5",
+  "Supporting Indigo": "#6366F1",
+  "Progress Accent": "#38BDF8",
 };
 
-export const brandGradient = ["#1AE1FE", "#2CCEFE", "#4BB7FE"] as const;
-export const brandGlow = "#67DDFC";
+export const brandGradient = ["#4F46E5", "#6366F1"] as const;
+export const brandGlow = "#38BDF8";
+
+export const chartColors = {
+  primary: "#4C5CFF",
+  secondary: "#6366F1",
+  accent: "#38BDF8",
+  label: "#94A3B8",
+  grid: "#CBD5E1",
+  track: "#E2E8F0",
+} as const;

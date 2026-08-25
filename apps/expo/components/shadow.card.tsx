@@ -5,10 +5,10 @@ import { View } from "tamagui";
 type CardTone = "aqua" | "mint" | "sky" | "surface";
 
 const CARD_GRADIENTS: Record<CardTone, readonly [string, string, ...string[]]> = {
-  surface: ["rgba(255,255,255,0.98)", "rgba(248,253,254,0.96)"],
-  aqua: ["rgba(255,255,255,0.98)", "rgba(221,249,253,0.88)"],
-  sky: ["rgba(255,255,255,0.98)", "rgba(226,242,255,0.9)"],
-  mint: ["rgba(255,255,255,0.98)", "rgba(226,251,244,0.9)"],
+  surface: ["rgba(255,255,255,0.99)", "rgba(248,250,252,0.96)"],
+  aqua: ["rgba(255,255,255,0.99)", "rgba(238,242,255,0.58)"],
+  sky: ["rgba(255,255,255,0.99)", "rgba(240,249,255,0.52)"],
+  mint: ["rgba(255,255,255,0.99)", "rgba(248,250,252,0.96)"],
 };
 
 export const ShadowCard = ({
@@ -18,13 +18,13 @@ export const ShadowCard = ({
 }: { children: React.ReactNode; tone?: CardTone } & React.ComponentProps<typeof View>) => (
   <View
     backgroundColor="transparent"
-    shadowColor="#67DDFC"
-    shadowOpacity={0.07}
-    shadowRadius={12}
-    borderRadius={28}
+    shadowColor="#4F46E5"
+    shadowOpacity={0.05}
+    shadowRadius={10}
+    borderRadius={16}
     borderWidth={1}
-    borderColor="rgba(162, 228, 250, 0.62)"
-    shadowOffset={{ width: 0, height: 5 }}
+    borderColor="#E2E8F0"
+    shadowOffset={{ width: 0, height: 3 }}
     overflow="hidden"
     padding="$5"
     {...viewProps}

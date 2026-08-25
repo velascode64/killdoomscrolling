@@ -65,8 +65,8 @@ export function AndroidFocusDashboard() {
           <SectionHeader />
           <ShadowCard tone="aqua">
             <YStack gap="$4">
-              <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={56} justifyContent="center" width={56}>
-                <Focus color="$text11" size={26} />
+              <View alignItems="center" backgroundColor="$primary3" borderRadius={99} height={56} justifyContent="center" width={56}>
+                <Focus color="$primary11" size={26} />
               </View>
               <YStack gap="$2">
                 <H4 color="$text11">Start Your Journey</H4>
@@ -100,7 +100,6 @@ export function AndroidFocusDashboard() {
             />
           );
         })}
-        <CreateModeCard />
       </YStack>
       <PermissionsSheet permissions={permissions} visible={!permissions.overlay || !permissions.usageStats} />
     </>
@@ -152,49 +151,22 @@ function ModeCard({
   );
 }
 
-function CreateModeCard() {
-  return (
-    <ShadowCard
-      padding="$4"
-      pressStyle={{ opacity: 0.82 }}
-      tone="surface"
-      onPress={() => router.push({ pathname: "/onboarding", params: { mode: "create" } })}
-    >
-      <XStack alignItems="center" gap="$3">
-        <View
-          alignItems="center"
-          backgroundColor="$blue2"
-          borderRadius={99}
-          height={42}
-          justifyContent="center"
-          width={42}
-        >
-          <Plus color="$primary11" size={20} />
-        </View>
-        <SizableText color="$text11" flex={1} fontSize="$5" fontWeight="900">
-          Crear nuevo modo
-        </SizableText>
-      </XStack>
-    </ShadowCard>
-  );
-}
-
 function PermissionsSheet({ visible, permissions }: { visible: boolean; permissions: { overlay: boolean; usageStats: boolean } }) {
   return (
     <Sheet dismissOnSnapToBottom={false} modal open={visible} snapPoints={[42]} onOpenChange={() => undefined}>
-      <Sheet.Overlay backgroundColor="rgba(0, 59, 92, 0.18)" />
+      <Sheet.Overlay backgroundColor="rgba(33, 27, 32, 0.18)" />
       <Sheet.Frame backgroundColor="$background" padding="$4">
         <Sheet.Handle backgroundColor="$borderColor" />
         <YStack gap="$4">
-          <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={48} justifyContent="center" width={48}>
-            <Settings color="$text11" size={22} />
+          <View alignItems="center" backgroundColor="$primary3" borderRadius={99} height={48} justifyContent="center" width={48}>
+            <Settings color="$primary11" size={22} />
           </View>
           <YStack gap="$1">
             <H4 color="$text11">Activa los permisos para usar Rehabbit</H4>
             <Paragraph color="$text10">Android necesita acceso de uso y permiso para mostrarse sobre otras apps.</Paragraph>
           </YStack>
-          {!permissions.usageStats && <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void openUsageStatsSettings()}>Activar acceso de uso</Button>}
-          {!permissions.overlay && <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void openOverlaySettings()}>Permitir mostrar sobre otras apps</Button>}
+          {!permissions.usageStats && <Button backgroundColor="$primary3" borderColor="$primary5" color="$primary11" onPress={() => void openUsageStatsSettings()}>Activar acceso de uso</Button>}
+          {!permissions.overlay && <Button backgroundColor="$primary3" borderColor="$primary5" color="$primary11" onPress={() => void openOverlaySettings()}>Permitir mostrar sobre otras apps</Button>}
         </YStack>
       </Sheet.Frame>
     </Sheet>

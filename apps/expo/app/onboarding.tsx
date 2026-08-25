@@ -33,7 +33,7 @@ import {
   YStack,
 } from "tamagui";
 
-import { AppAvatarStack, BrandGradientFill, GradientButton, ModeRadial } from "../components/mode-ui";
+import { AppAvatarStack, GradientButton, ModeRadial } from "../components/mode-ui";
 import { AppPickerSheet } from "../components/app-picker-sheet";
 import { CategoryGlyph, CategorySelector } from "../components/category-selector";
 import type { CategoryOption } from "../components/category-selector";
@@ -101,14 +101,13 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
               key={minutes}
               unstyled
               alignItems="center"
-              backgroundColor={selected ? "transparent" : "$background2"}
-              borderColor={selected ? "$blue8" : "$borderColor"}
+              backgroundColor={selected ? "$primary9" : "$background2"}
+              borderColor={selected ? "$primary9" : "$borderColor"}
               borderRadius="$10"
               borderWidth={1}
               flex={1}
               justifyContent="center"
               minWidth={0}
-              overflow="hidden"
               paddingHorizontal="$1"
               paddingVertical="$2.5"
               pressStyle={{ opacity: 0.8 }}
@@ -117,7 +116,6 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
                 onChange(minutes);
               }}
             >
-              {selected ? <BrandGradientFill /> : null}
               <SizableText
                 color={selected ? "white" : "$text11"}
                 fontWeight="700"
@@ -132,14 +130,13 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
         <Button
           unstyled
           alignItems="center"
-          backgroundColor={customActive ? "transparent" : "$background2"}
-          borderColor={customActive ? "$blue8" : "$borderColor"}
+          backgroundColor={customActive ? "$primary9" : "$background2"}
+          borderColor={customActive ? "$primary9" : "$borderColor"}
           borderRadius="$10"
           borderWidth={1}
           flex={1}
           justifyContent="center"
           minWidth={0}
-          overflow="hidden"
           paddingHorizontal="$1"
           paddingVertical="$2.5"
           pressStyle={{ opacity: 0.8 }}
@@ -147,7 +144,6 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
             setCustomOpen((open) => !open);
           }}
         >
-          {customActive ? <BrandGradientFill /> : null}
           <SizableText
             color={customActive ? "white" : "$text11"}
             fontWeight="700"
@@ -576,15 +572,18 @@ function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
       <YStack alignItems="center" gap="$6">
         <View
           alignItems="center"
-          backgroundColor="$blue2"
-          borderColor="$borderColor"
+          backgroundColor="$primary3"
+          borderColor="$primary5"
           borderRadius={99}
           borderWidth={1}
           height={92}
           justifyContent="center"
           width={92}
         >
-          <Focus color="$text11" size={42} />
+          <Image
+            source={require("../assets/images/rehabbit-logo.png")}
+            style={{ borderRadius: 24, height: 78, width: 78 }}
+          />
         </View>
         <YStack alignItems="center" gap="$3" paddingHorizontal="$4">
           <H3 color="$text11" textAlign="center">Recupera tu atencion</H3>
@@ -615,20 +614,18 @@ function ChoiceChip({ label, selected, onPress }: { label: string; selected: boo
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "transparent" : "$background2"}
-      borderColor={selected ? "$blue8" : "$borderColor"}
+      backgroundColor={selected ? "$primary3" : "$background2"}
+      borderColor={selected ? "$primary6" : "$borderColor"}
       borderRadius="$10"
       borderWidth={1}
       justifyContent="center"
       minWidth={72}
-      overflow="hidden"
       paddingHorizontal="$4"
       paddingVertical="$3"
       pressStyle={{ opacity: 0.75 }}
       onPress={onPress}
     >
-      {selected ? <BrandGradientFill /> : null}
-      <SizableText color={selected ? "white" : "$text11"} fontWeight="800">{label}</SizableText>
+      <SizableText color={selected ? "$primary11" : "$text11"} fontWeight="800">{label}</SizableText>
     </Button>
   );
 }
@@ -638,30 +635,28 @@ function ChoiceRow({ label, selected, onPress }: { label: string; selected: bool
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "transparent" : "$background2"}
-      borderColor={selected ? "$blue8" : "$borderColor"}
+      backgroundColor={selected ? "$primary3" : "$background2"}
+      borderColor={selected ? "$primary6" : "$borderColor"}
       borderRadius="$6"
       borderWidth={1}
       flexDirection="row"
       justifyContent="space-between"
-      overflow="hidden"
       padding="$4"
       pressStyle={{ opacity: 0.75 }}
       onPress={onPress}
     >
-      {selected ? <BrandGradientFill /> : null}
-      <SizableText color={selected ? "white" : "$text11"} fontWeight="700" size="$5">{label}</SizableText>
+      <SizableText color={selected ? "$primary11" : "$text11"} fontWeight="700" size="$5">{label}</SizableText>
       <View
         alignItems="center"
-        backgroundColor={selected ? "rgba(255, 255, 255, 0.78)" : "$background"}
-        borderColor={selected ? "rgba(255, 255, 255, 0.94)" : "$borderColor"}
+        backgroundColor={selected ? "rgba(79, 70, 229, 0.12)" : "$background"}
+        borderColor={selected ? "rgba(79, 70, 229, 0.24)" : "$borderColor"}
         borderRadius={99}
         borderWidth={1}
         height={25}
         justifyContent="center"
         width={25}
       >
-        {selected && <Check color="$blue9" size={16} />}
+        {selected && <Check color="$primary11" size={16} />}
       </View>
     </Button>
   );
@@ -916,7 +911,7 @@ function AppGroupCard({ apps, description, label, onPress }: { apps: AndroidBloc
 const durationPickerStyles = StyleSheet.create({
   backdrop: {
     alignItems: "center",
-    backgroundColor: "rgba(0, 59, 92, 0.2)",
+    backgroundColor: "rgba(31, 36, 48, 0.2)",
     flex: 1,
     justifyContent: "center",
     padding: 24,

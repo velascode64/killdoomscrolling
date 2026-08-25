@@ -109,7 +109,7 @@ export default function TipDetailScreen() {
 
 const styles = StyleSheet.create({
   screen: {
-    backgroundColor: "#F8FDFE",
+    backgroundColor: "#F8FAFC",
     flex: 1,
   },
   hero: {
@@ -186,13 +186,13 @@ const styles = StyleSheet.create({
     paddingTop: 36,
   },
   section: {
-    borderBottomColor: "#DCEEF2",
+    borderBottomColor: "#E2E8F0",
     borderBottomWidth: 1,
     marginBottom: 28,
     paddingBottom: 28,
   },
   sectionTitle: {
-    color: "#003B5C",
+    color: "#1F2430",
     fontFamily: "SatoshiBlack",
     fontSize: 25,
     letterSpacing: -0.6,
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   body: {
-    color: "#36586F",
+    color: "#707785",
     fontFamily: "Satoshi",
     fontSize: 17,
     lineHeight: 27,
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   itemText: {
-    color: "#234960",
+    color: "#594C53",
     flex: 1,
     fontFamily: "SatoshiBold",
     fontSize: 15,
@@ -247,17 +247,17 @@ const styles = StyleSheet.create({
   },
   missing: {
     alignItems: "center",
-    backgroundColor: "#F8FDFE",
+    backgroundColor: "#F8FAFC",
     flex: 1,
     justifyContent: "center",
   },
   missingTitle: {
-    color: "#003B5C",
+    color: "#1F2430",
     fontFamily: "SatoshiBlack",
     fontSize: 28,
   },
   missingAction: {
-    color: "#0C8FD1",
+    color: "#4F46E5",
     fontFamily: "SatoshiBold",
     fontSize: 16,
     marginTop: 16,

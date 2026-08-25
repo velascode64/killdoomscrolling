@@ -12,7 +12,7 @@ import { PieChart } from "../../../components/pie.chart";
 import { ShadowCard } from "../../../components/shadow.card";
 import { OverviewStore } from "../../../data/overview.store";
 
-const labelTextStyle = { color: "#797979", width: 100, marginTop: -2, fontFamily: "Satoshi", fontSize: 12 };
+const labelTextStyle = { color: "#707785", width: 100, marginTop: -2, fontFamily: "Satoshi", fontSize: 12 };
 
 const generateData = ({ statistic }: { statistic: { value: number; timestamp: number }[] }) => {
   return statistic
@@ -63,11 +63,11 @@ const App = observer(() => {
         <XStack justifyContent="space-between" alignItems="center">
           <XStack space={"$2"} alignItems="center">
             <Link href="/overview/" asChild>
-              <Paragraph size="$5" fontWeight={"bold"} color="#797979">
+              <Paragraph size="$5" fontWeight={"bold"} color="#707785">
                 Overview
               </Paragraph>
             </Link>
-            <ChevronRight size={16} color="#797979" strokeWidth={3} />
+            <ChevronRight size={16} color="#707785" strokeWidth={3} />
             <Paragraph size="$5" fontWeight={"bold"}>
               {selectedApp?.name}
             </Paragraph>
@@ -86,7 +86,7 @@ const App = observer(() => {
         </XStack>
         <ShadowCard>
           <H4>Opening attempts</H4>
-          <Paragraph color="#797979" lineHeight={20}>
+          <Paragraph color="#707785" lineHeight={20}>
             In comparison to the last week you tried to open this app{" "}
             <SizableText fontWeight={"bold"}>
               {interruptedMultiplierThisWeek.toFixed(0)}x {interruptedMultiplierThisWeek >= 0 ? "more" : "less"}
@@ -116,7 +116,7 @@ const App = observer(() => {
         </ShadowCard>
         <ShadowCard>
           <H4>Time saved</H4>
-          <Paragraph color="#797979" lineHeight={20}>
+          <Paragraph color="#707785" lineHeight={20}>
             You tried to open this app{" "}
             <SizableText fontWeight={"bold"}>{OverviewStore.interruptionByApp(selectedApp)}x</SizableText> which blocked
             you from spending{" "}
@@ -127,21 +127,21 @@ const App = observer(() => {
               <H2 color="$text11" fontWeight={"900"} marginBottom={-6} fontSize={"$9"}>
                 {OverviewStore.hoursSavedByApp(selectedApp)}h
               </H2>
-              <Paragraph color="#797979">Saved</Paragraph>
+              <Paragraph color="#707785">Saved</Paragraph>
             </YStack>
             <Divider />
             <YStack>
               <H2 color="$text11" fontWeight={"900"} marginBottom={-6} fontSize={"$9"}>
                 {OverviewStore.interruptionByApp(selectedApp)}x
               </H2>
-              <Paragraph color="#797979">Interrupted</Paragraph>
+              <Paragraph color="#707785">Interrupted</Paragraph>
             </YStack>
             <Divider />
             <YStack>
               <H2 color="$text11" fontWeight={"900"} marginBottom={-6} fontSize={"$9"}>
                 {OverviewStore.preventedByAppInPercentage(selectedApp)}%
               </H2>
-              <Paragraph color="#797979">Blocked</Paragraph>
+              <Paragraph color="#707785">Blocked</Paragraph>
             </YStack>
           </XStack>
         </ShadowCard>
@@ -171,7 +171,7 @@ const App = observer(() => {
         </ShadowCard>
         <ShadowCard>
           <H4>Share of total apps</H4>
-          <Paragraph color="#797979" lineHeight={20}>
+          <Paragraph color="#707785" lineHeight={20}>
             <SizableText fontWeight={"bold"}>
               {
                 interruptionsSplitUpByAppInPercentage.find((interruptions) => interruptions.app.id === selectedApp.id)

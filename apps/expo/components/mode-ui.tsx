@@ -6,11 +6,11 @@ import { Button, SizableText, View, XStack, YStack } from "tamagui";
 
 import type { AndroidBlockableApp } from "expo-app-blocker";
 
-import { brandGlow, brandGradient } from "../theme/colors";
+import { brandGradient } from "../theme/colors";
 
-export const MODE_INK = "#003B5C";
-export const MODE_MUTED = "#36586F";
-export const MODE_BORDER = "#CFEBF0";
+export const MODE_INK = "#1F2430";
+export const MODE_MUTED = "#707785";
+export const MODE_BORDER = "#E2E8F0";
 
 export function BrandGradientFill() {
   return (
@@ -77,20 +77,11 @@ export function ModeRadial({
 
   return (
     <View alignSelf="center" width={size} height={size} alignItems="center" justifyContent="center">
-      <View
-        position="absolute"
-        width={size - 20}
-        height={size - 20}
-        borderRadius={999}
-        backgroundColor={brandGlow}
-        opacity={0.1}
-      />
       <Svg width={size} height={size}>
         <Defs>
-          <SvgLinearGradient id="mode-radial" x1="0" y1="0" x2="1" y2="1">
+          <SvgLinearGradient id="mode-radial" x1="0%" y1="0%" x2="100%" y2="100%">
             <Stop offset="0" stopColor={brandGradient[0]} />
-            <Stop offset="0.5" stopColor={brandGradient[1]} />
-            <Stop offset="1" stopColor={brandGradient[2]} />
+            <Stop offset="1" stopColor={brandGradient[1]} />
           </SvgLinearGradient>
         </Defs>
         <Circle
