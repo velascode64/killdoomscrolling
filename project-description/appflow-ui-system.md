@@ -244,6 +244,17 @@ Referencia: `dashboard_card_mode.png`.
 - La tarjeta debe poder abrir la edicion del modo al tocarla.
 - El dashboard puede conservar sus metricas y resumen semanal actuales, pero las tarjetas por app individuales se sustituyen visualmente por estas tarjetas por modo.
 
+### 18. Overlay Android: bloqueo de app
+
+- Esta pantalla aparece cuando una persona intenta abrir una app bloqueada.
+- Se implementa en el modulo nativo Android, no solo en React Native.
+- Fondo claro calido `#FAF9FA` con halo rosa/fucsia de baja opacidad.
+- Ilustracion o icono de un conejo escapando de la pantalla de un telefono, siguiendo la metafora central de Rehabbit.
+- Muestra el nombre de la app bloqueada y un mensaje breve, amistoso y no punitivo.
+- La accion principal para abrir una app de reemplazo o volver al modo usa el gradiente `#F21A68` -> `#DF117B` -> `#CC068A`.
+- La accion secundaria para volver atras usa una superficie neutra con borde `#E9E3E7`.
+- La pantalla conserva el lenguaje de Rehabbit: texto `#211B20`, tarjetas blancas y controles secundarios neutros.
+
 ## Reglas para revision con un LLM grafico
 
 - Priorizar onboarding, editor de modo, horario, selector horario y tarjetas de modo.
@@ -251,3 +262,4 @@ Referencia: `dashboard_card_mode.png`.
 - Usar el gradiente `#F21A68` -> `#DF117B` -> `#CC068A` como firma de marca, no como fondo permanente ni como estado de seleccion por defecto.
 - Mantener tarjetas, inputs, chips normales y navegacion mayormente neutros para que el gradiente tenga significado.
 - Los avatares de Apps bloqueadas y Apps Rehabbit se muestran como grupos circulares superpuestos y abren una lista de seleccion al tocarlos.
+- Incluir el overlay Android de bloqueo como pantalla de marca; no debe conservar la identidad azul anterior.
