@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
   },
   missingAction: {
-    color: "#4F46E5",
+    color: "#483FFF",
     fontFamily: "SatoshiBold",
     fontSize: 16,
     marginTop: 16,

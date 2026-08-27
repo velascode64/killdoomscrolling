@@ -73,8 +73,8 @@ function TimeChip({ active, value, onPress }: { active: boolean; value: number; 
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={active ? "#4F46E5" : "rgba(255, 255, 255, 0.72)"}
-      borderColor={active ? "#4F46E5" : "#E2E8F0"}
+      backgroundColor={active ? "#483FFF" : "rgba(255, 255, 255, 0.72)"}
+      borderColor={active ? "#483FFF" : "#E2E8F0"}
       borderRadius={99}
       borderWidth={1}
       justifyContent="center"

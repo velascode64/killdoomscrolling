@@ -84,7 +84,7 @@ export function CategorySelector({
             unstyled
             alignItems="center"
             backgroundColor="rgba(255, 255, 255, 0.72)"
-            borderColor="rgba(79, 70, 229, 0.2)"
+            borderColor="rgba(72, 63, 255, 0.2)"
             borderRadius={99}
             borderWidth={1}
             height={38}

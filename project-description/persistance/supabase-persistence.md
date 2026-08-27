@@ -1,67 +1,110 @@
-# Persistencia de Rehabbit
+# Persistencia y Métricas de Rehabbit
 
-## Objetivo
+## Decisión base
 
-La app funciona localmente y sincroniza con Supabase cuando hay internet. El usuario entra de forma anónima en la primera apertura; puede vincular una cuenta después.
+Rehabbit es **local primero**. El bloqueo, los modos y el contador activo deben funcionar sin internet. Supabase sirve para respaldo y análisis de producto; nunca para decidir si una app se bloquea o se desbloquea. Mientras la persona solo tenga identidad anónima, no puede recuperar datos después de borrar la app o cambiar de teléfono.
 
-Guardar datos permite recuperar sus modos, mostrar el dashboard y medir si Rehabbit crea un hábito.
-
-## Qué guardamos y dónde
-
-| Dónde se guarda | Qué guardamos | Cuándo |
-| --- | --- | --- |
-| Perfil del usuario | Cuenta anónima, zona horaria, plataforma, versión, última actividad y estado de onboarding | Primera apertura y cada sincronización |
-| Perfil del usuario | Respuestas de onboarding: tiempo actual en teléfono, tiempo que quiere reducir, objetivo, texto libre de “otro”, permisos, apps a reducir, duración del bloqueo, apps de reemplazo y plan final | Al responder cada paso |
-| Modos | Nombre, categoría, horario, días, apps bloqueadas, apps de reemplazo, duración y estado | Crear, editar, activar, desactivar o eliminar un modo |
-| Sesiones de enfoque | Modo usado, inicio, fin, duración planeada, resultado, tiempo de reemplazo e intentos bloqueados | Iniciar y finalizar una sesión |
-| Eventos de producto | Acción, fecha, pantalla o modo relacionado y contexto mínimo | Acciones importantes de la app |
-
-No guardar capturas, contenido de otras apps ni un historial detallado de actividad dentro de ellas.
-
-## Eventos mínimos para Lean Startup
-
-| Evento | Qué permite medir |
+| El teléfono debe decidir | Supabase debe guardar |
 | --- | --- |
-| Inicio, avance y abandono de onboarding | Intención y punto de abandono |
-| Permiso aceptado o rechazado | Capacidad de activar el bloqueo |
-| Plan creado, editado o descartado | Conversión de intención a plan |
-| Modo activado | Activación del producto |
-| Sesión iniciada, completada, cancelada o interrumpida | Valor real para el usuario |
-| Intento de abrir una app bloqueada | Dificultad del cambio de hábito |
-| App de reemplazo abierta | Uso de la conducta alternativa |
-| Dashboard abierto | Retorno a la app |
+| Modo activo, horario, apps bloqueadas y apps de reemplazo | Copia de respaldo del perfil, onboarding y modos |
+| Contador de foco, desbloqueo ganado y overlay | Sesiones terminadas y eventos de producto |
+| Cola de cambios pendientes cuando no hay red | Métricas agregadas de intención, activación y retorno |
+| Identidad anónima guardada en el dispositivo | Email opcional y su consentimiento |
 
-Métrica principal inicial: **persona que completa una primera sesión de enfoque durante las primeras 24 horas tras instalar Rehabbit**.
+## Estado actual que hay que corregir
 
-Retención: personas que vuelven a abrir la app o completar una sesión en semana 1, 2 y 4.
+La app ya guarda eventos locales y la configuración Android localmente, pero todavía no sincroniza con Supabase.
 
-## Funciones necesarias
+El dashboard actual estima “horas ahorradas” multiplicando bloqueos por un tiempo configurado. Esa cifra no es fiable y no debe enviarse ni presentarse como resultado real.
 
-| Función | Cuándo se usa | Responsabilidad |
+El servicio Android ya sabe cuánto tiempo una app de reemplazo estuvo en primer plano y cuándo se abre una app bloqueada. Falta convertir esas señales en registros locales durables antes de mostrarlas o sincronizarlas.
+
+## Cómo se calculan las estadísticas
+
+No medir ni guardar el historial completo de uso del teléfono. Solo registrar acciones relacionadas con un modo Rehabbit.
+
+| Métrica mostrada | Cálculo correcto | Cuándo se registra |
 | --- | --- | --- |
-| Preparar cuenta | Abrir app o recuperar conexión | Crear o actualizar perfil y recuperar modos |
-| Guardar onboarding | Cada respuesta y al finalizar | Guardar progreso, respuestas y plan creado |
-| Sincronizar modos | Crear o editar un modo | Guardar cambios locales y recuperar su versión final |
-| Iniciar sesión | Activar un modo | Crear una única sesión activa |
-| Registrar actividad | Volver a la app, terminar sesión o recuperar red | Enviar eventos por lotes y actualizar progreso |
-| Finalizar sesión | Completar, cancelar o interrumpir | Guardar resultado final |
-| Resumen dashboard | Abrir o actualizar dashboard | Devolver estadísticas semanales |
-| Métricas internas | Consulta del equipo | Ver intención, activación y retención agregadas |
+| Tiempo enfocado | Suma de minutos en que una app de reemplazo estuvo en primer plano durante un modo activo | Al pausar, completar o cerrar una sesión de foco |
+| Bloqueos | Número de intentos únicos de abrir una app bloqueada durante un modo activo | Cuando aparece el overlay; evitar duplicados del mismo intento |
+| Desbloqueos ganados | Número de ciclos completados de foco que liberan tiempo para una app bloqueada | Al completar los minutos de foco del plan |
+| Sesiones completadas | Sesiones que terminan por completar el objetivo definido | Al cerrar una sesión con resultado `completed` |
+| Retorno | Día distinto en que la persona abre Rehabbit o usa un modo | Al abrir la app o empezar una sesión |
 
-## Reglas de implementación
+### Dashboard semanal
 
-1. Crear una cuenta anónima en la primera apertura.
-2. Guardar todo primero en el teléfono y sincronizar después.
-3. Sincronizar al abrir, volver a foreground, guardar un modo y terminar una sesión.
-4. Cada usuario solo puede acceder a sus propios datos.
-5. Usar identificadores únicos para que los reintentos no dupliquen eventos.
-6. Si no hay internet, los modos y el bloqueo Android deben seguir funcionando.
-7. Para el MVP, si hay conflicto entre dispositivos conserva la edición más reciente.
+Las barras semanales representan **minutos enfocados por día**, no una estimación de “tiempo ahorrado”.
 
-## Orden de trabajo
+El total semanal es la suma de esos minutos. La tendencia compara el total de la semana actual contra la semana anterior. Si todavía no existe un registro válido, se muestra “Estamos recopilando datos”.
 
-1. Configurar Supabase, Auth anónimo y acceso privado por usuario.
-2. Persistir perfil, onboarding y modos.
-3. Persistir sesiones y eventos.
-4. Conectar el dashboard.
-5. Crear la vista interna de métricas Lean Startup.
+No llamar “tiempo recuperado” a una estimación basada en bloqueos. Si se usa ese nombre en producto, debe significar el tiempo enfocado real de la tabla anterior.
+
+## Datos mínimos a guardar
+
+| Grupo | Guardar | No guardar |
+| --- | --- | --- |
+| Perfil | Identidad anónima, zona horaria, plataforma, versión, primera y última apertura, estado de onboarding | Nombre real, contactos, contenido del teléfono |
+| Onboarding | Todas las respuestas: uso declarado, reducción deseada, objetivo, texto “otro”, permisos, apps elegidas, duración y reemplazos | Historial completo de uso de otras apps |
+| Modos | Categoría, horario, días, duración, apps bloqueadas y de reemplazo, estado y fecha de edición | Iconos de terceros ni capturas |
+| Sesiones | Modo, inicio, fin, minutos enfocados, bloqueos, desbloqueos y resultado | Eventos de primer plano cada pocos segundos |
+| Producto | Apertura, onboarding, permisos, modo creado, sesión iniciada/completada e email aceptado/omitido | Texto privado no necesario |
+
+Las apps elegidas pueden guardarse dentro del modo para restaurarlo en el mismo usuario. Los eventos de producto no necesitan incluir el nombre o paquete de cada app.
+
+## Flujo local y sincronización
+
+1. Al abrir por primera vez, crear una identidad anónima de Supabase y conservar su sesión en el teléfono.
+2. Cada cambio se guarda primero en el teléfono. La app nunca espera una respuesta de red para guardar un modo o bloquear una app.
+3. El plan local se copia al almacenamiento nativo Android que usa el servicio de bloqueo. Ese almacenamiento nativo es el que mantiene el overlay funcionando en background y sin red.
+4. Cada sesión terminada y cada evento de producto se añade a una cola local con un identificador único.
+5. Sincronizar la cola al abrir la app, volver a foreground, guardar un modo y terminar una sesión. Enviar en lote y borrar de la cola solo después de una respuesta exitosa.
+6. Si falla la red, conservar la cola y reintentar después. Un mismo identificador no puede crear dos eventos.
+7. Si se usa el mismo usuario en dos teléfonos, el modo editado más recientemente gana. El historial de sesiones y eventos solo se agrega, nunca se reemplaza.
+
+## Qué llamadas hacen falta
+
+| Llamada | Tipo | Cuándo | Regla |
+| --- | --- | --- | --- |
+| Crear o restaurar identidad anónima | Auth | Primera apertura y arranque | Sin pantalla de login |
+| Leer respaldo de perfil y modos | API de datos con RLS | Arranque con red | Nunca bloquea el inicio local |
+| Guardar onboarding y modos | API de datos con RLS | Al completar un paso o editar | Primero local, luego sincronizar |
+| Enviar sesiones y eventos | API de datos con RLS | En lote | Idempotente por `event_id` |
+| Capturar email | Edge Function autenticada | Solo cuando la persona lo acepta | Validar, limitar frecuencia y guardar consentimiento |
+| Consultar métricas internas | Consulta privada o Edge Function | Solo equipo Rehabbit | Datos agregados, no datos personales individuales |
+
+No crear una Edge Function para cada toque ni para el bloqueo. Las tablas privadas con RLS son suficientes para datos del usuario. Reservar Edge Functions para validación de email, operaciones internas y agregados que no deben vivir en el cliente.
+
+## Email sin login
+
+La cuenta anónima identifica el dispositivo sin pedir datos personales. Pedir email no convierte al usuario en una cuenta con login y no debe prometer recuperación entre dispositivos todavía.
+
+Mostrar el pedido una sola vez cuando se cumplan todas estas condiciones:
+
+1. La persona abrió Rehabbit en dos días distintos.
+2. Pasaron al menos 24 horas desde la primera apertura.
+3. Creó un modo o inició una sesión.
+4. No dejó email ni rechazó el pedido en los últimos 14 días.
+
+Mensaje sugerido: “¿Quieres recibir tu progreso semanal? Déjanos tu email.” Debe ser opcional e incluir consentimiento explícito para recibir ese correo.
+
+Guardar email normalizado, fecha de consentimiento, versión del texto de consentimiento y resultado `accepted`, `skipped` o `dismissed`. Si se omite, volver a preguntar solo tras 14 días. Para recuperar datos en otro teléfono se añadirá después un magic link; no es parte de esta primera etapa.
+
+## Métricas Lean Startup
+
+| Pregunta | Métrica |
+| --- | --- |
+| ¿La persona entiende el valor? | Onboarding completado y modo creado |
+| ¿Activa Rehabbit? | Primera sesión iniciada o primer bloqueo real |
+| ¿Obtiene valor? | Primera sesión completada o primer desbloqueo ganado |
+| ¿Vuelve? | Apertura o sesión en un día distinto: semana 1, 2 y 4 |
+| ¿Tiene intención de seguir? | Email aceptado después de haber usado la app |
+
+La métrica principal inicial es: **porcentaje de personas que crean un modo y completan una primera sesión dentro de 24 horas de instalar Rehabbit**. El email es una señal secundaria de intención, no la métrica principal.
+
+## Orden de implementación
+
+1. Registrar localmente sesiones, minutos enfocados, bloqueos y desbloqueos; cambiar el dashboard para leer esas cifras reales.
+2. Crear Auth anónimo, perfil privado y reglas RLS por usuario.
+3. Sincronizar onboarding, modos y la cola de sesiones/eventos.
+4. Añadir la petición de email bajo las condiciones definidas y la Edge Function protegida.
+5. Crear una vista interna con métricas agregadas para el equipo.

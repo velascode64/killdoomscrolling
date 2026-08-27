@@ -18,7 +18,7 @@ export const ShadowCard = ({
 }: { children: React.ReactNode; tone?: CardTone } & React.ComponentProps<typeof View>) => (
   <View
     backgroundColor="transparent"
-    shadowColor="#4F46E5"
+    shadowColor="#483FFF"
     shadowOpacity={0.05}
     shadowRadius={10}
     borderRadius={16}

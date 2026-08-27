@@ -10,8 +10,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: "digitalbreak",
   userInterfaceStyle: "light",
   splash: {
-    image: "./assets/images/rehabbit-logo.png",
+    image: "./assets/images/rehabbit-splash.png",
     resizeMode: "contain",
+    backgroundColor: "#483FFF",
   },
   assetBundlePatterns: ["**/*"],
   ios: {

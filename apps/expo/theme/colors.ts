@@ -3,15 +3,15 @@ export const colors = {
     light: {
       primary1: "#F8FAFC",
       primary2: "#FFFFFF",
-      primary3: "#EEF2FF",
+      primary3: "#EEF3FF",
       primary4: "#E2E8F0",
-      primary5: "#C7D2FE",
-      primary6: "#A5B4FC",
-      primary7: "#818CF8",
-      primary8: "#6366F1",
-      primary9: "#4F46E5",
-      primary10: "#4338CA",
-      primary11: "#3730A3",
+      primary5: "#C7D8FF",
+      primary6: "#A5C2FF",
+      primary7: "#7CA3FF",
+      primary8: "#5B8CFF",
+      primary9: "#483FFF",
+      primary10: "#315BEA",
+      primary11: "#315BEA",
       primary12: "#1F2430",
     },
     dark: {
@@ -34,7 +34,7 @@ export const colors = {
       text1: "#F8FAFC",
       text2: "#F1F5F9",
       text3: "#E2E8F0",
-      text4: "#C7D2FE",
+      text4: "#C7D8FF",
       text5: "#A1A8B3",
       text6: "#878F9B",
       text7: "#707785",
@@ -61,11 +61,11 @@ export const colors = {
     light: {
       background1: "#F8FAFC",
       background2: "#FFFFFF",
-      background3: "#EEF2FF",
+      background3: "#EEF3FF",
       background4: "#E2E8F0",
-      background5: "#C7D2FE",
-      background6: "#A5B4FC",
-      background7: "#818CF8",
+      background5: "#C7D8FF",
+      background6: "#A5C2FF",
+      background7: "#7CA3FF",
       background8: "#707785",
       background9: "#565E6B",
       background10: "#414854",
@@ -116,17 +116,17 @@ export const colors = {
 };
 
 export const logoColors = {
-  "Electric Indigo": "#4F46E5",
-  "Supporting Indigo": "#6366F1",
+  "Electric Indigo": "#483FFF",
+  "Supporting Indigo": "#5B8CFF",
   "Progress Accent": "#38BDF8",
 };
 
-export const brandGradient = ["#4F46E5", "#6366F1"] as const;
+export const brandGradient = ["#4F3AE0", "#483FFF", "#5B8CFF"] as const;
 export const brandGlow = "#38BDF8";
 
 export const chartColors = {
-  primary: "#4C5CFF",
-  secondary: "#6366F1",
+  primary: "#483FFF",
+  secondary: "#5B8CFF",
   accent: "#38BDF8",
   label: "#94A3B8",
   grid: "#CBD5E1",

@@ -648,8 +648,8 @@ function ChoiceRow({ label, selected, onPress }: { label: string; selected: bool
       <SizableText color={selected ? "$primary11" : "$text11"} fontWeight="700" size="$5">{label}</SizableText>
       <View
         alignItems="center"
-        backgroundColor={selected ? "rgba(79, 70, 229, 0.12)" : "$background"}
-        borderColor={selected ? "rgba(79, 70, 229, 0.24)" : "$borderColor"}
+        backgroundColor={selected ? "rgba(72, 63, 255, 0.12)" : "$background"}
+        borderColor={selected ? "rgba(72, 63, 255, 0.24)" : "$borderColor"}
         borderRadius={99}
         borderWidth={1}
         height={25}

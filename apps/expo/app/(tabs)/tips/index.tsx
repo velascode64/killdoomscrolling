@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   eyebrow: {
-    color: "#4F46E5",
+    color: "#483FFF",
     fontFamily: "SatoshiBold",
     fontSize: 10,
     letterSpacing: 1.8,
@@ -121,9 +121,9 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
   },
   activeChip: {
-    backgroundColor: "#EEF2FF",
-    borderColor: "rgba(79, 70, 229, 0.24)",
-    color: "#4F46E5",
+    backgroundColor: "#EEF3FF",
+    borderColor: "rgba(72, 63, 255, 0.24)",
+    color: "#483FFF",
   },
   feed: {
     gap: 16,

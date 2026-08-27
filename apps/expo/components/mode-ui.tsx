@@ -81,7 +81,8 @@ export function ModeRadial({
         <Defs>
           <SvgLinearGradient id="mode-radial" x1="0%" y1="0%" x2="100%" y2="100%">
             <Stop offset="0" stopColor={brandGradient[0]} />
-            <Stop offset="1" stopColor={brandGradient[1]} />
+            <Stop offset="0.5" stopColor={brandGradient[1]} />
+            <Stop offset="0.96" stopColor={brandGradient[2]} />
           </SvgLinearGradient>
         </Defs>
         <Circle
