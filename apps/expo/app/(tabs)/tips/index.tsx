@@ -1,18 +1,22 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { TipCard } from "../../../components/tips/TipCard";
-import { tips } from "../../../data/tips";
-import type { TipCategory } from "../../../data/tips";
+import { loadTips } from "../../../data/tips.repository";
+import type { Tip, TipCategory } from "../../../data/tips";
 
 const categories: ("All" | TipCategory)[] = ["All", "Detox", "Environment", "Focus", "Rehabit"];
 
 export default function TipsScreen() {
   const insets = useSafeAreaInsets();
   const [activeCategory, setActiveCategory] = useState<(typeof categories)[number]>("All");
+  const [tips, setTips] = useState<Tip[]>([]);
+  useEffect(() => {
+    void loadTips().then(setTips).catch((error: unknown) => console.warn("Unable to load tips", error));
+  }, []);
   const visibleTips =
     activeCategory === "All" ? tips : tips.filter((tip) => tip.category === activeCategory);
 

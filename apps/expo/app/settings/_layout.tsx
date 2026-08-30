@@ -12,7 +12,7 @@ const SettingsLayout = observer(() => {
       <Stack.Screen
         name="index"
         options={{
-          title: "Settings",
+          title: "Ajustes",
           presentation: "modal",
           headerRight: () => {
             return (
@@ -29,7 +29,7 @@ const SettingsLayout = observer(() => {
                 backgroundColor={"transparent"}
               >
                 <SizableText color="$text11" size="$4">
-                  Done
+                  Listo
                 </SizableText>
               </Button>
             );
@@ -39,7 +39,7 @@ const SettingsLayout = observer(() => {
       <Stack.Screen
         name="delete-app-data"
         options={{
-          title: "Delete App Data",
+          title: "Eliminar mis datos",
           presentation: "modal",
           headerRight: () => {
             return (
@@ -56,7 +56,7 @@ const SettingsLayout = observer(() => {
                 backgroundColor={"transparent"}
               >
                 <SizableText color="$text11" size="$4">
-                  Cancel
+                  Cancelar
                 </SizableText>
               </Button>
             );
@@ -72,9 +72,13 @@ const SettingsLayout = observer(() => {
       <Stack.Screen
         name="theme"
         options={{
-          title: "Theme",
+          title: "Tema",
         }}
       />
+      <Stack.Screen name="permissions" options={{ title: "Permisos" }} />
+      <Stack.Screen name="privacy" options={{ title: "Privacidad y datos" }} />
+      <Stack.Screen name="terms" options={{ title: "Términos y condiciones" }} />
+      <Stack.Screen name="about" options={{ title: "Acerca de" }} />
     </Stack>
   );
 });

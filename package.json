@@ -14,7 +14,8 @@
     "android:metro": "bun run --cwd apps/expo dev:client",
     "android:usb": "adb reverse tcp:8081 tcp:8081",
     "android:apk": "bun run --cwd apps/expo android:apk",
-    "android:device": "bun run --cwd apps/expo android:device"
+    "android:device": "bun run --cwd apps/expo android:device",
+    "eas:android:production": "cd apps/expo && EAS_SKIP_AUTO_FINGERPRINT=1 npx eas-cli@latest build --platform android --profile production"
   },
   "workspaces": [
     "packages/*",

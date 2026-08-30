@@ -2,13 +2,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet } from "react-native";
 import { View } from "tamagui";
 
-type CardTone = "aqua" | "mint" | "sky" | "surface";
+type CardTone = "aqua" | "blocked" | "mint" | "sky" | "solid" | "surface";
 
 const CARD_GRADIENTS: Record<CardTone, readonly [string, string, ...string[]]> = {
   surface: ["rgba(255,255,255,0.99)", "rgba(248,250,252,0.96)"],
   aqua: ["rgba(255,255,255,0.99)", "rgba(238,242,255,0.58)"],
   sky: ["rgba(255,255,255,0.99)", "rgba(240,249,255,0.52)"],
   mint: ["rgba(255,255,255,0.99)", "rgba(248,250,252,0.96)"],
+  solid: ["#FFFFFF", "#FFFFFF"],
+  blocked: ["#1F2847", "#314176", "#483FFF"],
 };
 
 export const ShadowCard = ({

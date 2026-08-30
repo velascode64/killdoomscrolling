@@ -1,112 +1,76 @@
-import { TrendingUp } from "@tamagui/lucide-icons";
-import dayjs from "dayjs";
-import weekday from "dayjs/plugin/weekday";
+import { LinearGradient } from "expo-linear-gradient";
 import { observer } from "mobx-react-lite";
-import { SizableText, View, XStack, YStack } from "tamagui";
+import { StyleSheet, Text, View } from "react-native";
 
 import { OverviewStore } from "../data/overview.store";
-import { ShadowCard } from "./shadow.card";
-
-dayjs.extend(weekday);
-
-const DAY_LABELS = ["L", "M", "X", "J", "V", "S", "D"];
-const EMPTY_CHART_LEVELS = [90, 78, 67, 55, 45, 34, 24];
 
 export const WeeklySummary = observer(() => {
-  const dailyValues = DAY_LABELS.map((_, day) => {
-    const dayStart = dayjs().weekday(day).startOf("day").valueOf();
-    const dayEnd = dayjs().weekday(day).endOf("day").valueOf();
-    return OverviewStore.hoursSaved({ from: dayStart, to: dayEnd });
-  });
-  const savedThisWeek = OverviewStore.hoursSaved({
-    from: dayjs().weekday(0).startOf("week").valueOf(),
-    to: dayjs().valueOf(),
-  });
-  const savedLastWeek = OverviewStore.hoursSaved({
-    from: dayjs().weekday(-7).startOf("week").valueOf(),
-    to: dayjs().weekday(-7).endOf("week").valueOf(),
-  });
-  const trend = savedLastWeek > 0 ? ((savedThisWeek - savedLastWeek) / savedLastWeek) * 100 : 0;
-  const hasData = OverviewStore.totalInterrupted > 0 || OverviewStore.totalPrevented > 0;
-  const chartValues = hasData ? dailyValues : EMPTY_CHART_LEVELS;
-  const maxValue = Math.max(...chartValues, 0);
-  const chartMaximum = hasData ? Math.max(maxValue, 4) : 100;
-  const totalLabel = hasData ? `${Math.floor(savedThisWeek)}h ${Math.round((savedThisWeek % 1) * 60)}m` : "—";
-  const trendLabel = hasData ? `${trend >= 0 ? "+" : ""}${Math.round(trend)}%` : "—";
+  const prevented = OverviewStore.totalPrevented;
+  const focusedMinutes = OverviewStore.focusedMinutes;
 
   return (
-    <ShadowCard padding="$5" tone="aqua">
-      <View position="relative">
-        <YStack gap="$4" opacity={hasData ? 1 : 0.38}>
-          <XStack gap="$3" height={142}>
-            <YStack justifyContent="space-between" paddingBottom={25} width={30}>
-              <SizableText color="$text6" fontSize="$2">{hasData ? `${chartMaximum.toFixed(0)}h` : "—"}</SizableText>
-              <SizableText color="$text6" fontSize="$2">{hasData ? `${(chartMaximum / 2).toFixed(0)}h` : "—"}</SizableText>
-              <SizableText color="$text6" fontSize="$2">{hasData ? "0h" : "—"}</SizableText>
-            </YStack>
-            <XStack alignItems="flex-end" flex={1} gap="$2">
-              {chartValues.map((value, day) => {
-                const isToday = hasData && dayjs().weekday(day).isSame(dayjs(), "day");
-                const barHeight = Math.max(3, (value / chartMaximum) * 104);
-                return (
-                  <YStack alignItems="center" flex={1} gap="$2" justifyContent="flex-end" key={DAY_LABELS[day]}>
-                    <View
-                      backgroundColor={isToday ? "$primary9" : "$primary5"}
-                      borderRadius={99}
-                      height={barHeight}
-                      minHeight={3}
-                      width={8}
-                    />
-                    <SizableText color={isToday ? "$text11" : "$text6"} fontSize="$2" fontWeight={isToday ? "900" : "600"}>
-                      {DAY_LABELS[day]}
-                    </SizableText>
-                  </YStack>
-                );
-              })}
-            </XStack>
-          </XStack>
-
-          <View backgroundColor="$borderColor" height={1} />
-
-          <XStack alignItems="flex-end" justifyContent="space-between">
-            <YStack gap="$1">
-              <SizableText color="$text6" fontSize="$2">Total enfocado</SizableText>
-              <SizableText color="$text11" fontSize="$7" fontWeight="900">{totalLabel}</SizableText>
-            </YStack>
-            <YStack alignItems="flex-end" gap="$1">
-              <SizableText color="$text6" fontSize="$2">Tendencia</SizableText>
-              <XStack alignItems="center" gap="$1">
-                <TrendingUp color="$primary11" size={17} />
-                <SizableText color="$primary11" fontSize="$6" fontWeight="900">{trendLabel}</SizableText>
-              </XStack>
-            </YStack>
-          </XStack>
-        </YStack>
-
-        {!hasData && (
-          <YStack
-            alignItems="center"
-            backgroundColor="rgba(248, 250, 252, 0.72)"
-            borderRadius={22}
-            bottom={0}
-            justifyContent="center"
-            left={0}
-            paddingHorizontal="$5"
-            right={0}
-            top={0}
-            position="absolute"
-          >
-            <YStack alignItems="center" gap="$1" maxWidth={250}>
-              <SizableText color="$text11" fontSize="$5" fontWeight="900" textAlign="center">
-                Estamos recopilando datos
-              </SizableText>
-              <SizableText color="$text10" fontSize="$3" lineHeight={19} textAlign="center">
-                Una vez recopilemos datos, aquí verás tus estadísticas.
-              </SizableText>
-            </YStack>
-          </YStack>
-        )}
+    <LinearGradient
+      colors={["#1F2847", "#314176", "#483FFF"]}
+      end={{ x: 1, y: 1 }}
+      start={{ x: 0, y: 0 }}
+      style={styles.card}
+    >
+      <View style={styles.header}>
+        <Text style={styles.title}>Resumen</Text>
       </View>
-    </ShadowCard>
+      <View style={styles.metrics}>
+        <View style={styles.metric}>
+          <Text style={styles.value}>{prevented}x</Text>
+          <Text style={styles.label}>Evitados</Text>
+        </View>
+        <View style={styles.metric}>
+          <Text style={styles.value}>{focusedMinutes} MIN</Text>
+          <Text style={styles.label}>Tiempo ahorrado</Text>
+        </View>
+      </View>
+    </LinearGradient>
   );
+});
+
+const styles = StyleSheet.create({
+  card: {
+    borderRadius: 30,
+    minHeight: 184,
+    overflow: "hidden",
+    padding: 22,
+  },
+  header: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  label: {
+    color: "rgba(236, 242, 255, 0.76)",
+    fontFamily: "Satoshi",
+    fontSize: 15,
+    lineHeight: 20,
+    marginTop: 2,
+  },
+  metric: {
+    flex: 1,
+  },
+  metrics: {
+    flexDirection: "row",
+    gap: 18,
+    marginTop: "auto",
+  },
+  title: {
+    color: "#FFFFFF",
+    fontFamily: "SatoshiBlack",
+    fontSize: 32,
+    letterSpacing: -0.8,
+    lineHeight: 37,
+  },
+  value: {
+    color: "#FFFFFF",
+    fontFamily: "SatoshiBlack",
+    fontSize: 28,
+    letterSpacing: -0.4,
+    lineHeight: 33,
+  },
 });
