@@ -39,6 +39,7 @@
     "react-native": "*"
   },
   "dependencies": {
-    "expo-file-system": "~19.0.21"
+    "expo-file-system": "~19.0.21",
+    "lru-cache": "^10.4.3"
   }
 }

@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.gdesign.digitalbreak'
+    namespace 'com.velascode.rehabbit'
     defaultConfig {
-        applicationId 'com.gdesign.digitalbreak'
+        applicationId 'com.velascode.rehabbit'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -11,6 +11,7 @@ import { ThemeProvider, useTheme } from "../components/theme-provider";
 import { BreakStore } from "../data/break.store";
 import { clearShortcutListener, listenForShortcut } from "../data/shortcut.listener";
 import { ShortCutPayload } from "../data/shortcut.payload";
+import { bootstrapSupabase } from "../data/supabase-bootstrap";
 import config from "../tamagui.config";
 
 export const unstable_settings = {
@@ -35,6 +36,12 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
+  useEffect(() => {
+    void bootstrapSupabase().catch((supabaseError: unknown) => {
+      // The app stays local-first if Supabase is unavailable.
+      console.warn("Supabase bootstrap failed", supabaseError);
+    });
+  }, []);
   const appState = useRef(AppState.currentState);
   useEffect(() => {
     // The original product receives iOS Shortcut/AppIntent callbacks. Android
@@ -71,6 +78,9 @@ export default function RootLayout() {
     };
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+        void bootstrapSupabase().catch((supabaseError: unknown) => {
+          console.warn("Supabase foreground sync failed", supabaseError);
+        });
         checkShortcut();
         console.log("App has come to the foreground!");
       } else if (appState.current.match(/active/) && nextAppState === "background") {

@@ -3,7 +3,7 @@ import type { ConfigContext, ExpoConfig } from "expo/config";
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Rehabbit",
-  slug: "digitalbreak",
+  slug: "digital-break-app",
   version: "1.0.2",
   orientation: "portrait",
   icon: "./assets/images/rehabbit-logo.png",
@@ -24,7 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
   },
   android: {
-    package: "com.gdesign.digitalbreak",
+    package: "com.velascode.rehabbit",
   },
   web: {
     bundler: "metro",
@@ -94,7 +94,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       origin: false,
     },
     eas: {
-      projectId: "4fb26108-8286-4f78-b25f-1c10a7c6e82b",
+      projectId: "e31cb166-348d-46db-b35c-520cba7d573c",
     },
   },
 });

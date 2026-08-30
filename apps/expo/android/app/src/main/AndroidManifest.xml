@@ -4,11 +4,11 @@
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions"/>
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove"/>
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
@@ -41,7 +41,7 @@
         <action android:name="android.intent.action.BOOT_COMPLETED"/>
       </intent-filter>
     </receiver>
-    <activity-alias android:name="com.gdesign.digitalbreak.MainActivityprimary" android:enabled="false" android:exported="true" android:icon="@mipmap/primary" android:targetActivity=".MainActivity">
+    <activity-alias android:name="com.velascode.rehabbit.MainActivityprimary" android:enabled="false" android:exported="true" android:icon="@mipmap/primary" android:targetActivity=".MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -54,7 +54,7 @@
         <data android:scheme="exp+digitalbreak"/>
       </intent-filter>
     </activity-alias>
-    <activity-alias android:name="com.gdesign.digitalbreak.MainActivitylight" android:enabled="false" android:exported="true" android:icon="@mipmap/light" android:targetActivity=".MainActivity">
+    <activity-alias android:name="com.velascode.rehabbit.MainActivitylight" android:enabled="false" android:exported="true" android:icon="@mipmap/light" android:targetActivity=".MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -67,7 +67,7 @@
         <data android:scheme="exp+digitalbreak"/>
       </intent-filter>
     </activity-alias>
-    <activity-alias android:name="com.gdesign.digitalbreak.MainActivitydark" android:enabled="false" android:exported="true" android:icon="@mipmap/dark" android:targetActivity=".MainActivity">
+    <activity-alias android:name="com.velascode.rehabbit.MainActivitydark" android:enabled="false" android:exported="true" android:icon="@mipmap/dark" android:targetActivity=".MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>

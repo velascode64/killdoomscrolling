@@ -1,17 +1,28 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { TipArtwork } from "../../../components/tips/TipArtwork";
-import { getTipById } from "../../../data/tips";
+import { loadTip } from "../../../data/tips.repository";
+import type { Tip } from "../../../data/tips";
 
 export default function TipDetailScreen() {
   const { tipId } = useLocalSearchParams<{ tipId: string }>();
   const insets = useSafeAreaInsets();
-  const tip = getTipById(tipId);
+  const [tip, setTip] = useState<Tip | undefined>();
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    void loadTip(tipId)
+      .then(setTip)
+      .catch((error: unknown) => console.warn("Unable to load tip", error))
+      .finally(() => setLoaded(true));
+  }, [tipId]);
+
+  if (!loaded) return <View style={styles.screen} />;
 
   if (!tip) {
     return (

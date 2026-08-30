@@ -51,6 +51,7 @@ import {
 } from "../data/android-reward";
 import type { AndroidRewardPlan, PlanCategory, PlanCustomCategory } from "../data/android-reward";
 import { markOnboardingCompleted } from "../data/onboarding-state";
+import { syncModes, syncOnboarding, trackProductEvent } from "../data/supabase-sync";
 
 const durationOptions = [15, 25, 60];
 const phoneUseOptions = [1, 2, 4, 8];
@@ -409,6 +410,32 @@ export default function OnboardingScreen() {
       if (!isDirectEditor) await markOnboardingCompleted();
       configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
       if (enabled) startMonitoring();
+      void syncModes(nextPlans).catch((error: unknown) => console.warn("Unable to sync modes", error));
+      if (isDirectEditor) {
+        void trackProductEvent(isEditing ? "mode_updated" : "mode_created", {
+          category: nextPlan.category,
+          enabled,
+        }).catch((error: unknown) => console.warn("Unable to track mode", error));
+      } else {
+        void Promise.all([
+          syncOnboarding({
+            blockedAppCount: nextPlan.blockedPackages.length,
+            customGoal: goal === "Otro" ? customGoal.trim() : null,
+            goal,
+            objectives,
+            phoneUseHours: phoneUse,
+            productiveAppCount: nextPlan.productivePackages.length,
+            productiveMinutes: nextPlan.productiveMinutes,
+            unlockMinutes: nextPlan.unlockMinutes,
+          }),
+          trackProductEvent("onboarding_completed", {
+            blockedAppCount: nextPlan.blockedPackages.length,
+            goal,
+            productiveAppCount: nextPlan.productivePackages.length,
+          }),
+          trackProductEvent("mode_created", { category: nextPlan.category, enabled }),
+        ]).catch((error: unknown) => console.warn("Unable to sync onboarding", error));
+      }
       router.replace("/(tabs)/overview");
     } catch {
       Alert.alert("No se pudo guardar", "Intenta guardar el modo de nuevo.");
@@ -416,6 +443,9 @@ export default function OnboardingScreen() {
   };
 
   const continueOnboarding = () => {
+    if (step === 0) {
+      void trackProductEvent("onboarding_started").catch((error: unknown) => console.warn("Unable to track onboarding", error));
+    }
     if (step === 3) setCategory(categoryForGoal(goal));
     if (step === 4 && Platform.OS === "android") {
       // Permission access is optional during exploration; Android validates it on activation.
@@ -887,21 +917,26 @@ function Editor({
 }
 
 function AppGroupCard({ apps, description, label, onPress }: { apps: AndroidBlockableApp[]; description: string; label: string; onPress: () => void }) {
+  const isBlockedApps = label === "Bloquear";
   return (
     <YStack gap="$3">
       <H4 color="$text11">{label}</H4>
       <ShadowCard
         padding="$5"
         pressStyle={{ opacity: 0.75 }}
-        tone={label === "Rehabbit" ? "mint" : "aqua"}
+        tone={isBlockedApps ? "blocked" : "mint"}
+        borderColor={isBlockedApps ? "rgba(255,255,255,0.14)" : "#E2E8F0"}
+        shadowColor={isBlockedApps ? "#1F2847" : "#483FFF"}
+        shadowOpacity={isBlockedApps ? 0.22 : 0.05}
+        shadowRadius={isBlockedApps ? 16 : 10}
         onPress={onPress}
       >
         <XStack alignItems="center" gap="$3" justifyContent="space-between">
           <YStack flex={1} gap="$1">
-            <SizableText color="$text11" fontWeight="800">{apps.length ? `${apps.length} apps seleccionadas` : "Seleccionar apps"}</SizableText>
-            <SizableText color="$text10" size="$3">{description}</SizableText>
+            <SizableText color={isBlockedApps ? "#FFFFFF" : "$text11"} fontWeight="800">{apps.length ? `${apps.length} apps seleccionadas` : "Seleccionar apps"}</SizableText>
+            <SizableText color={isBlockedApps ? "rgba(236,242,255,0.76)" : "$text10"} size="$3">{description}</SizableText>
           </YStack>
-          {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color="$text11" size={22} />}
+          {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color={isBlockedApps ? "#FFFFFF" : "$text11"} size={22} />}
         </XStack>
       </ShadowCard>
     </YStack>

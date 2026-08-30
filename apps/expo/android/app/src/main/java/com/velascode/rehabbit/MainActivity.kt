@@ -1,4 +1,4 @@
-package com.gdesign.digitalbreak
+package com.velascode.rehabbit
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

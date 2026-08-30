@@ -34,6 +34,11 @@ class OverviewStoreSingleton {
     return this.appStatisticsStore.getEvents({ type: "app-close" }).length;
   }
 
+  /** Real focus minutes will be populated from completed native focus sessions. */
+  get focusedMinutes(): number {
+    return 0;
+  }
+
   get totalPreventedInPercentage(): number {
     const totalInterrupted = this.totalInterrupted;
     const totalPrevented = this.totalPrevented;

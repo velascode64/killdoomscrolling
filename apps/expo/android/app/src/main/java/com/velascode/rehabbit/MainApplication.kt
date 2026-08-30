@@ -1,4 +1,4 @@
-package com.gdesign.digitalbreak
+package com.velascode.rehabbit
 
 import android.app.Application
 import android.content.res.Configuration
