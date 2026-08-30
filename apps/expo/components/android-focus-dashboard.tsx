@@ -1,4 +1,4 @@
-import { Clock3, Focus, Plus, Settings } from "@tamagui/lucide-icons";
+import { CircleMinus, Clock3, Plus, Settings } from "@tamagui/lucide-icons";
 import {
   configureRewardBlockerPlans,
   getInstalledApps,
@@ -11,7 +11,7 @@ import type { AndroidBlockableApp } from "expo-app-blocker";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { AppState, Platform } from "react-native";
-import { Button, H4, Paragraph, Sheet, SizableText, View, XStack, YStack } from "tamagui";
+import { Button, H4, Paragraph, Sheet, SizableText, Spinner, View, XStack, YStack } from "tamagui";
 
 import {
   formatPlanTime,
@@ -28,6 +28,7 @@ export function AndroidFocusDashboard() {
   const [plans, setPlans] = useState<AndroidRewardPlan[]>([]);
   const [installedApps, setInstalledApps] = useState<AndroidBlockableApp[]>([]);
   const [permissions, setPermissions] = useState({ overlay: true, usageStats: true });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (Platform.OS !== "android") return;
@@ -51,12 +52,28 @@ export function AndroidFocusDashboard() {
       if (currentPlans.some((plan) => plan.enabled)) startMonitoring();
     };
 
-    void refresh().catch((error) => console.warn("Unable to load Android plans", error));
+    void refresh()
+      .catch((error) => console.warn("Unable to load Android plans", error))
+      .finally(() => setLoading(false));
     const subscription = AppState.addEventListener("change", (nextState) => {
       if (nextState === "active") void refresh();
     });
     return () => subscription.remove();
   }, []);
+
+  if (loading) {
+    return (
+      <YStack gap="$3">
+        <SectionHeader />
+        <ShadowCard tone="aqua">
+          <YStack alignItems="center" gap="$3" paddingVertical="$4">
+            <Spinner color="$primary11" size="large" />
+            <SizableText color="$text10" fontWeight="700">Cargando tus modos...</SizableText>
+          </YStack>
+        </ShadowCard>
+      </YStack>
+    );
+  }
 
   if (!plans.length) {
     return (
@@ -66,7 +83,7 @@ export function AndroidFocusDashboard() {
           <ShadowCard tone="aqua">
             <YStack gap="$4">
               <View alignItems="center" backgroundColor="$primary3" borderRadius={99} height={56} justifyContent="center" width={56}>
-                <Focus color="$primary11" size={26} />
+                <CircleMinus color="$primary11" size={26} />
               </View>
               <YStack gap="$2">
                 <H4 color="$text11">Start Your Journey</H4>

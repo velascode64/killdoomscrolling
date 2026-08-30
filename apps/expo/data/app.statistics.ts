@@ -2,6 +2,7 @@ import * as Crypto from "expo-crypto";
 import { action, makeAutoObservable, observable } from "mobx";
 
 import { Storage } from "./storage";
+import { trackProductEvent } from "./supabase-sync";
 
 interface Event {
   id: string;
@@ -62,6 +63,14 @@ export class AppStatisticsStore {
       timestamp: timestamp ?? Date.now(),
     };
     await this.storage.create(event);
+    const eventName = type === "break-start"
+      ? "block_overlay_shown"
+      : type === "app-reopen"
+        ? "blocked_app_unlocked"
+        : "break_completed";
+    void trackProductEvent(eventName).catch((error: unknown) => {
+      console.warn("Unable to sync product event", error);
+    });
   }
 
   public async deleteEventsByAppId(appId: string) {

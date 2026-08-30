@@ -4,7 +4,7 @@ import {
   Brain,
   Briefcase,
   Dumbbell,
-  Focus,
+  CircleMinus,
   Heart,
   Music,
   Palette,
@@ -39,7 +39,7 @@ export function CategoryGlyph({ icon, color = "$text11", size = 20 }: { icon: Ca
   if (icon === "heart") return <Heart {...props} />;
   if (icon === "music") return <Music {...props} />;
   if (icon === "star") return <Star {...props} />;
-  return <Focus {...props} />;
+  return <CircleMinus {...props} />;
 }
 
 export function CategorySelector({

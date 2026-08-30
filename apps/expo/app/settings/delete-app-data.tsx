@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import { Alert } from "react-native";
 import { Button, Label, SizableText, View, XStack, YStack } from "tamagui";
 import { Container } from "../../components/container";
 import { AppSettings } from "../../data/app.settings";
@@ -10,8 +11,8 @@ const DeleteAppData = () => (
       <View flexDirection="row" justifyContent="flex-end">
         <YStack space="$2">
           <Label size="$3" lineHeight={21} htmlFor={"delete-popover"}>
-            You are about to delete all your app data. This action cannot be
-            undone.
+            Se eliminarán tus modos, respuestas de onboarding, estadísticas y
+            eventos sincronizados. Esta acción no se puede deshacer.
           </Label>
 
           <XStack space="$2" alignItems="center" marginTop="$2">
@@ -22,7 +23,7 @@ const DeleteAppData = () => (
               flexDirection="row"
               onPress={() => router.back()}
             >
-              <SizableText fontWeight={"bold"}>Cancel</SizableText>
+              <SizableText fontWeight={"bold"}>Cancelar</SizableText>
             </Button>
             <Button
               variant="outlined"
@@ -31,16 +32,19 @@ const DeleteAppData = () => (
               borderWidth={1}
               size="$3"
               backgroundColor={"rgba(255,0,0,0.1)"}
-              onPress={() => {
-                void AppSettings.dangerouslyDeleteAllData().then(() => {
-                  void OverviewStore.init().then(() => {
-                    router.back();
-                  });
-                });
+              onPress={async () => {
+                try {
+                  await AppSettings.dangerouslyDeleteAllData();
+                  await OverviewStore.init();
+                  router.replace("/");
+                } catch (error) {
+                  console.warn("Unable to delete Rehabbit data", error);
+                  Alert.alert("No se pudieron eliminar los datos", "Conéctate a internet e inténtalo nuevamente para eliminar también los datos sincronizados.");
+                }
               }}
             >
               <SizableText color="red" fontWeight={"bold"}>
-                Delete all data
+                Eliminar mis datos
               </SizableText>
             </Button>
           </XStack>

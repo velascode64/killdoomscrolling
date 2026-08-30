@@ -50,7 +50,6 @@ const Overview = observer(() => {
       <YStack space="$4">
         {Platform.OS === "android" && (
           <>
-            <H4 color="$text11" fontSize="$7">Resumen semanal</H4>
             <WeeklySummary />
             <AndroidFocusDashboard />
           </>
