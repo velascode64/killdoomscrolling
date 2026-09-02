@@ -1,4 +1,18 @@
-import { Search, X } from "@tamagui/lucide-icons";
+import {
+  Briefcase,
+  ChevronDown,
+  ChevronRight,
+  Gamepad2,
+  Headphones,
+  Images,
+  LayoutGrid,
+  MapPinned,
+  Newspaper,
+  Play,
+  Search,
+  Users,
+  X,
+} from "@tamagui/lucide-icons";
 import type { AndroidAppCategory, AndroidBlockableApp } from "expo-app-blocker";
 import { useDeferredValue, useEffect, useState } from "react";
 import { Image, SectionList } from "react-native";
@@ -33,8 +47,22 @@ const CATEGORY_LABELS: Record<AndroidAppCategory, string> = {
 type AppSection = {
   category: AndroidAppCategory;
   data: AndroidBlockableApp[];
+  selectedCount: number;
   title: string;
 };
+
+function CategoryIcon({ category, color }: { category: AndroidAppCategory; color: string }) {
+  const props = { color, size: 18 };
+  if (category === "social") return <Users {...props} />;
+  if (category === "productivity") return <Briefcase {...props} />;
+  if (category === "video") return <Play {...props} />;
+  if (category === "audio") return <Headphones {...props} />;
+  if (category === "game") return <Gamepad2 {...props} />;
+  if (category === "news") return <Newspaper {...props} />;
+  if (category === "maps") return <MapPinned {...props} />;
+  if (category === "image") return <Images {...props} />;
+  return <LayoutGrid {...props} />;
+}
 
 export function AppSelectionList({
   apps,
@@ -51,10 +79,12 @@ export function AppSelectionList({
   onSearchFocus?: () => void;
   onToggle: (packageName: string) => void;
 }) {
+  const [expandedCategories, setExpandedCategories] = useState<Set<AndroidAppCategory>>(() => new Set());
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query.trim().toLocaleLowerCase());
 
   useEffect(() => {
+    setExpandedCategories(new Set());
     setQuery("");
   }, [resetKey]);
 
@@ -63,11 +93,28 @@ export function AppSelectionList({
         `${app.name} ${app.packageName}`.toLocaleLowerCase().includes(deferredQuery),
       )
     : apps;
-  const sections = CATEGORY_ORDER.reduce<AppSection[]>((result, category) => {
+  const groupedSections = CATEGORY_ORDER.reduce<AppSection[]>((result, category) => {
     const data = filteredApps.filter((app) => (app.category ?? "other") === category);
-    if (data.length > 0) result.push({ category, data, title: CATEGORY_LABELS[category] });
+    const selectedCount = apps.filter(
+      (app) => (app.category ?? "other") === category && selectedPackages.includes(app.packageName),
+    ).length;
+    if (data.length > 0) result.push({ category, data, selectedCount, title: CATEGORY_LABELS[category] });
     return result;
   }, []);
+  const searching = deferredQuery.length > 0;
+  const sections = groupedSections.map((section) => ({
+    ...section,
+    data: searching || expandedCategories.has(section.category) ? section.data : [],
+  }));
+
+  const toggleCategory = (category: AndroidAppCategory) => {
+    setExpandedCategories((current) => {
+      const next = new Set(current);
+      if (next.has(category)) next.delete(category);
+      else next.add(category);
+      return next;
+    });
+  };
 
   return (
     <YStack flex={height ? undefined : 1} gap="$3" height={height}>
@@ -106,7 +153,7 @@ export function AppSelectionList({
         showsVerticalScrollIndicator={false}
         stickySectionHeadersEnabled={false}
         keyExtractor={(app) => app.packageName}
-        ListEmptyComponent={
+        ListEmptyComponent={groupedSections.length === 0 ? (
           <YStack alignItems="center" gap="$2" paddingVertical="$8">
             <Search color="$text6" size={26} />
             <SizableText color="$text10" textAlign="center">
@@ -115,17 +162,53 @@ export function AppSelectionList({
                 : "No encontramos aplicaciones con ese nombre."}
             </SizableText>
           </YStack>
-        }
-        renderSectionHeader={({ section }) => (
-          <XStack alignItems="center" justifyContent="space-between" paddingBottom="$2" paddingTop="$3">
-            <SizableText color="$text10" fontWeight="900" size="$3">
-              {section.title}
-            </SizableText>
-            <SizableText color="$text6" fontWeight="700" size="$2">
-              {section.data.length}
-            </SizableText>
-          </XStack>
-        )}
+        ) : null}
+        renderSectionHeader={({ section }) => {
+          const expanded = searching || expandedCategories.has(section.category);
+          const hasSelection = section.selectedCount > 0;
+          return (
+            <Button
+              unstyled
+              alignItems="center"
+              backgroundColor={hasSelection ? "$primary9" : "#FFFFFF"}
+              borderColor={hasSelection ? "$primary9" : "#E2E8F0"}
+              borderRadius={16}
+              borderWidth={1}
+              flexDirection="row"
+              justifyContent="space-between"
+              marginBottom={expanded ? "$2" : 0}
+              marginTop="$2"
+              minHeight={52}
+              paddingHorizontal="$3"
+              pressStyle={{ opacity: 0.72 }}
+              onPress={() => toggleCategory(section.category)}
+            >
+              <XStack alignItems="center" flex={1} gap="$2" minWidth={0}>
+                <View
+                  alignItems="center"
+                  backgroundColor={hasSelection ? "rgba(255,255,255,0.18)" : "$primary3"}
+                  borderRadius={10}
+                  height={32}
+                  justifyContent="center"
+                  width={32}
+                >
+                  <CategoryIcon category={section.category} color={hasSelection ? "#FFFFFF" : "#315BEA"} />
+                </View>
+                <SizableText color={hasSelection ? "white" : "$text11"} fontWeight="800" numberOfLines={1} size="$3">
+                  {section.title}
+                </SizableText>
+              </XStack>
+              <XStack alignItems="center" gap="$2">
+                <SizableText color={hasSelection ? "white" : "$text6"} fontWeight="700" size="$2">
+                  {section.selectedCount} {section.selectedCount === 1 ? "seleccionada" : "seleccionadas"}
+                </SizableText>
+                {expanded
+                  ? <ChevronDown color={hasSelection ? "white" : "$primary9"} size={18} />
+                  : <ChevronRight color={hasSelection ? "white" : "$primary9"} size={18} />}
+              </XStack>
+            </Button>
+          );
+        }}
         renderItem={({ item }) => (
           <View paddingBottom="$2">
             <AppPickerRow
