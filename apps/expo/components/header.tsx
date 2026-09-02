@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { DarkTheme } from "@react-navigation/native";
 import { Cog } from "@tamagui/lucide-icons";
-import { Button, Heading, Image, XStack } from "tamagui";
+import { Button, Heading, Image, View, XStack } from "tamagui";
 
 import { useTheme } from "./theme-provider";
 
@@ -25,31 +25,18 @@ export const Header = ({ isSticky, ...props }: React.ComponentProps<typeof XStac
       {...props}
     >
       <XStack space="$2" alignItems="center">
-        <Button
-          shadowColor={"black"}
-          shadowOpacity={0.1}
-          shadowRadius={6}
-          borderColor={"$grey3"}
-          shadowOffset={{ width: 0, height: 2 }}
-          width={36}
-          height={36}
-          backgroundColor={"rgba(0,0,0,0.05)"}
-          borderRadius="$3"
-          disabled
-        >
+        <View alignItems="center" height={44} justifyContent="center" overflow="hidden" width={44}>
           <Image
             source={
               // eslint-disable-next-line @typescript-eslint/no-var-requires
-              require("../assets/images/rehabbit-logo.png") as ImageSourcePropType
+              require("../assets/images/rehabbit-splash.png") as ImageSourcePropType
             }
-            //source={require("../assets/images/default.png") as any}
-            width={26}
-            height={26}
+            height={64}
             resizeMode="contain"
+            tintColor="#483FFF"
+            width={64}
           />
-          {/* <Coffee color="$text11" size={24} /> */}
-          {/* <Hourglass color="$text11" size={24} strokeWidth={2} /> */}
-        </Button>
+        </View>
         <Heading color="$text11">Rehabbit</Heading>
       </XStack>
       <Button
