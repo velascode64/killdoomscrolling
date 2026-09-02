@@ -83,6 +83,18 @@ export async function syncModes(plans: AndroidRewardPlan[]): Promise<void> {
   if (error) throw error;
 }
 
+export async function deleteMode(clientModeId: string): Promise<void> {
+  const userId = await getUserId();
+  if (!userId) return;
+
+  const { error } = await supabase
+    .from("modes")
+    .delete()
+    .eq("user_id", userId)
+    .eq("client_mode_id", clientModeId);
+  if (error) throw error;
+}
+
 export async function syncOnboarding(answers: Record<string, unknown>): Promise<void> {
   await AsyncStorage.setItem(ONBOARDING_QUEUE_KEY, JSON.stringify(answers));
   const userId = await getUserId();

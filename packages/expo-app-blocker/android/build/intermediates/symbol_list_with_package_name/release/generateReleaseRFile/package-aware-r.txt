@@ -1,0 +1,2 @@
+expo.modules.appblocker
+drawable rehabbit_logo

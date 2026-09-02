@@ -1,10 +1,23 @@
 import {
+  AppWindow,
   ArrowLeft,
+  Ban,
+  Bell,
   Check,
+  ChevronRight,
   Clock3,
   Focus,
+  Layers,
+  ListChecks,
+  Pause,
   Plus,
+  Repeat2,
+  ShieldCheck,
   ShieldBan,
+  Smartphone,
+  Target,
+  Timer,
+  Trash2,
 } from "@tamagui/lucide-icons";
 import {
   configureRewardBlockerPlans,
@@ -13,13 +26,14 @@ import {
   openOverlaySettings,
   openUsageStatsSettings,
   startMonitoring,
+  stopMonitoring,
 } from "expo-app-blocker";
 import type { AndroidBlockableApp } from "expo-app-blocker";
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { Alert, Image, Modal, Platform, Pressable, StyleSheet } from "react-native";
+import { Alert, AppState, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, StyleSheet } from "react-native";
 import {
   Button,
   H3,
@@ -34,7 +48,8 @@ import {
 } from "tamagui";
 
 import { AppAvatarStack, GradientButton, ModeRadial } from "../components/mode-ui";
-import { AppPickerSheet } from "../components/app-picker-sheet";
+import { AppPickerSheet, AppSelectionList } from "../components/app-picker-sheet";
+import { ActionSuccessModal } from "../components/action-success-modal";
 import { CategoryGlyph, CategorySelector } from "../components/category-selector";
 import type { CategoryOption } from "../components/category-selector";
 import { GlassMinutePicker, ScheduleCard } from "../components/schedule-card";
@@ -51,7 +66,7 @@ import {
 } from "../data/android-reward";
 import type { AndroidRewardPlan, PlanCategory, PlanCustomCategory } from "../data/android-reward";
 import { markOnboardingCompleted } from "../data/onboarding-state";
-import { syncModes, syncOnboarding, trackProductEvent } from "../data/supabase-sync";
+import { deleteMode, syncModes, syncOnboarding, trackProductEvent } from "../data/supabase-sync";
 
 const durationOptions = [15, 25, 60];
 const phoneUseOptions = [1, 2, 4, 8];
@@ -60,6 +75,13 @@ const goals = ["Dejar redes", "Concentrar mas", "Dormir", "Hacer otra actividad"
 const objectiveOptions = ["Foco", "Ejercicio", "Dormir", "Meditacion", "Hobby"];
 
 type PickerTarget = "blocked" | "productive" | null;
+type AndroidPermissionState = { notifications: boolean; overlay: boolean; usageStats: boolean };
+
+type ActionFeedback = {
+  celebration?: boolean;
+  message: string;
+  title: string;
+} | null;
 
 function categoryForGoal(goal: string): PlanCategory {
   if (goal === "Dormir") return "sleep";
@@ -173,97 +195,13 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
   );
 }
 
-function ProgressDots({ step }: { step: number }) {
-  return (
-    <XStack alignItems="center" gap={5} justifyContent="center">
-      {Array.from({ length: 11 }).map((_, index) => (
-        <View
-          key={index}
-          backgroundColor={index === step ? "$blue8" : "$borderColor"}
-          borderRadius={99}
-          height={6}
-          opacity={index > step ? 0.65 : 1}
-          width={index === step ? 20 : 6}
-        />
-      ))}
-    </XStack>
-  );
-}
-
-function AppIcon({ app, size = 44 }: { app: AndroidBlockableApp; size?: number }) {
-  if (app.iconBase64) {
-    return <Image source={{ uri: `data:image/png;base64,${app.iconBase64}` }} style={{ borderRadius: size / 2, height: size, width: size }} />;
-  }
+function OnboardingProgress({ step }: { step: number }) {
+  const progressWidth = `${Math.max(8, Math.min(100, step * 10))}%` as `${number}%`;
 
   return (
-    <View
-      alignItems="center"
-      backgroundColor="$blue3"
-      borderRadius={size / 2}
-      height={size}
-      justifyContent="center"
-      width={size}
-    >
-      <SizableText color="$text11" fontWeight="800">{app.name.slice(0, 1).toUpperCase()}</SizableText>
+    <View backgroundColor="$primary3" borderRadius={99} height={7} overflow="hidden" width="100%">
+      <View backgroundColor="$primary9" borderRadius={99} height="100%" width={progressWidth} />
     </View>
-  );
-}
-
-function AppSelectionList({
-  apps,
-  selectedPackages,
-  onToggle,
-}: {
-  apps: AndroidBlockableApp[];
-  selectedPackages: string[];
-  onToggle: (packageName: string) => void;
-}) {
-  if (apps.length === 0) {
-    return <Paragraph color="$text10">No se pudieron cargar las aplicaciones instaladas.</Paragraph>;
-  }
-
-  return (
-    <YStack gap="$2">
-      {apps.map((app) => {
-        const selected = selectedPackages.includes(app.packageName);
-        return (
-          <Button
-            key={app.packageName}
-            unstyled
-            alignItems="center"
-            backgroundColor={selected ? "$blue2" : "$background2"}
-            borderColor={selected ? "$blue8" : "$borderColor"}
-            borderRadius="$6"
-            borderWidth={1}
-            flexDirection="row"
-            gap="$3"
-            justifyContent="space-between"
-            padding="$3"
-            pressStyle={{ opacity: 0.75 }}
-            onPress={() => onToggle(app.packageName)}
-          >
-            <XStack alignItems="center" flex={1} gap="$3">
-              <AppIcon app={app} size={40} />
-              <SizableText color="$text11" flex={1} fontWeight="700" numberOfLines={1}>
-                {app.name}
-              </SizableText>
-            </XStack>
-            <View
-              alignItems="center"
-              backgroundColor={selected ? "$blue8" : "$background"}
-              borderColor={selected ? "$blue8" : "$borderColor"}
-              borderRadius={99}
-              borderWidth={1}
-              height={24}
-              justifyContent="center"
-              width={24}
-            >
-              {selected && <Check color="$text1" size={15} />}
-            </View>
-          </Button>
-        );
-      })}
-    </YStack>
   );
 }
 
@@ -303,13 +241,15 @@ export default function OnboardingScreen() {
   const [customGoal, setCustomGoal] = useState("");
   const [objectives, setObjectives] = useState<string[]>([]);
   const [creating, setCreating] = useState(false);
+  const [feedback, setFeedback] = useState<ActionFeedback>(null);
+  const [permissions, setPermissions] = useState<AndroidPermissionState | null>(null);
   const isEditing = Boolean(planId);
   const isCreatingMode = mode === "create";
   const isDirectEditor = isEditing || isCreatingMode;
 
   useEffect(() => {
     if (Platform.OS !== "android") return;
-    void Promise.all([loadAndroidRewardPlans(), getInstalledApps(), getPermissionStatus()]).then(async ([savedPlans, installedApps]) => {
+    void Promise.all([loadAndroidRewardPlans(), getInstalledApps(), getPermissionStatus()]).then(async ([savedPlans, installedApps, permissionStatus]) => {
       const currentPlans = pruneUnavailablePlanApps(savedPlans, installedApps.map((app) => app.packageName));
       if (currentPlans.some((savedPlan, index) => savedPlan !== savedPlans[index])) {
         await saveAndroidRewardPlans(currentPlans);
@@ -317,12 +257,26 @@ export default function OnboardingScreen() {
       }
       setPlans(currentPlans);
       setApps(installedApps);
+      if (permissionStatus.details.platform === "android") setPermissions(permissionStatus.details);
       if (planId) {
         const existing = currentPlans.find((entry) => entry.id === planId);
         if (existing) setPlan(existing);
       }
     });
   }, [planId]);
+
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+    const refresh = () => {
+      void getPermissionStatus().then((status) => {
+        if (status.details.platform === "android") setPermissions(status.details);
+      });
+    };
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") refresh();
+    });
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     if (step !== 9 || isDirectEditor) return;
@@ -395,7 +349,7 @@ export default function OnboardingScreen() {
       return;
     }
 
-    const nextPlan = { ...plan, enabled };
+    const nextPlan = { ...plan, enabled, paused: false };
     if (enabled && planHasOverlap(nextPlan, plans)) {
       Alert.alert("Horario ocupado", "Ya existe otro modo activo en ese horario.");
       return;
@@ -436,10 +390,86 @@ export default function OnboardingScreen() {
           trackProductEvent("mode_created", { category: nextPlan.category, enabled }),
         ]).catch((error: unknown) => console.warn("Unable to sync onboarding", error));
       }
-      router.replace("/(tabs)/overview");
+      setPlan(nextPlan);
+      setPlans(nextPlans);
+      setFeedback(isDirectEditor
+        ? {
+            message: isEditing
+              ? "Los cambios de tu modo ya están guardados."
+              : "Tu nuevo modo ya está guardado y listo para usar.",
+            title: isEditing ? "Modo actualizado" : "Modo creado",
+          }
+        : {
+            celebration: true,
+            message: "Tu primer modo está listo. Puedes activarlo o cambiarlo cuando quieras.",
+            title: "¡Tu rehábito comienza ahora!",
+          });
     } catch {
       Alert.alert("No se pudo guardar", "Intenta guardar el modo de nuevo.");
     }
+  };
+
+  const pausePlan = async () => {
+    if (!isEditing) return;
+    const pausedPlan = { ...plan, enabled: false, paused: true };
+    const nextPlans = plans.map((entry) => (entry.id === pausedPlan.id ? pausedPlan : entry));
+
+    try {
+      await saveAndroidRewardPlans(nextPlans);
+      configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
+      if (!nextPlans.some((entry) => entry.enabled)) stopMonitoring();
+      setPlan(pausedPlan);
+      setPlans(nextPlans);
+      void syncModes(nextPlans).catch((error: unknown) => console.warn("Unable to sync paused mode", error));
+      void trackProductEvent("mode_paused", { category: pausedPlan.category }).catch((error: unknown) =>
+        console.warn("Unable to track mode pause", error),
+      );
+      setFeedback({
+        message: "El modo dejó de bloquear aplicaciones. Su configuración se conserva.",
+        title: "Modo pausado",
+      });
+    } catch {
+      Alert.alert("No se pudo pausar", "Intenta pausar el modo de nuevo.");
+    }
+  };
+
+  const performDeletePlan = async () => {
+    if (!isEditing) return;
+    const nextPlans = plans.filter((entry) => entry.id !== plan.id);
+
+    try {
+      await saveAndroidRewardPlans(nextPlans);
+      configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
+      if (!nextPlans.some((entry) => entry.enabled)) stopMonitoring();
+      setPlans(nextPlans);
+      void deleteMode(plan.id).catch((error: unknown) => console.warn("Unable to delete remote mode", error));
+      void trackProductEvent("mode_deleted", { category: plan.category }).catch((error: unknown) =>
+        console.warn("Unable to track mode deletion", error),
+      );
+      setFeedback({
+        message: "El modo y su configuración fueron eliminados.",
+        title: "Modo eliminado",
+      });
+    } catch {
+      Alert.alert("No se pudo eliminar", "Intenta eliminar el modo de nuevo.");
+    }
+  };
+
+  const deletePlan = () => {
+    if (!isEditing) return;
+    Alert.alert(
+      "Eliminar modo",
+      `¿Quieres eliminar ${plan.name}? Esta acción no se puede deshacer.`,
+      [
+        { style: "cancel", text: "Cancelar" },
+        { style: "destructive", text: "Eliminar", onPress: () => void performDeletePlan() },
+      ],
+    );
+  };
+
+  const closeFeedback = () => {
+    setFeedback(null);
+    router.replace("/(tabs)/overview");
   };
 
   const continueOnboarding = () => {
@@ -447,9 +477,7 @@ export default function OnboardingScreen() {
       void trackProductEvent("onboarding_started").catch((error: unknown) => console.warn("Unable to track onboarding", error));
     }
     if (step === 3) setCategory(categoryForGoal(goal));
-    if (step === 4 && Platform.OS === "android") {
-      // Permission access is optional during exploration; Android validates it on activation.
-    }
+    if (step === 4 && (!permissions?.overlay || !permissions?.usageStats)) return;
     setStep((current) => Math.min(current + 1, 10));
   };
 
@@ -479,31 +507,43 @@ export default function OnboardingScreen() {
 
   if (isDirectEditor) {
     return (
-      <Editor
-        apps={apps}
-        pickerTarget={pickerTarget}
-        plan={plan}
-        setPickerTarget={setPickerTarget}
-        setPlan={setPlan}
-        setCategory={setCategory}
-        addCustomCategory={addCustomCategory}
-        selectCustomCategory={selectCustomCategory}
-        togglePackages={togglePackages}
-        selectedApps={selectedApps}
-        updateTime={updateTime}
-        title={isCreatingMode ? "Crear modo" : "Editar modo"}
-        onBack={() => router.back()}
-        onSave={savePlan}
-      />
+      <>
+        <Editor
+          apps={apps}
+          isEditing={isEditing}
+          pickerTarget={pickerTarget}
+          plan={plan}
+          setPickerTarget={setPickerTarget}
+          setPlan={setPlan}
+          setCategory={setCategory}
+          addCustomCategory={addCustomCategory}
+          selectCustomCategory={selectCustomCategory}
+          togglePackages={togglePackages}
+          selectedApps={selectedApps}
+          updateTime={updateTime}
+          title={isCreatingMode ? "Crear modo" : "Editar modo"}
+          onBack={() => router.back()}
+          onDelete={deletePlan}
+          onPause={pausePlan}
+          onSave={savePlan}
+        />
+        <ActionSuccessModal
+          message={feedback?.message ?? ""}
+          title={feedback?.title ?? ""}
+          visible={feedback !== null}
+          onClose={closeFeedback}
+        />
+      </>
     );
   }
 
   return (
-    <Container scroll={false}>
-      <StatusBar style="dark" />
-      <YStack flex={1} paddingTop="$3">
+    <>
+      <Container scroll={false}>
+        <StatusBar style="dark" />
+        <YStack flex={1} paddingTop="$3">
         {step > 0 && <Header onBack={goBack} />}
-        {step > 0 && <ProgressDots step={step} />}
+        {step > 0 && <OnboardingProgress step={step} />}
         <View flex={1} marginTop={step > 0 ? "$5" : 0}>
           {step === 0 && (
             <WelcomeScreen onContinue={continueOnboarding} />
@@ -511,6 +551,7 @@ export default function OnboardingScreen() {
           {step === 1 && (
             <QuestionScreen
               body="Usaremos esta referencia para proponerte un plan inicial. Puedes cambiarlo despues."
+              icon={<Smartphone color="$primary9" size={38} />}
               title="Cuanto tiempo pasas en tu telefono?"
             >
               <XStack flexWrap="wrap" gap="$3">
@@ -521,12 +562,12 @@ export default function OnboardingScreen() {
             </QuestionScreen>
           )}
           {step === 2 && (
-            <QuestionScreen body="Elige el primer periodo que quieres recuperar." title="Cuanto tiempo quieres dejar de usar el telefono?">
+            <QuestionScreen body="Elige el primer periodo que quieres recuperar." icon={<Timer color="$primary9" size={38} />} title="Cuanto tiempo quieres dejar de usar el telefono?">
               <DurationChips value={plan.unlockMinutes} onChange={(unlockMinutes) => setPlan((current) => ({ ...current, unlockMinutes }))} />
             </QuestionScreen>
           )}
           {step === 3 && (
-            <QuestionScreen body="El plan se adapta a la intencion que elijas." title="Que quieres lograr?">
+            <QuestionScreen body="El plan se adapta a la intencion que elijas." icon={<Target color="$primary9" size={38} />} title="Que quieres lograr?">
               <YStack gap="$3">
                 {goals.map((option) => (
                   <ChoiceRow key={option} selected={goal === option} label={option} onPress={() => setGoal(option)} />
@@ -543,9 +584,16 @@ export default function OnboardingScreen() {
               </YStack>
             </QuestionScreen>
           )}
-          {step === 4 && <PermissionsScreen />}
+          {step === 4 && (
+            <PermissionsScreen
+              permissions={permissions}
+              onRefresh={() => void getPermissionStatus().then((status) => {
+                if (status.details.platform === "android") setPermissions(status.details);
+              })}
+            />
+          )}
           {step === 5 && (
-            <QuestionScreen body="Elige uno o varios objetivos para tu plan." title="Selecciona tus objetivos">
+            <QuestionScreen body="Elige uno o varios objetivos para tu plan." icon={<ListChecks color="$primary9" size={38} />} title="Selecciona tus objetivos">
               <YStack gap="$3">
                 {objectiveOptions.map((option) => (
                   <ChoiceRow
@@ -559,23 +607,29 @@ export default function OnboardingScreen() {
             </QuestionScreen>
           )}
           {step === 6 && (
-            <QuestionScreen body="Podras ajustarlas cuando quieras." title="Que apps quisieras dejar de usar mas?">
-              <ScrollView height={330} showsVerticalScrollIndicator={false}>
-                <AppSelectionList apps={apps} selectedPackages={plan.blockedPackages} onToggle={(item) => togglePackages("blockedPackages", item)} />
-              </ScrollView>
+            <QuestionScreen body="Podras ajustarlas cuando quieras." icon={<Ban color="$primary9" size={38} />} title="Que apps quisieras dejar de usar mas?">
+              <AppSelectionList
+                apps={apps}
+                height={360}
+                selectedPackages={plan.blockedPackages}
+                onToggle={(item) => togglePackages("blockedPackages", item)}
+              />
             </QuestionScreen>
           )}
           {step === 7 && (
-            <QuestionScreen body="Este es el tiempo que tendras para estar en tu estado antes de liberar las redes." title="Cuanto tiempo quieres dejar de usar esas apps?">
+            <QuestionScreen body="Este es el tiempo que tendras para estar en tu estado antes de liberar las redes." icon={<Clock3 color="$primary9" size={38} />} title="Cuanto tiempo quieres dejar de usar esas apps?">
               <ModeRadial duration={plan.productiveMinutes} label="tu estado" />
               <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
             </QuestionScreen>
           )}
           {step === 8 && (
-            <QuestionScreen body="Estas apps se habilitan mientras mantienes tu estado." title="Con que app te gustaria reemplazar ese tiempo?">
-              <ScrollView height={330} showsVerticalScrollIndicator={false}>
-                <AppSelectionList apps={apps} selectedPackages={plan.productivePackages} onToggle={(item) => togglePackages("productivePackages", item)} />
-              </ScrollView>
+            <QuestionScreen body="Estas apps se habilitan mientras mantienes tu estado." icon={<Repeat2 color="$primary9" size={38} />} title="Con que app te gustaria reemplazar ese tiempo?">
+              <AppSelectionList
+                apps={apps}
+                height={360}
+                selectedPackages={plan.productivePackages}
+                onToggle={(item) => togglePackages("productivePackages", item)}
+              />
             </QuestionScreen>
           )}
           {step === 9 && <CreatingScreen visible={creating} />}
@@ -589,10 +643,22 @@ export default function OnboardingScreen() {
           )}
         </View>
         {step > 0 && step < 9 && (
-          <View marginTop="$4"><GradientButton onPress={continueOnboarding}>Continuar</GradientButton></View>
+          <View marginTop="$4">
+            <GradientButton disabled={step === 4 && permissions?.overlay !== true || step === 4 && permissions?.usageStats !== true} onPress={continueOnboarding}>
+              {step === 4 ? "Activar Rehabbit" : "Continuar"}
+            </GradientButton>
+          </View>
         )}
-      </YStack>
-    </Container>
+        </YStack>
+      </Container>
+      <ActionSuccessModal
+        celebration={feedback?.celebration}
+        message={feedback?.message ?? ""}
+        title={feedback?.title ?? ""}
+        visible={feedback !== null}
+        onClose={closeFeedback}
+      />
+    </>
   );
 }
 
@@ -627,12 +693,17 @@ function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-function QuestionScreen({ body, children, title }: { body: string; children: ReactNode; title: string }) {
+function QuestionScreen({ body, children, icon, title }: { body: string; children: ReactNode; icon: ReactNode; title: string }) {
   return (
     <YStack gap="$5">
-      <YStack gap="$2">
-        <H3 color="$text11" letterSpacing={-0.4}>{title}</H3>
-        <Paragraph color="$text10" fontSize="$5" lineHeight="$6">{body}</Paragraph>
+      <YStack alignItems="center" gap="$3">
+        <View alignItems="center" backgroundColor="$primary3" borderRadius={24} height={80} justifyContent="center" width={80}>
+          {icon}
+        </View>
+        <YStack alignItems="center" gap="$2" paddingHorizontal="$2">
+          <H3 color="$text11" letterSpacing={-0.4} textAlign="center">{title}</H3>
+          <Paragraph color="$text10" fontSize="$5" lineHeight="$6" textAlign="center">{body}</Paragraph>
+        </YStack>
       </YStack>
       {children}
     </YStack>
@@ -644,8 +715,8 @@ function ChoiceChip({ label, selected, onPress }: { label: string; selected: boo
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "$primary3" : "$background2"}
-      borderColor={selected ? "$primary6" : "$borderColor"}
+      backgroundColor={selected ? "#483FFF" : "#FFFFFF"}
+      borderColor={selected ? "#483FFF" : "#E2E8F0"}
       borderRadius="$10"
       borderWidth={1}
       justifyContent="center"
@@ -655,7 +726,7 @@ function ChoiceChip({ label, selected, onPress }: { label: string; selected: boo
       pressStyle={{ opacity: 0.75 }}
       onPress={onPress}
     >
-      <SizableText color={selected ? "$primary11" : "$text11"} fontWeight="800">{label}</SizableText>
+      <SizableText color={selected ? "white" : "$text11"} fontWeight="800">{label}</SizableText>
     </Button>
   );
 }
@@ -665,74 +736,175 @@ function ChoiceRow({ label, selected, onPress }: { label: string; selected: bool
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "$primary3" : "$background2"}
-      borderColor={selected ? "$primary6" : "$borderColor"}
+      backgroundColor={selected ? "#483FFF" : "#FFFFFF"}
+      borderColor={selected ? "#483FFF" : "#E2E8F0"}
       borderRadius="$6"
       borderWidth={1}
       flexDirection="row"
-      justifyContent="space-between"
       padding="$4"
       pressStyle={{ opacity: 0.75 }}
       onPress={onPress}
     >
-      <SizableText color={selected ? "$primary11" : "$text11"} fontWeight="700" size="$5">{label}</SizableText>
-      <View
-        alignItems="center"
-        backgroundColor={selected ? "rgba(72, 63, 255, 0.12)" : "$background"}
-        borderColor={selected ? "rgba(72, 63, 255, 0.24)" : "$borderColor"}
-        borderRadius={99}
-        borderWidth={1}
-        height={25}
-        justifyContent="center"
-        width={25}
-      >
-        {selected && <Check color="$primary11" size={16} />}
-      </View>
+      <SizableText color={selected ? "white" : "$text11"} fontWeight="700" size="$5">{label}</SizableText>
     </Button>
   );
 }
 
-function PermissionsScreen() {
+function PermissionsScreen({
+  onRefresh,
+  permissions,
+}: {
+  onRefresh: () => void;
+  permissions: AndroidPermissionState | null;
+}) {
   return (
-    <YStack gap="$5">
-      <YStack gap="$2">
-        <H3 color="$text11">Permisos necesarios</H3>
-        <Paragraph color="$text10" fontSize="$5" lineHeight="$6">
-          Android necesita estos permisos para aplicar tu plan en el momento indicado.
+    <YStack flex={1} gap="$4">
+      <YStack alignItems="center" height="15%" justifyContent="center" minHeight={92}>
+        <View
+          alignItems="center"
+          backgroundColor="$primary3"
+          borderRadius={28}
+          height={88}
+          justifyContent="center"
+          width={88}
+        >
+          <ShieldCheck color="$primary9" size={52} strokeWidth={1.8} />
+        </View>
+      </YStack>
+      <YStack alignItems="center" gap="$2" paddingHorizontal="$3">
+        <H3 color="$text11" fontSize={24} lineHeight={29} maxFontSizeMultiplier={1.1} textAlign="center">
+          Un último paso para activar Rehabbit
+        </H3>
+        <Paragraph color="$text10" fontSize={17} lineHeight={24} maxFontSizeMultiplier={1.1} textAlign="center">
+          Necesitamos estos permisos para que el bloqueo funcione correctamente.
         </Paragraph>
       </YStack>
-      <ShadowCard>
-        <YStack gap="$3">
-          <XStack alignItems="center" gap="$3">
-            <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={42} justifyContent="center" width={42}>
-              <ShieldBan color="$text11" size={20} />
-            </View>
-            <YStack flex={1} gap="$1">
-              <SizableText color="$text11" fontWeight="800">Acceso de uso</SizableText>
-              <SizableText color="$text10" size="$3">Para detectar las apps elegidas.</SizableText>
-            </YStack>
+      <YStack gap="$3">
+        <PermissionRow
+          description="Detecta cuándo abres una app bloqueada."
+          granted={permissions?.usageStats === true}
+          icon={<AppWindow color="#315BEA" size={24} />}
+          title="Acceso de uso"
+          onPress={openUsageStatsSettings}
+        />
+        <PermissionRow
+          description="Muestra la pantalla de bloqueo."
+          granted={permissions?.overlay === true}
+          icon={<Layers color="#315BEA" size={24} />}
+          title="Mostrar sobre otras apps"
+          onPress={openOverlaySettings}
+        />
+        <PermissionRow
+          badgeLabel="Opcional"
+          description="Estado y avisos del modo activo."
+          granted={permissions?.notifications === true}
+          icon={<Bell color="#315BEA" size={24} />}
+          title="Notificaciones"
+          onPress={async () => {
+            if (Number(Platform.Version) >= 33) {
+              await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+            } else {
+              await Linking.openSettings();
+            }
+            onRefresh();
+          }}
+        />
+      </YStack>
+    </YStack>
+  );
+}
+
+function PermissionRow({
+  badgeLabel,
+  description,
+  granted,
+  icon,
+  onPress,
+  title,
+}: {
+  badgeLabel?: string;
+  description: string;
+  granted: boolean;
+  icon: ReactNode;
+  onPress: () => void;
+  title: string;
+}) {
+  return (
+    <YStack
+      backgroundColor="white"
+      borderRadius={20}
+      elevation={3}
+      shadowColor="#000000"
+      shadowOffset={{ height: 4, width: 0 }}
+      shadowOpacity={0.08}
+      shadowRadius={18}
+    >
+      <Button
+        unstyled
+        alignItems="center"
+        flexDirection="row"
+        gap={0}
+        height={110}
+        paddingHorizontal={14}
+        disabled={granted}
+        onPress={onPress}
+        pressStyle={{ opacity: 0.72 }}
+      >
+        <View
+          alignItems="center"
+          backgroundColor="#F2F4FF"
+          borderRadius={14}
+          flexShrink={0}
+          height={48}
+          justifyContent="center"
+          marginRight={8}
+          padding={0}
+          width={48}
+        >
+          {icon}
+        </View>
+        <YStack flex={1} gap={3} justifyContent="center" minWidth={0}>
+          <XStack alignItems="center" gap={6} minWidth={0}>
+            <SizableText
+              adjustsFontSizeToFit
+              color="$text11"
+              flexShrink={1}
+              fontSize={16}
+              fontWeight="700"
+              maxFontSizeMultiplier={1}
+              minimumFontScale={0.8}
+              numberOfLines={1}
+            >
+              {title}
+            </SizableText>
+            {badgeLabel && (
+              <XStack
+                backgroundColor="#F1EFFF"
+                borderRadius={999}
+                flexShrink={0}
+                paddingHorizontal={7}
+                paddingVertical={3}
+              >
+                <SizableText color="#5B5CE2" fontSize={10} maxFontSizeMultiplier={1}>
+                  {badgeLabel}
+                </SizableText>
+              </XStack>
+            )}
           </XStack>
-          <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void openUsageStatsSettings()}>
-            Abrir ajustes
-          </Button>
+          <SizableText
+            color="#667085"
+            fontSize={14}
+            lineHeight={19}
+            maxFontSizeMultiplier={1.05}
+            numberOfLines={2}
+          >
+            {description}
+          </SizableText>
         </YStack>
-      </ShadowCard>
-      <ShadowCard>
-        <YStack gap="$3">
-          <XStack alignItems="center" gap="$3">
-            <View alignItems="center" backgroundColor="$blue2" borderRadius={99} height={42} justifyContent="center" width={42}>
-              <Focus color="$text11" size={20} />
-            </View>
-            <YStack flex={1} gap="$1">
-              <SizableText color="$text11" fontWeight="800">Mostrar sobre otras apps</SizableText>
-              <SizableText color="$text10" size="$3">Para mostrar el bloqueo cuando sea necesario.</SizableText>
-            </YStack>
-          </XStack>
-          <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={() => void openOverlaySettings()}>
-            Abrir ajustes
-          </Button>
-        </YStack>
-      </ShadowCard>
+        <View alignItems="center" flexShrink={0} height={48} justifyContent="center" width={28}>
+          {granted ? <Check color="#315BEA" size={20} /> : <ChevronRight color="#315BEA" size={20} />}
+        </View>
+      </Button>
     </YStack>
   );
 }
@@ -803,6 +975,7 @@ function PlanPreview({
 
 function Editor({
   apps,
+  isEditing,
   pickerTarget,
   plan,
   setPickerTarget,
@@ -815,9 +988,12 @@ function Editor({
   updateTime,
   title,
   onBack,
+  onDelete,
+  onPause,
   onSave,
 }: {
   apps: AndroidBlockableApp[];
+  isEditing: boolean;
   pickerTarget: PickerTarget;
   plan: AndroidRewardPlan;
   setPickerTarget: (target: PickerTarget) => void;
@@ -830,6 +1006,8 @@ function Editor({
   updateTime: (key: "start" | "end", value: number) => void;
   title: string;
   onBack: () => void;
+  onDelete: () => void;
+  onPause: () => Promise<void>;
   onSave: (enabled: boolean) => Promise<void>;
 }) {
   const categoryOptions: CategoryOption[] = [
@@ -895,7 +1073,37 @@ function Editor({
               />
             </YStack>
 
-            <GradientButton onPress={() => void onSave(true)}>{plan.enabled ? "Guardar cambios" : "Activar modo"}</GradientButton>
+            <GradientButton onPress={() => void onSave(true)}>
+              {plan.paused ? "Reanudar modo" : plan.enabled ? "Guardar cambios" : "Activar modo"}
+            </GradientButton>
+            {isEditing ? (
+              <YStack gap="$3">
+                <Button
+                  backgroundColor="#FFFFFF"
+                  borderColor="#C7D8FF"
+                  borderRadius="$4"
+                  color="#315BEA"
+                  disabled={plan.paused}
+                  height={54}
+                  icon={Pause}
+                  opacity={plan.paused ? 0.55 : 1}
+                  onPress={() => void onPause()}
+                >
+                  {plan.paused ? "Modo pausado" : "Pausar modo"}
+                </Button>
+                <Button
+                  backgroundColor="#FFFFFF"
+                  borderColor="rgba(220, 38, 38, 0.28)"
+                  borderRadius="$4"
+                  color="#B91C1C"
+                  height={54}
+                  icon={Trash2}
+                  onPress={onDelete}
+                >
+                  Eliminar modo
+                </Button>
+              </YStack>
+            ) : null}
           </YStack>
         </ScrollView>
       </YStack>
@@ -917,26 +1125,21 @@ function Editor({
 }
 
 function AppGroupCard({ apps, description, label, onPress }: { apps: AndroidBlockableApp[]; description: string; label: string; onPress: () => void }) {
-  const isBlockedApps = label === "Bloquear";
   return (
     <YStack gap="$3">
       <H4 color="$text11">{label}</H4>
       <ShadowCard
         padding="$5"
         pressStyle={{ opacity: 0.75 }}
-        tone={isBlockedApps ? "blocked" : "mint"}
-        borderColor={isBlockedApps ? "rgba(255,255,255,0.14)" : "#E2E8F0"}
-        shadowColor={isBlockedApps ? "#1F2847" : "#483FFF"}
-        shadowOpacity={isBlockedApps ? 0.22 : 0.05}
-        shadowRadius={isBlockedApps ? 16 : 10}
+        tone="surface"
         onPress={onPress}
       >
         <XStack alignItems="center" gap="$3" justifyContent="space-between">
           <YStack flex={1} gap="$1">
-            <SizableText color={isBlockedApps ? "#FFFFFF" : "$text11"} fontWeight="800">{apps.length ? `${apps.length} apps seleccionadas` : "Seleccionar apps"}</SizableText>
-            <SizableText color={isBlockedApps ? "rgba(236,242,255,0.76)" : "$text10"} size="$3">{description}</SizableText>
+            <SizableText color="$text11" fontWeight="800">{apps.length ? `${apps.length} apps seleccionadas` : "Seleccionar apps"}</SizableText>
+            <SizableText color="$text10" size="$3">{description}</SizableText>
           </YStack>
-          {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color={isBlockedApps ? "#FFFFFF" : "$text11"} size={22} />}
+          {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color="$text11" size={22} />}
         </XStack>
       </ShadowCard>
     </YStack>

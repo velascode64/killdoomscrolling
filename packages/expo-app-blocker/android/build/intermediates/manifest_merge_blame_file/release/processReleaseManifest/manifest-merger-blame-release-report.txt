@@ -1,0 +1,35 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="expo.modules.appblocker" >
+4
+5    <uses-sdk android:minSdkVersion="24" />
+6    <!--
+7    QUERY_ALL_PACKAGES — needed so getInstalledApps() can enumerate every
+8    user-installed app that has a launcher activity. Without this, Android
+9    11+ (API 30+) returns only a subset based on package-visibility
+10    queries. App blockers / digital wellbeing apps are an approved use
+11    case for this permission on the Play Store.
+12    -->
+13    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+13-->/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:9:3-75
+13-->/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:9:20-72
+14
+15    <!--
+16    Fallback queries for devices/builds that do not grant
+17    QUERY_ALL_PACKAGES — covers any app declaring a launcher activity.
+18    -->
+19    <queries>
+19-->/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:15:3-20:13
+20        <intent>
+20-->/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:16:5-19:14
+21            <action android:name="android.intent.action.MAIN" />
+21-->/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:17:7-59
+21-->/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:17:15-56
+22
+23            <category android:name="android.intent.category.LAUNCHER" />
+23-->/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:18:7-67
+23-->/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:18:17-64
+24        </intent>
+25    </queries>
+26
+27</manifest>

@@ -6,6 +6,7 @@ import {
   ShieldBan,
 } from "@tamagui/lucide-icons";
 import dayjs from "dayjs";
+import weekday from "dayjs/plugin/weekday";
 import { router } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -29,6 +30,8 @@ import { PercentageTrend } from "../../../components/percentage.trend";
 import { ShadowCard } from "../../../components/shadow.card";
 import { WeeklySummary } from "../../../components/weekly-summary";
 import { OverviewStore } from "../../../data/overview.store";
+
+dayjs.extend(weekday);
 
 const Overview = observer(() => {
   useEffect(() => {

@@ -1,0 +1,32 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:1:1-21:12
+INJECTED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:1:1-21:12
+	package
+		INJECTED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.QUERY_ALL_PACKAGES
+ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:9:3-75
+	android:name
+		ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:9:20-72
+queries
+ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:15:3-20:13
+intent#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:16:5-19:14
+action#android.intent.action.MAIN
+ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:17:7-59
+	android:name
+		ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:17:15-56
+category#android.intent.category.LAUNCHER
+ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:18:7-67
+	android:name
+		ADDED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml:18:17-64
+uses-sdk
+INJECTED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml
+INJECTED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android/src/main/AndroidManifest.xml

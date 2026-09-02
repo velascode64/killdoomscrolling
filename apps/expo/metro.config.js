@@ -6,6 +6,10 @@ const config = getDefaultConfig(__dirname, {
   isCSSEnabled: false,
 });
 
+// File-system watching is reliable for this workspace and avoids local
+// Watchman launch-agent failures during release exports.
+config.resolver.useWatchman = false;
+
 // 2. Enable Tamagui
 const { withTamagui } = require("@tamagui/metro-plugin");
 module.exports = withTamagui(config, {

@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/Users/gdesign/developer-projects/killdoomscroll/digital-break-app-main/packages/expo-app-blocker/android"
+    name=":expo-app-blocker"
+    type="LIBRARY"
+    maven="expo.modules.appblocker:expo-app-blocker:0.1.0"
+    agpVersion="8.11.0"
+    buildFolder="build"
+    bootClassPath="/Users/gdesign/Library/Android/sdk/platforms/android-36/android.jar:/Users/gdesign/Library/Android/sdk/build-tools/35.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-36"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>
