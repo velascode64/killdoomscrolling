@@ -272,32 +272,35 @@ export function ScheduleCard({
         <TimeRow active={openTarget === "end"} label="Fin" value={endMinute} onPress={() => setOpenTarget("end")} />
       </ShadowCard>
       <ShadowCard padding={0} tone="surface">
-        <XStack alignItems="center" gap={6} justifyContent="space-between" minHeight={76} paddingHorizontal="$4">
-          {ALL_PLAN_WEEKDAYS.map((day) => {
-            const selected = weekdays.includes(day);
-            return (
-              <Button
-                key={day}
-                unstyled
-                alignItems="center"
-                backgroundColor={selected ? "#5B8CFF" : "rgba(255, 255, 255, 0.9)"}
-                borderColor={selected ? "#483FFF" : "#E2E8F0"}
-                borderRadius={99}
-                borderWidth={1}
-                flex={1}
-                height={36}
-                justifyContent="center"
-                maxWidth={38}
-                pressStyle={{ opacity: 0.72 }}
-                onPress={() => toggleWeekday(day)}
-              >
-                <SizableText color={selected ? "white" : "$text11"} fontWeight="800" size="$3">
-                  {DAY_LABELS[day]}
-                </SizableText>
-              </Button>
-            );
-          })}
-        </XStack>
+        <YStack gap="$2" paddingBottom="$3" paddingTop="$3">
+          <SizableText color="$text11" fontWeight="800" paddingHorizontal="$4" size="$4">Días</SizableText>
+          <XStack alignItems="center" gap={4} justifyContent="space-between" minHeight={50} paddingHorizontal="$3">
+            {ALL_PLAN_WEEKDAYS.map((day) => {
+              const selected = weekdays.includes(day);
+              return (
+                <Button
+                  key={day}
+                  unstyled
+                  alignItems="center"
+                  backgroundColor={selected ? "$primary9" : "rgba(255, 255, 255, 0.9)"}
+                  borderColor={selected ? "transparent" : "#E2E8F0"}
+                  borderRadius={99}
+                  borderWidth={selected ? 0 : 1}
+                  flex={1}
+                  height={42}
+                  justifyContent="center"
+                  maxWidth={42}
+                  pressStyle={{ opacity: 0.72 }}
+                  onPress={() => toggleWeekday(day)}
+                >
+                  <SizableText color={selected ? "white" : "$text11"} fontWeight="800" size="$4">
+                    {DAY_LABELS[day]}
+                  </SizableText>
+                </Button>
+              );
+            })}
+          </XStack>
+        </YStack>
       </ShadowCard>
       <SizableText color="$text10" fontWeight="600" paddingLeft="$2" size="$3">
         {recurrenceLabel(weekdays)}

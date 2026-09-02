@@ -7,9 +7,9 @@ import {
 } from "@tamagui/lucide-icons";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Platform, RefreshControl } from "react-native";
 import {
   H1,
@@ -23,20 +23,30 @@ import {
 } from "tamagui";
 import { AppIcon } from "../../../components/app.icon";
 import { AndroidFocusDashboard } from "../../../components/android-focus-dashboard";
+import { CelebrationModal } from "../../../components/celebration-modal";
 import { Container } from "../../../components/container";
 import { Divider } from "../../../components/divider";
 import { Header } from "../../../components/header";
 import { PercentageTrend } from "../../../components/percentage.trend";
 import { ShadowCard } from "../../../components/shadow.card";
 import { WeeklySummary } from "../../../components/weekly-summary";
+import { consumeCelebrationNotice } from "../../../data/celebration-notice";
+import type { CelebrationNotice } from "../../../data/celebration-notice";
 import { OverviewStore } from "../../../data/overview.store";
 
 dayjs.extend(weekday);
 
 const Overview = observer(() => {
+  const [celebration, setCelebration] = useState<CelebrationNotice | null>(null);
+  const dismissCelebration = useCallback(() => setCelebration(null), []);
+
   useEffect(() => {
     void OverviewStore.init();
   }, []);
+  useFocusEffect(useCallback(() => {
+    const notice = consumeCelebrationNotice();
+    if (notice) setCelebration(notice);
+  }, []));
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
@@ -44,13 +54,14 @@ const Overview = observer(() => {
     void OverviewStore.init().then(() => setRefreshing(false));
   };
   return (
-    <Container
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-      header={({ isSticky }) => <Header isSticky={isSticky} />}
-    >
-      <YStack space="$4">
+    <>
+      <Container
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        header={({ isSticky }) => <Header isSticky={isSticky} />}
+      >
+        <YStack space="$4">
         {Platform.OS === "android" && (
           <>
             <WeeklySummary />
@@ -247,8 +258,15 @@ const Overview = observer(() => {
           </View>
         </ShadowCard>
         </>}
-      </YStack>
-    </Container>
+        </YStack>
+      </Container>
+      <CelebrationModal
+        message={celebration?.message ?? ""}
+        title={celebration?.title ?? ""}
+        visible={celebration !== null}
+        onDismiss={dismissCelebration}
+      />
+    </>
   );
 });
 

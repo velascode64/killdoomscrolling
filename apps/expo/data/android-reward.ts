@@ -68,7 +68,7 @@ export function createAndroidRewardPlan(category: PlanCategory = "focus"): Andro
     blockedPackages: [],
     productivePackages: [],
     schedule: MODE_SCHEDULE[mode],
-    weekdays: [...ALL_PLAN_WEEKDAYS],
+    weekdays: ALL_PLAN_WEEKDAYS.filter((day) => day !== 7),
     customCategories: [],
     selectedCategoryId: category,
     productiveMinutes: 5,
@@ -97,7 +97,7 @@ function normalizePlan(value: Partial<AndroidRewardPlan>, index: number): Androi
     blockedPackages: value.blockedPackages ?? [],
     productivePackages: value.productivePackages ?? [],
     schedule: value.schedule ?? fallback.schedule,
-    weekdays: value.weekdays?.filter((day): day is PlanWeekday => ALL_PLAN_WEEKDAYS.includes(day)) ?? [...ALL_PLAN_WEEKDAYS],
+    weekdays: value.weekdays?.filter((day): day is PlanWeekday => ALL_PLAN_WEEKDAYS.includes(day)) ?? fallback.weekdays,
     customCategories,
     selectedCategoryId,
   };

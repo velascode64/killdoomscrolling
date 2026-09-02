@@ -42,6 +42,7 @@ import {
   Paragraph,
   ScrollView,
   SizableText,
+  Spinner,
   View,
   XStack,
   YStack,
@@ -66,6 +67,7 @@ import {
 } from "../data/android-reward";
 import type { AndroidRewardPlan, PlanCategory, PlanCustomCategory } from "../data/android-reward";
 import { markOnboardingCompleted } from "../data/onboarding-state";
+import { queueCelebrationNotice } from "../data/celebration-notice";
 import { deleteMode, syncModes, syncOnboarding, trackProductEvent } from "../data/supabase-sync";
 
 const durationOptions = [15, 25, 60];
@@ -232,6 +234,7 @@ function Header({ onBack, title }: { onBack: () => void; title?: string }) {
 export default function OnboardingScreen() {
   const { mode, planId } = useLocalSearchParams<{ mode?: string; planId?: string }>();
   const [apps, setApps] = useState<AndroidBlockableApp[]>([]);
+  const [appsLoading, setAppsLoading] = useState(Platform.OS === "android");
   const [plans, setPlans] = useState<AndroidRewardPlan[]>([]);
   const [plan, setPlan] = useState<AndroidRewardPlan>(() => createAndroidRewardPlan("focus"));
   const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
@@ -249,20 +252,24 @@ export default function OnboardingScreen() {
 
   useEffect(() => {
     if (Platform.OS !== "android") return;
-    void Promise.all([loadAndroidRewardPlans(), getInstalledApps(), getPermissionStatus()]).then(async ([savedPlans, installedApps, permissionStatus]) => {
-      const currentPlans = pruneUnavailablePlanApps(savedPlans, installedApps.map((app) => app.packageName));
-      if (currentPlans.some((savedPlan, index) => savedPlan !== savedPlans[index])) {
-        await saveAndroidRewardPlans(currentPlans);
-        configureRewardBlockerPlans(toNativeRewardPlansConfig(currentPlans));
-      }
-      setPlans(currentPlans);
-      setApps(installedApps);
-      if (permissionStatus.details.platform === "android") setPermissions(permissionStatus.details);
-      if (planId) {
-        const existing = currentPlans.find((entry) => entry.id === planId);
-        if (existing) setPlan(existing);
-      }
-    });
+    setAppsLoading(true);
+    void Promise.all([loadAndroidRewardPlans(), getInstalledApps(), getPermissionStatus()])
+      .then(async ([savedPlans, installedApps, permissionStatus]) => {
+        const currentPlans = pruneUnavailablePlanApps(savedPlans, installedApps.map((app) => app.packageName));
+        if (currentPlans.some((savedPlan, index) => savedPlan !== savedPlans[index])) {
+          await saveAndroidRewardPlans(currentPlans);
+          configureRewardBlockerPlans(toNativeRewardPlansConfig(currentPlans));
+        }
+        setPlans(currentPlans);
+        setApps(installedApps);
+        if (permissionStatus.details.platform === "android") setPermissions(permissionStatus.details);
+        if (planId) {
+          const existing = currentPlans.find((entry) => entry.id === planId);
+          if (existing) setPlan(existing);
+        }
+      })
+      .catch((error: unknown) => console.warn("Unable to load installed apps", error))
+      .finally(() => setAppsLoading(false));
   }, [planId]);
 
   useEffect(() => {
@@ -392,7 +399,7 @@ export default function OnboardingScreen() {
       }
       setPlan(nextPlan);
       setPlans(nextPlans);
-      setFeedback(isDirectEditor
+      queueCelebrationNotice(isDirectEditor
         ? {
             message: isEditing
               ? "Los cambios de tu modo ya están guardados."
@@ -400,10 +407,10 @@ export default function OnboardingScreen() {
             title: isEditing ? "Modo actualizado" : "Modo creado",
           }
         : {
-            celebration: true,
             message: "Tu primer modo está listo. Puedes activarlo o cambiarlo cuando quieras.",
             title: "¡Tu rehábito comienza ahora!",
           });
+      router.replace("/(tabs)/overview");
     } catch {
       Alert.alert("No se pudo guardar", "Intenta guardar el modo de nuevo.");
     }
@@ -510,6 +517,7 @@ export default function OnboardingScreen() {
       <>
         <Editor
           apps={apps}
+          appsLoading={appsLoading}
           isEditing={isEditing}
           pickerTarget={pickerTarget}
           plan={plan}
@@ -975,6 +983,7 @@ function PlanPreview({
 
 function Editor({
   apps,
+  appsLoading,
   isEditing,
   pickerTarget,
   plan,
@@ -993,6 +1002,7 @@ function Editor({
   onSave,
 }: {
   apps: AndroidBlockableApp[];
+  appsLoading: boolean;
   isEditing: boolean;
   pickerTarget: PickerTarget;
   plan: AndroidRewardPlan;
@@ -1032,7 +1042,10 @@ function Editor({
           <YStack gap="$5" paddingBottom="$8">
             <YStack alignItems="center" gap="$3">
               <ModeRadial duration={plan.productiveMinutes} size={214} />
-              <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
+              <YStack gap="$2" width="100%">
+                <SizableText color="$text11" fontWeight="800" size="$4">Minutos por ganar</SizableText>
+                <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
+              </YStack>
             </YStack>
 
             <CategorySelector
@@ -1053,17 +1066,19 @@ function Editor({
               apps={selectedApps(plan.blockedPackages)}
               description="Estas apps permanecen bloqueadas durante tu estado."
               label="Bloquear"
+              loading={appsLoading}
               onPress={() => setPickerTarget("blocked")}
             />
             <AppGroupCard
               apps={selectedApps(plan.productivePackages)}
               description="Apps para reemplazar el tiempo de scroll."
               label="Rehabbit"
+              loading={appsLoading}
               onPress={() => setPickerTarget("productive")}
             />
 
             <YStack gap="$3">
-              <H4 color="$text11">Hora</H4>
+              <H4 color="$text11">Elige tu horario</H4>
               <ScheduleCard
                 endMinute={plan.schedule.endMinute}
                 startMinute={plan.schedule.startMinute}
@@ -1124,23 +1139,42 @@ function Editor({
   );
 }
 
-function AppGroupCard({ apps, description, label, onPress }: { apps: AndroidBlockableApp[]; description: string; label: string; onPress: () => void }) {
+function AppGroupCard({
+  apps,
+  description,
+  label,
+  loading,
+  onPress,
+}: {
+  apps: AndroidBlockableApp[];
+  description: string;
+  label: string;
+  loading: boolean;
+  onPress: () => void;
+}) {
   return (
     <YStack gap="$3">
       <H4 color="$text11">{label}</H4>
       <ShadowCard
         padding="$5"
-        pressStyle={{ opacity: 0.75 }}
+        pressStyle={loading ? undefined : { opacity: 0.75 }}
         tone="surface"
-        onPress={onPress}
+        onPress={loading ? undefined : onPress}
       >
-        <XStack alignItems="center" gap="$3" justifyContent="space-between">
-          <YStack flex={1} gap="$1">
-            <SizableText color="$text11" fontWeight="800">{apps.length ? `${apps.length} apps seleccionadas` : "Seleccionar apps"}</SizableText>
-            <SizableText color="$text10" size="$3">{description}</SizableText>
-          </YStack>
-          {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color="$text11" size={22} />}
-        </XStack>
+        {loading ? (
+          <XStack alignItems="center" gap="$3" minHeight={44}>
+            <Spinner color="$primary9" size="small" />
+            <SizableText color="$text10" fontWeight="700">Cargando aplicaciones...</SizableText>
+          </XStack>
+        ) : (
+          <XStack alignItems="center" gap="$3" justifyContent="space-between">
+            <YStack flex={1} gap="$1">
+              <SizableText color="$text11" fontWeight="800">{apps.length ? `${apps.length} apps seleccionadas` : "Seleccionar apps"}</SizableText>
+              <SizableText color="$text10" size="$3">{description}</SizableText>
+            </YStack>
+            {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color="$text11" size={22} />}
+          </XStack>
+        )}
       </ShadowCard>
     </YStack>
   );
