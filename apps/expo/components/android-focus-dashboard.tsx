@@ -1,4 +1,4 @@
-import { CircleMinus, Clock3, Plus, Settings } from "@tamagui/lucide-icons";
+import { CircleMinus, CirclePause, Clock3, Plus, Settings } from "@tamagui/lucide-icons";
 import {
   configureRewardBlockerPlans,
   getInstalledApps,
@@ -145,7 +145,19 @@ function ModeCard({
       tone={plan.category === "sleep" ? "sky" : plan.category === "exercise" ? "mint" : "aqua"}
       onPress={() => router.push({ pathname: "/onboarding", params: { planId: plan.id } })}
     >
-      <YStack gap="$3">
+      {plan.paused ? (
+        <View
+          backgroundColor="rgba(112, 119, 133, 0.16)"
+          bottom={0}
+          left={0}
+          pointerEvents="none"
+          position="absolute"
+          right={0}
+          top={0}
+          zIndex={1}
+        />
+      ) : null}
+      <YStack gap="$3" zIndex={2}>
         <H4 color="$text11" fontSize="$7">{plan.name}</H4>
 
         <XStack alignItems="center" gap="$2">
@@ -163,6 +175,23 @@ function ModeCard({
         </XStack>
 
         <SizableText color="$text6" fontSize="$2">Todos los dias</SizableText>
+
+        {plan.paused ? (
+          <XStack
+            alignItems="center"
+            alignSelf="flex-start"
+            backgroundColor="rgba(255, 255, 255, 0.72)"
+            borderColor="rgba(112, 119, 133, 0.28)"
+            borderRadius={99}
+            borderWidth={1}
+            gap="$2"
+            paddingHorizontal="$3"
+            paddingVertical="$2"
+          >
+            <CirclePause color="#707785" size={16} />
+            <SizableText color="#565E6B" fontWeight="800" size="$3">Pausado</SizableText>
+          </XStack>
+        ) : null}
       </YStack>
     </ShadowCard>
   );

@@ -70,7 +70,7 @@ Use Tamagui `View`, `XStack`, `YStack`, `Button`, `Input`, `Paragraph`, `Sizable
 
 ## Canonical Android Locker
 
-- The native Android overlay in `expo-app-blocker-master/android/src/main/java/expo/modules/appblocker/OverlayManager.kt` is the core product experience. It is the only locker shown when a blocked app is opened.
+- The native Android overlay in `packages/expo-app-blocker/android/src/main/java/expo/modules/appblocker/OverlayManager.kt` is the core product experience. It is the only locker shown when a blocked app is opened.
 - Preserve its turquoise-to-blue gradient, circular progress ring, countdown, replacement-app cards, real app icons, and arrow-to-open behavior. Focus, Sleep, and Work reuse this exact layout; only their copy and selected replacement apps may change.
 - Never replace the native locker with a React Native `blocked` screen, deep link, white card, generic overlay, or a second visual design. Any visual change to this overlay requires an approved reference and explicit user request.
 - The plan form must remain one card with sections. Installed app discovery/search belongs in a modal sheet opened from a `+` button; the form itself only displays selected apps.

@@ -280,8 +280,8 @@ export function ScheduleCard({
                 key={day}
                 unstyled
                 alignItems="center"
-                backgroundColor={selected ? "$primary9" : "rgba(255, 255, 255, 0.7)"}
-                borderColor={selected ? "$primary9" : "#E2E8F0"}
+                backgroundColor={selected ? "#5B8CFF" : "rgba(255, 255, 255, 0.9)"}
+                borderColor={selected ? "#483FFF" : "#E2E8F0"}
                 borderRadius={99}
                 borderWidth={1}
                 flex={1}

@@ -1,10 +1,144 @@
-import { Check, Search, X } from "@tamagui/lucide-icons";
-import type { AndroidBlockableApp } from "expo-app-blocker";
+import { Search, X } from "@tamagui/lucide-icons";
+import type { AndroidAppCategory, AndroidBlockableApp } from "expo-app-blocker";
 import { useDeferredValue, useEffect, useState } from "react";
-import { Image } from "react-native";
-import { Button, H4, Input, Paragraph, ScrollView, Sheet, SizableText, View, XStack, YStack } from "tamagui";
+import { Image, SectionList } from "react-native";
+import { Button, H4, Input, Paragraph, Sheet, SizableText, View, XStack, YStack } from "tamagui";
 
 import { GradientButton } from "./mode-ui";
+
+const CATEGORY_ORDER: AndroidAppCategory[] = [
+  "social",
+  "productivity",
+  "video",
+  "audio",
+  "game",
+  "news",
+  "maps",
+  "image",
+  "other",
+];
+
+const CATEGORY_LABELS: Record<AndroidAppCategory, string> = {
+  audio: "Música y audio",
+  game: "Juegos",
+  image: "Fotos e imágenes",
+  maps: "Mapas y navegación",
+  news: "Noticias",
+  other: "Otras aplicaciones",
+  productivity: "Productividad",
+  social: "Social",
+  video: "Video",
+};
+
+type AppSection = {
+  category: AndroidAppCategory;
+  data: AndroidBlockableApp[];
+  title: string;
+};
+
+export function AppSelectionList({
+  apps,
+  height,
+  resetKey,
+  selectedPackages,
+  onSearchFocus,
+  onToggle,
+}: {
+  apps: AndroidBlockableApp[];
+  height?: number;
+  resetKey?: boolean | string;
+  selectedPackages: string[];
+  onSearchFocus?: () => void;
+  onToggle: (packageName: string) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query.trim().toLocaleLowerCase());
+
+  useEffect(() => {
+    setQuery("");
+  }, [resetKey]);
+
+  const filteredApps = deferredQuery
+    ? apps.filter((app) =>
+        `${app.name} ${app.packageName}`.toLocaleLowerCase().includes(deferredQuery),
+      )
+    : apps;
+  const sections = CATEGORY_ORDER.reduce<AppSection[]>((result, category) => {
+    const data = filteredApps.filter((app) => (app.category ?? "other") === category);
+    if (data.length > 0) result.push({ category, data, title: CATEGORY_LABELS[category] });
+    return result;
+  }, []);
+
+  return (
+    <YStack flex={height ? undefined : 1} gap="$3" height={height}>
+      <XStack
+        alignItems="center"
+        backgroundColor="#FFFFFF"
+        borderColor="#E2E8F0"
+        borderRadius={20}
+        borderWidth={1}
+        gap="$2"
+        paddingHorizontal="$3"
+      >
+        <Search color="$text10" size={20} />
+        <Input
+          unstyled
+          color="$text11"
+          flex={1}
+          height={52}
+          placeholder="Buscar aplicaciones"
+          placeholderTextColor="$text6"
+          value={query}
+          onChangeText={setQuery}
+          onFocus={onSearchFocus}
+        />
+        {query.length > 0 ? (
+          <Button unstyled padding="$1" onPress={() => setQuery("")}>
+            <X color="$text10" size={17} />
+          </Button>
+        ) : null}
+      </XStack>
+
+      <SectionList
+        contentContainerStyle={{ paddingBottom: 12 }}
+        keyboardShouldPersistTaps="handled"
+        sections={sections}
+        showsVerticalScrollIndicator={false}
+        stickySectionHeadersEnabled={false}
+        keyExtractor={(app) => app.packageName}
+        ListEmptyComponent={
+          <YStack alignItems="center" gap="$2" paddingVertical="$8">
+            <Search color="$text6" size={26} />
+            <SizableText color="$text10" textAlign="center">
+              {apps.length === 0
+                ? "No se pudieron cargar las aplicaciones instaladas."
+                : "No encontramos aplicaciones con ese nombre."}
+            </SizableText>
+          </YStack>
+        }
+        renderSectionHeader={({ section }) => (
+          <XStack alignItems="center" justifyContent="space-between" paddingBottom="$2" paddingTop="$3">
+            <SizableText color="$text10" fontWeight="900" size="$3">
+              {section.title}
+            </SizableText>
+            <SizableText color="$text6" fontWeight="700" size="$2">
+              {section.data.length}
+            </SizableText>
+          </XStack>
+        )}
+        renderItem={({ item }) => (
+          <View paddingBottom="$2">
+            <AppPickerRow
+              app={item}
+              selected={selectedPackages.includes(item.packageName)}
+              onPress={() => onToggle(item.packageName)}
+            />
+          </View>
+        )}
+      />
+    </YStack>
+  );
+}
 
 export function AppPickerSheet({
   apps,
@@ -21,17 +155,10 @@ export function AppPickerSheet({
   onOpenChange: (open: boolean) => void;
   onToggle: (packageName: string) => void;
 }) {
-  const [query, setQuery] = useState("");
   const [position, setPosition] = useState(1);
-  const deferredQuery = useDeferredValue(query.trim().toLocaleLowerCase());
-  const filteredApps = deferredQuery
-    ? apps.filter((app) => app.name.toLocaleLowerCase().includes(deferredQuery))
-    : apps;
 
   useEffect(() => {
-    if (!open) return;
-    setQuery("");
-    setPosition(1);
+    if (open) setPosition(1);
   }, [open]);
 
   return (
@@ -77,57 +204,13 @@ export function AppPickerSheet({
             </Button>
           </XStack>
 
-          <XStack
-            alignItems="center"
-            backgroundColor="$background2"
-            borderColor="$borderColor"
-            borderRadius={20}
-            borderWidth={1}
-            gap="$2"
-            paddingHorizontal="$3"
-          >
-            <Search color="$text10" size={20} />
-            <Input
-              unstyled
-              color="$text11"
-              flex={1}
-              height={52}
-              placeholder="Buscar apps"
-              placeholderTextColor="$text6"
-              value={query}
-              onChangeText={setQuery}
-              onFocus={() => setPosition(0)}
-            />
-            {query.length > 0 && (
-              <Button unstyled padding="$1" onPress={() => setQuery("")}>
-                <X color="$text10" size={17} />
-              </Button>
-            )}
-          </XStack>
-
-          <ScrollView
-            flex={1}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            onScrollBeginDrag={() => setPosition(0)}
-          >
-            <YStack gap="$2" paddingBottom="$3">
-              {filteredApps.map((app) => (
-                <AppPickerRow
-                  app={app}
-                  key={app.packageName}
-                  selected={selectedPackages.includes(app.packageName)}
-                  onPress={() => onToggle(app.packageName)}
-                />
-              ))}
-              {filteredApps.length === 0 && (
-                <YStack alignItems="center" gap="$2" paddingVertical="$8">
-                  <Search color="$text6" size={26} />
-                  <SizableText color="$text10">No encontramos apps con ese nombre.</SizableText>
-                </YStack>
-              )}
-            </YStack>
-          </ScrollView>
+          <AppSelectionList
+            apps={apps}
+            resetKey={open ? title : false}
+            selectedPackages={selectedPackages}
+            onSearchFocus={() => setPosition(0)}
+            onToggle={onToggle}
+          />
 
           <GradientButton onPress={() => onOpenChange(false)}>
             {selectedPackages.length ? `Listo · ${selectedPackages.length}` : "Listo"}
@@ -151,13 +234,12 @@ function AppPickerRow({
     <Button
       unstyled
       alignItems="center"
-      backgroundColor={selected ? "$primary9" : "$background2"}
-      borderColor={selected ? "$primary9" : "$borderColor"}
+      backgroundColor={selected ? "#483FFF" : "#FFFFFF"}
+      borderColor={selected ? "#483FFF" : "#E2E8F0"}
       borderRadius={20}
       borderWidth={1}
       flexDirection="row"
       gap="$3"
-      justifyContent="space-between"
       minHeight={64}
       paddingHorizontal="$3"
       paddingVertical="$2"
@@ -170,18 +252,6 @@ function AppPickerRow({
           {app.name}
         </SizableText>
       </XStack>
-      <View
-        alignItems="center"
-        backgroundColor={selected ? "rgba(255,255,255,0.18)" : "$background"}
-        borderColor={selected ? "rgba(255,255,255,0.72)" : "$borderColor"}
-        borderRadius={99}
-        borderWidth={1}
-        height={25}
-        justifyContent="center"
-        width={25}
-      >
-        {selected && <Check color="white" size={16} />}
-      </View>
     </Button>
   );
 }

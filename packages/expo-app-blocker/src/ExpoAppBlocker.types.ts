@@ -24,10 +24,22 @@ export interface IOSPermissions {
 // App selection types
 // ──────────────────────────────────────────────────────────────────────────────
 
+export type AndroidAppCategory =
+  | "audio"
+  | "game"
+  | "image"
+  | "maps"
+  | "news"
+  | "other"
+  | "productivity"
+  | "social"
+  | "video";
+
 export interface AndroidBlockableApp {
   packageName: string;
   name: string;
   iconBase64?: string | null;
+  category?: AndroidAppCategory;
 }
 
 export interface IOSBlockedItem {

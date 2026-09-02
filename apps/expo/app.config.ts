@@ -25,6 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     package: "com.velascode.rehabbit",
+    versionCode: 5,
   },
   web: {
     bundler: "metro",

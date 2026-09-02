@@ -23,6 +23,7 @@ export interface AndroidRewardPlan extends AndroidRewardBlockerPlan {
   mode: RewardPlanMode;
   category: PlanCategory;
   name: string;
+  paused: boolean;
   weekdays: PlanWeekday[];
   customCategories: PlanCustomCategory[];
   selectedCategoryId: string;
@@ -63,6 +64,7 @@ export function createAndroidRewardPlan(category: PlanCategory = "focus"): Andro
     category,
     name: PLAN_CATEGORY_COPY[category].name,
     enabled: false,
+    paused: false,
     blockedPackages: [],
     productivePackages: [],
     schedule: MODE_SCHEDULE[mode],
@@ -91,6 +93,7 @@ function normalizePlan(value: Partial<AndroidRewardPlan>, index: number): Androi
     name: name ? name : PLAN_CATEGORY_COPY[category].name,
     mode,
     category,
+    paused: value.paused === true,
     blockedPackages: value.blockedPackages ?? [],
     productivePackages: value.productivePackages ?? [],
     schedule: value.schedule ?? fallback.schedule,

@@ -9,6 +9,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Process
 import android.provider.Settings
 import android.util.Base64
@@ -60,9 +61,15 @@ class ExpoAppBlockerModule : Module() {
     }
 
     Function("openUsageStatsSettings") {
-      val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-      context.startActivity(intent)
+      val detailsIntent = Intent(
+        "android.settings.USAGE_ACCESS_DETAILS_SETTINGS",
+        Uri.parse("package:${context.packageName}")
+      ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      try {
+        context.startActivity(detailsIntent)
+      } catch (_: android.content.ActivityNotFoundException) {
+        context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+      }
     }
 
     Function("setAndroidConfig") { config: Map<String, Any?> ->
@@ -292,9 +299,25 @@ class ExpoAppBlockerModule : Module() {
         mapOf(
           "packageName" to appInfo.packageName,
           "name" to (pm.getApplicationLabel(appInfo)?.toString() ?: appInfo.packageName),
-          "iconBase64" to iconBase64
+          "iconBase64" to iconBase64,
+          "category" to androidAppCategory(appInfo)
         )
       }.sortedBy { it["name"]?.toString()?.lowercase() }
+    }
+  }
+
+  private fun androidAppCategory(appInfo: ApplicationInfo): String {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return "other"
+    return when (appInfo.category) {
+      ApplicationInfo.CATEGORY_AUDIO -> "audio"
+      ApplicationInfo.CATEGORY_GAME -> "game"
+      ApplicationInfo.CATEGORY_IMAGE -> "image"
+      ApplicationInfo.CATEGORY_MAPS -> "maps"
+      ApplicationInfo.CATEGORY_NEWS -> "news"
+      ApplicationInfo.CATEGORY_PRODUCTIVITY -> "productivity"
+      ApplicationInfo.CATEGORY_SOCIAL -> "social"
+      ApplicationInfo.CATEGORY_VIDEO -> "video"
+      else -> "other"
     }
   }
 

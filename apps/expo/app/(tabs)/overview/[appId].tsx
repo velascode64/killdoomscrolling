@@ -2,6 +2,7 @@ import type { TextProps } from "react-native";
 import { Link, Redirect, router, useLocalSearchParams } from "expo-router";
 import { ChevronRight, Cog } from "@tamagui/lucide-icons";
 import dayjs from "dayjs";
+import weekday from "dayjs/plugin/weekday";
 import { observer } from "mobx-react-lite";
 import { H2, H4, Paragraph, SizableText, useTheme, View, XStack, YStack } from "tamagui";
 
@@ -11,6 +12,8 @@ import { LineChart } from "../../../components/line.chart";
 import { PieChart } from "../../../components/pie.chart";
 import { ShadowCard } from "../../../components/shadow.card";
 import { OverviewStore } from "../../../data/overview.store";
+
+dayjs.extend(weekday);
 
 const labelTextStyle = { color: "#707785", width: 100, marginTop: -2, fontFamily: "Satoshi", fontSize: 12 };
 
