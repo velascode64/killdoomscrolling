@@ -1,3 +1,158 @@
 {
-  "translation": {}
+  "translation": {
+    "categories": {
+      "focus": { "name": "Focus", "description": "Recover your attention with apps that help you move forward." },
+      "exercise": { "name": "Exercise", "description": "Make room to move before returning to social media." },
+      "sleep": { "name": "Sleep", "description": "Protect your rest and prepare for a better night." },
+      "meditation": { "name": "Meditation", "description": "Take a pause before returning to distractions." },
+      "hobby": { "name": "Hobby", "description": "Set aside time for an activity you enjoy." },
+      "work": { "name": "Work", "description": "Create space for the work that matters." }
+    },
+    "modes": { "focus": "Focus", "sleep": "Sleep", "work": "Work" },
+    "dashboard": {
+      "startJourney": "Start your journey",
+      "loading": "Loading your modes...",
+      "emptyDescription": "Create your first mode to pause distractions and reclaim your time.",
+      "createFirst": "Create my first mode",
+      "modes": "Your modes",
+      "everyDay": "Every day",
+      "paused": "Paused",
+      "resuming": "Resuming...",
+      "resumeErrorTitle": "Couldn't resume",
+      "resumeErrorBody": "Make sure there isn't another active mode during that schedule, then try again.",
+      "noApps": "No apps",
+      "noRehabbit": "No Rehabbit apps"
+    },
+    "navigation": { "overview": "Home", "apps": "Apps", "tips": "Tips" },
+    "common": { "done": "Done", "save": "Save", "continue": "Continue", "cancel": "Cancel", "delete": "Delete", "activate": "Enable" },
+    "summary": { "title": "Summary", "prevented": "Prevented", "savedTime": "Time saved" },
+    "about": { "version": "Version {{version}}", "description": "Reclaim time from social media for what you really want to do." },
+    "privacy": {
+      "intro": "Rehabbit stores your modes, onboarding answers, and Rehabbit usage events to sync them and measure whether the product helps you. We don't send your complete phone usage history.",
+      "storedTitle": "Data we store", "storedBody": "Mode settings, apps you choose to block, onboarding answers, and interaction events with Rehabbit.",
+      "deleteTitle": "Delete my data", "deleteBody": "Deletes data from your device and Rehabbit."
+    },
+    "terms": { "title": "Using Rehabbit", "body1": "Rehabbit lets you create modes to temporarily block apps you choose. Android permissions are required for blocking to work.", "body2": "You can edit or delete your modes and data at any time from Settings." },
+    "onboarding": {
+      "androidOnly": "This experience is available on Android.",
+      "welcomeTitle": "Recover your attention",
+      "welcomeBody": "Create a mode to block distractions and spend time on what matters.",
+      "start": "Get started",
+      "phoneUseTitle": "How much time do you spend on your phone?",
+      "phoneUseBody": "We'll use this to suggest an initial plan. You can change it later.",
+      "recoverTimeTitle": "How long do you want to stop using your phone?",
+      "recoverTimeBody": "Choose the first period you want to recover.",
+      "goalTitle": "What do you want to achieve?",
+      "goalBody": "Your plan adapts to the intention you choose.",
+      "goals": { "social": "Use social media less", "focus": "Focus more", "sleep": "Sleep", "activity": "Do another activity", "other": "Other" },
+      "customGoalPlaceholder": "Write your goal",
+      "objectivesTitle": "Choose your goals",
+      "objectivesBody": "Choose one or more goals for your plan.",
+      "blockedTitle": "Which apps would you like to use less?",
+      "blockedBody": "You can adjust them whenever you want.",
+      "modeTimeTitle": "How long do you want to stop using those apps?",
+      "modeTimeBody": "This is how long you'll stay in your mode before social apps unlock.",
+      "yourMode": "your mode",
+      "replacementTitle": "Which app would you like to use instead?",
+      "replacementBody": "These apps become available while you stay in your mode.",
+      "activate": "Activate Rehabbit",
+      "permissionsTitle": "One last step to activate Rehabbit",
+      "permissionsBody": "We need these permissions for blocking to work correctly.",
+      "permissions": {
+        "usageTitle": "Usage access", "usageDescription": "Detects when you open a blocked app.",
+        "overlayTitle": "Display over other apps", "overlayDescription": "Shows the blocking screen.",
+        "notificationsTitle": "Notifications", "notificationsDescription": "Status and updates for your active mode.", "optional": "Optional"
+      },
+      "creatingTitle": "Creating your plan",
+      "creatingBody": "We're preparing your limits and alternatives.",
+      "previewTitle": "Your plan is ready",
+      "previewBody": "Review it before saving. It will remain inactive until you choose to activate it.",
+      "inactive": "Inactive",
+      "editOptions": "Edit options",
+      "feedback": {
+        "updatedTitle": "Mode updated", "updatedMessage": "Your mode changes have been saved.",
+        "createdTitle": "Mode created", "createdMessage": "Your new mode is saved and ready to use.",
+        "firstTitle": "Your Rehabbit starts now!", "firstMessage": "Your first mode is ready. You can activate or change it whenever you want.",
+        "pausedTitle": "Mode paused", "pausedMessage": "The mode stopped blocking apps. Its setup is still saved.",
+        "deletedTitle": "Mode deleted", "deletedMessage": "The mode and its setup have been deleted."
+      }
+    },
+    "editor": {
+      "createTitle": "Create mode", "editTitle": "Edit mode", "minutesToGain": "Minutes to earn",
+      "block": "Block", "blockDescription": "These apps stay blocked while your mode is active.",
+      "rehabbitDescription": "Apps to replace scrolling time.", "scheduleTitle": "Choose your schedule",
+      "resume": "Resume mode", "saveChanges": "Save changes", "activate": "Activate mode",
+      "paused": "Mode paused", "pause": "Pause mode", "delete": "Delete mode", "saveMode": "Save mode",
+      "blockedApps": "Blocked apps", "rehabbitApps": "Rehabbit apps", "loadingApps": "Loading apps...",
+      "appsSelected_one": "{{count}} app selected", "appsSelected_other": "{{count}} apps selected", "selectApps": "Select apps",
+      "alerts": {
+        "nameTitle": "Add a name", "nameBody": "The mode needs a name before it can be saved.",
+        "appsTitle": "Select apps", "appsBody": "Choose at least one app you want to block.",
+        "scheduleTitle": "Check the schedule", "scheduleBody": "Start and end time must be different.",
+        "overlapTitle": "Schedule in use", "overlapBody": "There is already another active mode during that schedule.",
+        "saveErrorTitle": "Couldn't save", "saveErrorBody": "Try saving the mode again.",
+        "pauseErrorTitle": "Couldn't pause", "pauseErrorBody": "Try pausing the mode again.",
+        "deleteErrorTitle": "Couldn't delete", "deleteErrorBody": "Try deleting the mode again.",
+        "deleteTitle": "Delete mode", "deleteBody": "Do you want to delete {{name}}? This can't be undone."
+      }
+    },
+    "category": {
+      "title": "Category",
+      "new": "New category",
+      "name": "Name",
+      "namePlaceholder": "Category name",
+      "icon": "Icon"
+    },
+    "schedule": {
+      "start": "Start",
+      "end": "End",
+      "days": "Days",
+      "everyDay": "Every day",
+      "weekdays": "Monday to Friday"
+    },
+    "appPicker": {
+      "title": "Select apps",
+      "search": "Search apps",
+      "loadError": "We couldn't load the installed apps.",
+      "empty": "We couldn't find apps with that name.",
+      "selected_one": "{{count}} selected",
+      "selected_other": "{{count}} selected",
+      "categories": {
+        "social": "Social",
+        "productivity": "Productivity",
+        "video": "Video",
+        "audio": "Music and audio",
+        "game": "Games",
+        "news": "News",
+        "maps": "Maps and navigation",
+        "image": "Photos and images",
+        "other": "Other apps"
+      }
+    },
+    "permissions": {
+      "sheetTitle": "Enable permissions to use Rehabbit",
+      "sheetDescription": "Android needs usage access and permission to display over other apps.",
+      "enableUsage": "Enable usage access",
+      "enableOverlay": "Allow display over other apps",
+      "settingsDescription": "Rehabbit requests these permissions only to apply the modes you create.",
+      "usageSettingsDescription": "Detects when you open an app you selected to block.",
+      "overlaySettingsDescription": "Shows blocking when you try to open a selected app.",
+      "notificationsSettingsDescription": "Keeps your active mode status visible on Android.",
+      "active": "Active", "pending": "Pending"
+    },
+    "settings": {
+      "control": "Control",
+      "permissions": "Permissions",
+      "privacy": "Privacy",
+      "privacyData": "Privacy and data",
+      "terms": "Terms and conditions",
+      "share": "Share Rehabbit",
+      "about": "About Rehabbit",
+      "lightTheme": "Light theme",
+      "languageSection": "Language",
+      "language": "App language",
+      "languageDescription": "Choose the language you want to use in Rehabbit.",
+      "changeLanguage": "Change language"
+    }
+  }
 }

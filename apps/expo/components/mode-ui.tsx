@@ -133,11 +133,13 @@ export function ModeRadial({
 
 export function AppAvatarStack({
   apps,
+  dimmed = false,
   emptyLabel = "Agregar",
   maxVisible = 3,
   onPress,
 }: {
   apps: AndroidBlockableApp[];
+  dimmed?: boolean;
   emptyLabel?: string;
   maxVisible?: number;
   onPress?: () => void;
@@ -173,6 +175,17 @@ export function AppAvatarStack({
                 {app.name.slice(0, 1).toUpperCase()}
               </SizableText>
             )}
+            {dimmed ? (
+              <View
+                backgroundColor="rgba(31, 36, 48, 0.42)"
+                bottom={0}
+                left={0}
+                pointerEvents="none"
+                position="absolute"
+                right={0}
+                top={0}
+              />
+            ) : null}
           </View>
         ))}
         {extra > 0 && (

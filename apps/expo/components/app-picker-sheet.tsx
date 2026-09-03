@@ -19,6 +19,7 @@ import { Image, SectionList } from "react-native";
 import { Button, H4, Input, Paragraph, Sheet, SizableText, View, XStack, YStack } from "tamagui";
 
 import { GradientButton } from "./mode-ui";
+import { translate, useAppLanguage } from "./translate";
 
 const CATEGORY_ORDER: AndroidAppCategory[] = [
   "social",
@@ -31,18 +32,6 @@ const CATEGORY_ORDER: AndroidAppCategory[] = [
   "image",
   "other",
 ];
-
-const CATEGORY_LABELS: Record<AndroidAppCategory, string> = {
-  audio: "Música y audio",
-  game: "Juegos",
-  image: "Fotos e imágenes",
-  maps: "Mapas y navegación",
-  news: "Noticias",
-  other: "Otras aplicaciones",
-  productivity: "Productividad",
-  social: "Social",
-  video: "Video",
-};
 
 type AppSection = {
   category: AndroidAppCategory;
@@ -79,6 +68,7 @@ export function AppSelectionList({
   onSearchFocus?: () => void;
   onToggle: (packageName: string) => void;
 }) {
+  useAppLanguage();
   const [expandedCategories, setExpandedCategories] = useState<Set<AndroidAppCategory>>(() => new Set());
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query.trim().toLocaleLowerCase());
@@ -98,7 +88,7 @@ export function AppSelectionList({
     const selectedCount = apps.filter(
       (app) => (app.category ?? "other") === category && selectedPackages.includes(app.packageName),
     ).length;
-    if (data.length > 0) result.push({ category, data, selectedCount, title: CATEGORY_LABELS[category] });
+    if (data.length > 0) result.push({ category, data, selectedCount, title: translate.t(`appPicker.categories.${category}`) });
     return result;
   }, []);
   const searching = deferredQuery.length > 0;
@@ -133,7 +123,7 @@ export function AppSelectionList({
           color="$text11"
           flex={1}
           height={52}
-          placeholder="Buscar aplicaciones"
+          placeholder={translate.t("appPicker.search")}
           placeholderTextColor="$text6"
           value={query}
           onChangeText={setQuery}
@@ -158,8 +148,8 @@ export function AppSelectionList({
             <Search color="$text6" size={26} />
             <SizableText color="$text10" textAlign="center">
               {apps.length === 0
-                ? "No se pudieron cargar las aplicaciones instaladas."
-                : "No encontramos aplicaciones con ese nombre."}
+                ? translate.t("appPicker.loadError")
+                : translate.t("appPicker.empty")}
             </SizableText>
           </YStack>
         ) : null}
@@ -200,7 +190,7 @@ export function AppSelectionList({
               </XStack>
               <XStack alignItems="center" gap="$2">
                 <SizableText color={hasSelection ? "white" : "$text6"} fontWeight="700" size="$2">
-                  {section.selectedCount} {section.selectedCount === 1 ? "seleccionada" : "seleccionadas"}
+                  {translate.t("appPicker.selected", { count: section.selectedCount })}
                 </SizableText>
                 {expanded
                   ? <ChevronDown color={hasSelection ? "white" : "$primary9"} size={18} />
@@ -238,6 +228,7 @@ export function AppPickerSheet({
   onOpenChange: (open: boolean) => void;
   onToggle: (packageName: string) => void;
 }) {
+  useAppLanguage();
   const [position, setPosition] = useState(1);
 
   useEffect(() => {
@@ -268,9 +259,9 @@ export function AppPickerSheet({
         <YStack flex={1} gap="$4">
           <XStack alignItems="flex-start" justifyContent="space-between">
             <YStack flex={1} gap="$1">
-              <H4 color="$text11" fontSize="$7">Seleccionar apps</H4>
+              <H4 color="$text11" fontSize="$7">{translate.t("appPicker.title")}</H4>
               <Paragraph color="$text10">
-                {title} · {selectedPackages.length} seleccionadas
+                {title} · {translate.t("appPicker.selected", { count: selectedPackages.length })}
               </Paragraph>
             </YStack>
             <Button
@@ -296,7 +287,7 @@ export function AppPickerSheet({
           />
 
           <GradientButton onPress={() => onOpenChange(false)}>
-            {selectedPackages.length ? `Listo · ${selectedPackages.length}` : "Listo"}
+            {selectedPackages.length ? `${translate.t("common.done")} · ${selectedPackages.length}` : translate.t("common.done")}
           </GradientButton>
         </YStack>
       </Sheet.Frame>

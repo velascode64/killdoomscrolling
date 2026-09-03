@@ -5,8 +5,13 @@ import {
   Briefcase,
   Dumbbell,
   CircleMinus,
+  Coffee,
+  Footprints,
+  Gamepad2,
+  GraduationCap,
   Heart,
   Music,
+  Moon,
   Palette,
   Plus,
   Star,
@@ -16,6 +21,7 @@ import { Button, H4, Input, Sheet, SizableText, View, XStack, YStack } from "tam
 
 import type { PlanCustomCategory, PlanCustomCategoryIcon } from "../data/android-reward";
 import { GradientButton } from "./mode-ui";
+import { translate, useAppLanguage } from "./translate";
 
 export type CategoryIconName = "focus" | "exercise" | "sleep" | "meditation" | "hobby" | "work" | PlanCustomCategoryIcon;
 
@@ -25,10 +31,23 @@ export interface CategoryOption {
   label: string;
 }
 
-const CUSTOM_ICONS: PlanCustomCategoryIcon[] = ["briefcase", "book", "heart", "music", "star"];
+const CUSTOM_ICONS: PlanCustomCategoryIcon[] = [
+  "briefcase",
+  "running",
+  "fitness",
+  "study",
+  "book",
+  "heart",
+  "music",
+  "game",
+  "coffee",
+  "moon",
+  "star",
+];
 
 export function CategoryGlyph({ icon, color = "$text11", size = 20 }: { icon: CategoryIconName; color?: string; size?: number }) {
   const props = { color, size };
+  if (icon === "focus") return <CircleMinus {...props} />;
   if (icon === "exercise") return <Dumbbell {...props} />;
   if (icon === "sleep") return <BedDouble {...props} />;
   if (icon === "meditation") return <Brain {...props} />;
@@ -38,6 +57,12 @@ export function CategoryGlyph({ icon, color = "$text11", size = 20 }: { icon: Ca
   if (icon === "book") return <BookOpen {...props} />;
   if (icon === "heart") return <Heart {...props} />;
   if (icon === "music") return <Music {...props} />;
+  if (icon === "running") return <Footprints {...props} />;
+  if (icon === "fitness") return <Dumbbell {...props} />;
+  if (icon === "study") return <GraduationCap {...props} />;
+  if (icon === "game") return <Gamepad2 {...props} />;
+  if (icon === "coffee") return <Coffee {...props} />;
+  if (icon === "moon") return <Moon {...props} />;
   if (icon === "star") return <Star {...props} />;
   return <CircleMinus {...props} />;
 }
@@ -53,6 +78,7 @@ export function CategorySelector({
   onAdd: (category: PlanCustomCategory) => void;
   onSelect: (category: CategoryOption) => void;
 }) {
+  useAppLanguage();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [name, setName] = useState("");
   const [icon, setIcon] = useState<PlanCustomCategoryIcon>("briefcase");
@@ -79,7 +105,7 @@ export function CategorySelector({
     <>
       <YStack gap="$3">
         <XStack alignItems="center" justifyContent="space-between">
-          <H4 color="$text11">Categoría</H4>
+          <H4 color="$text11">{translate.t("category.title")}</H4>
           <Button
             unstyled
             alignItems="center"
@@ -120,22 +146,22 @@ export function CategorySelector({
         >
           <Sheet.Handle backgroundColor="$borderColor" marginBottom="$3" />
           <YStack gap="$4">
-            <H4 color="$text11" fontSize="$7">Nueva categoría</H4>
+            <H4 color="$text11" fontSize="$7">{translate.t("category.new")}</H4>
             <YStack gap="$2">
-              <SizableText color="$text10" fontWeight="700">Nombre</SizableText>
+              <SizableText color="$text10" fontWeight="700">{translate.t("category.name")}</SizableText>
               <Input
                 backgroundColor="$background2"
                 borderColor="$borderColor"
                 borderRadius={18}
                 color="$text11"
-                placeholder="Nombre de la categoría"
+                placeholder={translate.t("category.namePlaceholder")}
                 value={name}
                 onChangeText={setName}
               />
             </YStack>
             <YStack gap="$2">
-              <SizableText color="$text10" fontWeight="700">Ícono</SizableText>
-              <XStack gap="$2">
+              <SizableText color="$text10" fontWeight="700">{translate.t("category.icon")}</SizableText>
+              <XStack flexWrap="wrap" gap="$2">
                 {CUSTOM_ICONS.map((option) => {
                   const selected = option === icon;
                   return (
@@ -147,10 +173,10 @@ export function CategorySelector({
                       borderColor={selected ? "$primary9" : "$borderColor"}
                       borderRadius={16}
                       borderWidth={1}
-                      flex={1}
                       height={48}
                       justifyContent="center"
                       pressStyle={{ opacity: 0.72 }}
+                      width={48}
                       onPress={() => setIcon(option)}
                     >
                       <CategoryGlyph color={selected ? "white" : "$text11"} icon={option} />
@@ -159,7 +185,7 @@ export function CategorySelector({
                 })}
               </XStack>
             </YStack>
-            <GradientButton disabled={!canSave} onPress={saveCategory}>Guardar</GradientButton>
+            <GradientButton disabled={!canSave} onPress={saveCategory}>{translate.t("common.save")}</GradientButton>
           </YStack>
         </Sheet.Frame>
       </Sheet>

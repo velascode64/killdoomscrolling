@@ -1,8 +1,10 @@
 import { Check, Sun } from "@tamagui/lucide-icons";
 import { ListItem, View, YGroup, YStack } from "tamagui";
 import { Container } from "../../components/container";
+import { translate, useAppLanguage } from "../../components/translate";
 
 const Theme = () => {
+  useAppLanguage();
   return (
     <Container paddingVertical={"$4"}>
       <YStack space="$3">
@@ -16,7 +18,7 @@ const Theme = () => {
               }
               iconAfter={<Check color="$primary11" size={18} strokeWidth={2.5} />}
             >
-              <ListItem.Text>Tema claro</ListItem.Text>
+              <ListItem.Text>{translate.t("settings.lightTheme")}</ListItem.Text>
             </ListItem>
           </YGroup.Item>
         </YGroup>

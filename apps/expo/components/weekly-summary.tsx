@@ -3,8 +3,10 @@ import { observer } from "mobx-react-lite";
 import { StyleSheet, Text, View } from "react-native";
 
 import { OverviewStore } from "../data/overview.store";
+import { translate, useAppLanguage } from "./translate";
 
 export const WeeklySummary = observer(() => {
+  useAppLanguage();
   const prevented = OverviewStore.totalPrevented;
   const focusedMinutes = OverviewStore.focusedMinutes;
 
@@ -16,16 +18,16 @@ export const WeeklySummary = observer(() => {
       style={styles.card}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>Resumen</Text>
+        <Text style={styles.title}>{translate.t("summary.title")}</Text>
       </View>
       <View style={styles.metrics}>
         <View style={styles.metric}>
           <Text style={styles.value}>{prevented}x</Text>
-          <Text style={styles.label}>Evitados</Text>
+          <Text style={styles.label}>{translate.t("summary.prevented")}</Text>
         </View>
         <View style={styles.metric}>
           <Text style={styles.value}>{focusedMinutes} MIN</Text>
-          <Text style={styles.label}>Tiempo ahorrado</Text>
+          <Text style={styles.label}>{translate.t("summary.savedTime")}</Text>
         </View>
       </View>
     </LinearGradient>
