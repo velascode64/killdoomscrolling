@@ -1,14 +1,16 @@
 import { Paragraph, SizableText, YStack } from "tamagui";
 
 import { Container } from "../../components/container";
+import { translate, useAppLanguage } from "../../components/translate";
 
 export default function Terms() {
+  useAppLanguage();
   return (
     <Container paddingVertical="$4">
       <YStack gap="$3">
-        <SizableText color="$text11" fontWeight="800">Uso de Rehabbit</SizableText>
-        <Paragraph color="$text10">Rehabbit te permite crear modos para bloquear temporalmente las apps que selecciones. Los permisos Android son necesarios para que el bloqueo funcione.</Paragraph>
-        <Paragraph color="$text10">Puedes modificar o eliminar tus modos y tus datos en cualquier momento desde Ajustes.</Paragraph>
+        <SizableText color="$text11" fontWeight="800">{translate.t("terms.title")}</SizableText>
+        <Paragraph color="$text10">{translate.t("terms.body1")}</Paragraph>
+        <Paragraph color="$text10">{translate.t("terms.body2")}</Paragraph>
       </YStack>
     </Container>
   );

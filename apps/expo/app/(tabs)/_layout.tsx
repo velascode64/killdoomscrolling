@@ -2,12 +2,15 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Tabs } from "expo-router";
 
 import { LiquidGlassTabBar } from "../../components/navigation/LiquidGlassTabBar";
+import { translate, useAppLanguage } from "../../components/translate";
 
 export const unstable_settings = {
   initialRouteName: "overview",
 };
 
-const OverviewLayout = () => (
+const OverviewLayout = () => {
+  useAppLanguage();
+  return (
   <Tabs
     screenOptions={{ headerShown: false }}
     tabBar={(props) => <LiquidGlassTabBar {...props} />}
@@ -15,7 +18,7 @@ const OverviewLayout = () => (
     <Tabs.Screen
       name="overview"
       options={{
-        title: "Overview",
+        title: translate.t("navigation.overview"),
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons color={color} name="chart-box-outline" size={size} />
         ),
@@ -25,7 +28,7 @@ const OverviewLayout = () => (
       name="apps"
       options={{
         href: null,
-        title: "Apps",
+        title: translate.t("navigation.apps"),
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons color={color} name="view-grid-outline" size={size} />
         ),
@@ -34,13 +37,14 @@ const OverviewLayout = () => (
     <Tabs.Screen
       name="tips"
       options={{
-        title: "Tips",
+        title: translate.t("navigation.tips"),
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons color={color} name="lightbulb-on-outline" size={size} />
         ),
       }}
     />
   </Tabs>
-);
+  );
+};
 
 export default OverviewLayout;

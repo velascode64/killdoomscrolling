@@ -55,15 +55,14 @@ import { CategoryGlyph, CategorySelector } from "../components/category-selector
 import type { CategoryOption } from "../components/category-selector";
 import { GlassMinutePicker, ScheduleCard } from "../components/schedule-card";
 import { ShadowCard } from "../components/shadow.card";
+import { translate, useAppLanguage } from "../components/translate";
 import { Container } from "../components/container";
 import {
   PLAN_CATEGORY_COPY,
   createAndroidRewardPlan,
-  loadAndroidRewardPlans,
   nativeModeForCategory,
-  pruneUnavailablePlanApps,
-  saveAndroidRewardPlans,
   toNativeRewardPlansConfig,
+  updateAndroidRewardPlans,
 } from "../data/android-reward";
 import type { AndroidRewardPlan, PlanCategory, PlanCustomCategory } from "../data/android-reward";
 import { markOnboardingCompleted } from "../data/onboarding-state";
@@ -73,8 +72,9 @@ import { deleteMode, syncModes, syncOnboarding, trackProductEvent } from "../dat
 const durationOptions = [15, 25, 60];
 const phoneUseOptions = [1, 2, 4, 8];
 const categories: PlanCategory[] = ["focus", "exercise", "sleep", "meditation", "hobby"];
-const goals = ["Dejar redes", "Concentrar mas", "Dormir", "Hacer otra actividad", "Otro"];
-const objectiveOptions = ["Foco", "Ejercicio", "Dormir", "Meditacion", "Hobby"];
+const goals = ["social", "focus", "sleep", "activity", "other"] as const;
+const objectiveOptions: PlanCategory[] = ["focus", "exercise", "sleep", "meditation", "hobby"];
+type Goal = (typeof goals)[number];
 
 type PickerTarget = "blocked" | "productive" | null;
 type AndroidPermissionState = { notifications: boolean; overlay: boolean; usageStats: boolean };
@@ -85,9 +85,9 @@ type ActionFeedback = {
   title: string;
 } | null;
 
-function categoryForGoal(goal: string): PlanCategory {
-  if (goal === "Dormir") return "sleep";
-  if (goal === "Hacer otra actividad") return "hobby";
+function categoryForGoal(goal: Goal): PlanCategory {
+  if (goal === "sleep") return "sleep";
+  if (goal === "activity") return "hobby";
   return "focus";
 }
 
@@ -232,6 +232,7 @@ function Header({ onBack, title }: { onBack: () => void; title?: string }) {
 }
 
 export default function OnboardingScreen() {
+  useAppLanguage();
   const { mode, planId } = useLocalSearchParams<{ mode?: string; planId?: string }>();
   const [apps, setApps] = useState<AndroidBlockableApp[]>([]);
   const [appsLoading, setAppsLoading] = useState(Platform.OS === "android");
@@ -240,7 +241,7 @@ export default function OnboardingScreen() {
   const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
   const [step, setStep] = useState(Boolean(planId) || mode === "create" ? 10 : 0);
   const [phoneUse, setPhoneUse] = useState(2);
-  const [goal, setGoal] = useState("Concentrar mas");
+  const [goal, setGoal] = useState<Goal>("focus");
   const [customGoal, setCustomGoal] = useState("");
   const [objectives, setObjectives] = useState<string[]>([]);
   const [creating, setCreating] = useState(false);
@@ -253,13 +254,14 @@ export default function OnboardingScreen() {
   useEffect(() => {
     if (Platform.OS !== "android") return;
     setAppsLoading(true);
-    void Promise.all([loadAndroidRewardPlans(), getInstalledApps(), getPermissionStatus()])
-      .then(async ([savedPlans, installedApps, permissionStatus]) => {
-        const currentPlans = pruneUnavailablePlanApps(savedPlans, installedApps.map((app) => app.packageName));
-        if (currentPlans.some((savedPlan, index) => savedPlan !== savedPlans[index])) {
-          await saveAndroidRewardPlans(currentPlans);
-          configureRewardBlockerPlans(toNativeRewardPlansConfig(currentPlans));
-        }
+    void Promise.all([getInstalledApps(), getPermissionStatus()])
+      .then(async ([installedApps, permissionStatus]) => {
+        // Reload within the serialized update so this delayed screen hydration
+        // can never restore an older snapshot over a user action.
+        // Never remove selected packages automatically. Android can temporarily
+        // return an incomplete app list, and that must not alter any mode.
+        const currentPlans = await updateAndroidRewardPlans((savedPlans) => savedPlans);
+        configureRewardBlockerPlans(toNativeRewardPlansConfig(currentPlans));
         setPlans(currentPlans);
         setApps(installedApps);
         if (permissionStatus.details.platform === "android") setPermissions(permissionStatus.details);
@@ -344,30 +346,35 @@ export default function OnboardingScreen() {
 
   const savePlan = async (enabled: boolean) => {
     if (!plan.name.trim()) {
-      Alert.alert("Agrega un nombre", "El modo necesita un nombre para poder guardarse.");
+      Alert.alert(translate.t("editor.alerts.nameTitle"), translate.t("editor.alerts.nameBody"));
       return;
     }
     if (plan.blockedPackages.length === 0) {
-      Alert.alert("Selecciona apps", "Elige al menos una app que quieras bloquear.");
+      Alert.alert(translate.t("editor.alerts.appsTitle"), translate.t("editor.alerts.appsBody"));
       return;
     }
     if (plan.schedule.startMinute === plan.schedule.endMinute) {
-      Alert.alert("Revisa el horario", "La hora de inicio y la hora de fin deben ser diferentes.");
+      Alert.alert(translate.t("editor.alerts.scheduleTitle"), translate.t("editor.alerts.scheduleBody"));
       return;
     }
 
     const nextPlan = { ...plan, enabled, paused: false };
     if (enabled && planHasOverlap(nextPlan, plans)) {
-      Alert.alert("Horario ocupado", "Ya existe otro modo activo en ese horario.");
+      Alert.alert(translate.t("editor.alerts.overlapTitle"), translate.t("editor.alerts.overlapBody"));
       return;
     }
 
-    const nextPlans = plans.some((entry) => entry.id === nextPlan.id)
-      ? plans.map((entry) => (entry.id === nextPlan.id ? nextPlan : entry))
-      : [...plans, nextPlan];
-
     try {
-      await saveAndroidRewardPlans(nextPlans);
+      const nextPlans = await updateAndroidRewardPlans((currentPlans) => {
+        const exists = currentPlans.some((entry) => entry.id === nextPlan.id);
+        if (isEditing && !exists) throw new Error("Cannot update a mode that no longer exists.");
+        if (enabled && planHasOverlap(nextPlan, currentPlans)) {
+          throw new Error("An enabled mode overlaps another saved mode.");
+        }
+        return exists
+          ? currentPlans.map((entry) => (entry.id === nextPlan.id ? nextPlan : entry))
+          : [...currentPlans, nextPlan];
+      });
       if (!isDirectEditor) await markOnboardingCompleted();
       configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
       if (enabled) startMonitoring();
@@ -381,7 +388,7 @@ export default function OnboardingScreen() {
         void Promise.all([
           syncOnboarding({
             blockedAppCount: nextPlan.blockedPackages.length,
-            customGoal: goal === "Otro" ? customGoal.trim() : null,
+            customGoal: goal === "other" ? customGoal.trim() : null,
             goal,
             objectives,
             phoneUseHours: phoneUse,
@@ -402,27 +409,32 @@ export default function OnboardingScreen() {
       queueCelebrationNotice(isDirectEditor
         ? {
             message: isEditing
-              ? "Los cambios de tu modo ya están guardados."
-              : "Tu nuevo modo ya está guardado y listo para usar.",
-            title: isEditing ? "Modo actualizado" : "Modo creado",
+              ? translate.t("onboarding.feedback.updatedMessage")
+              : translate.t("onboarding.feedback.createdMessage"),
+            title: isEditing ? translate.t("onboarding.feedback.updatedTitle") : translate.t("onboarding.feedback.createdTitle"),
           }
         : {
-            message: "Tu primer modo está listo. Puedes activarlo o cambiarlo cuando quieras.",
-            title: "¡Tu rehábito comienza ahora!",
+            message: translate.t("onboarding.feedback.firstMessage"),
+            title: translate.t("onboarding.feedback.firstTitle"),
           });
       router.replace("/(tabs)/overview");
     } catch {
-      Alert.alert("No se pudo guardar", "Intenta guardar el modo de nuevo.");
+      Alert.alert(translate.t("editor.alerts.saveErrorTitle"), translate.t("editor.alerts.saveErrorBody"));
     }
   };
 
   const pausePlan = async () => {
     if (!isEditing) return;
-    const pausedPlan = { ...plan, enabled: false, paused: true };
-    const nextPlans = plans.map((entry) => (entry.id === pausedPlan.id ? pausedPlan : entry));
 
     try {
-      await saveAndroidRewardPlans(nextPlans);
+      const nextPlans = await updateAndroidRewardPlans((currentPlans) => {
+        const currentPlan = currentPlans.find((entry) => entry.id === plan.id);
+        if (!currentPlan) throw new Error("Cannot pause a mode that has not been loaded.");
+        const pausedPlan = { ...currentPlan, enabled: false, paused: true };
+        return currentPlans.map((entry) => (entry.id === pausedPlan.id ? pausedPlan : entry));
+      });
+      const pausedPlan = nextPlans.find((entry) => entry.id === plan.id);
+      if (!pausedPlan) throw new Error("Unable to pause mode.");
       configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
       if (!nextPlans.some((entry) => entry.enabled)) stopMonitoring();
       setPlan(pausedPlan);
@@ -432,20 +444,24 @@ export default function OnboardingScreen() {
         console.warn("Unable to track mode pause", error),
       );
       setFeedback({
-        message: "El modo dejó de bloquear aplicaciones. Su configuración se conserva.",
-        title: "Modo pausado",
+        message: translate.t("onboarding.feedback.pausedMessage"),
+        title: translate.t("onboarding.feedback.pausedTitle"),
       });
     } catch {
-      Alert.alert("No se pudo pausar", "Intenta pausar el modo de nuevo.");
+      Alert.alert(translate.t("editor.alerts.pauseErrorTitle"), translate.t("editor.alerts.pauseErrorBody"));
     }
   };
 
   const performDeletePlan = async () => {
     if (!isEditing) return;
-    const nextPlans = plans.filter((entry) => entry.id !== plan.id);
 
     try {
-      await saveAndroidRewardPlans(nextPlans);
+      const nextPlans = await updateAndroidRewardPlans((currentPlans) => {
+        if (!currentPlans.some((entry) => entry.id === plan.id)) {
+          throw new Error("Cannot delete a mode that no longer exists.");
+        }
+        return currentPlans.filter((entry) => entry.id !== plan.id);
+      });
       configureRewardBlockerPlans(toNativeRewardPlansConfig(nextPlans));
       if (!nextPlans.some((entry) => entry.enabled)) stopMonitoring();
       setPlans(nextPlans);
@@ -454,22 +470,22 @@ export default function OnboardingScreen() {
         console.warn("Unable to track mode deletion", error),
       );
       setFeedback({
-        message: "El modo y su configuración fueron eliminados.",
-        title: "Modo eliminado",
+        message: translate.t("onboarding.feedback.deletedMessage"),
+        title: translate.t("onboarding.feedback.deletedTitle"),
       });
     } catch {
-      Alert.alert("No se pudo eliminar", "Intenta eliminar el modo de nuevo.");
+      Alert.alert(translate.t("editor.alerts.deleteErrorTitle"), translate.t("editor.alerts.deleteErrorBody"));
     }
   };
 
   const deletePlan = () => {
     if (!isEditing) return;
     Alert.alert(
-      "Eliminar modo",
-      `¿Quieres eliminar ${plan.name}? Esta acción no se puede deshacer.`,
+      translate.t("editor.alerts.deleteTitle"),
+      translate.t("editor.alerts.deleteBody", { name: plan.name }),
       [
-        { style: "cancel", text: "Cancelar" },
-        { style: "destructive", text: "Eliminar", onPress: () => void performDeletePlan() },
+        { style: "cancel", text: translate.t("common.cancel") },
+        { style: "destructive", text: translate.t("common.delete"), onPress: () => void performDeletePlan() },
       ],
     );
   };
@@ -507,7 +523,7 @@ export default function OnboardingScreen() {
   if (Platform.OS !== "android") {
     return (
       <Container>
-        <Paragraph>Esta experiencia esta disponible en Android.</Paragraph>
+        <Paragraph>{translate.t("onboarding.androidOnly")}</Paragraph>
       </Container>
     );
   }
@@ -529,7 +545,7 @@ export default function OnboardingScreen() {
           togglePackages={togglePackages}
           selectedApps={selectedApps}
           updateTime={updateTime}
-          title={isCreatingMode ? "Crear modo" : "Editar modo"}
+          title={isCreatingMode ? translate.t("editor.createTitle") : translate.t("editor.editTitle")}
           onBack={() => router.back()}
           onDelete={deletePlan}
           onPause={pausePlan}
@@ -558,9 +574,9 @@ export default function OnboardingScreen() {
           )}
           {step === 1 && (
             <QuestionScreen
-              body="Usaremos esta referencia para proponerte un plan inicial. Puedes cambiarlo despues."
+              body={translate.t("onboarding.phoneUseBody")}
               icon={<Smartphone color="$primary9" size={38} />}
-              title="Cuanto tiempo pasas en tu telefono?"
+              title={translate.t("onboarding.phoneUseTitle")}
             >
               <XStack flexWrap="wrap" gap="$3">
                 {phoneUseOptions.map((hours) => (
@@ -570,21 +586,21 @@ export default function OnboardingScreen() {
             </QuestionScreen>
           )}
           {step === 2 && (
-            <QuestionScreen body="Elige el primer periodo que quieres recuperar." icon={<Timer color="$primary9" size={38} />} title="Cuanto tiempo quieres dejar de usar el telefono?">
+            <QuestionScreen body={translate.t("onboarding.recoverTimeBody")} icon={<Timer color="$primary9" size={38} />} title={translate.t("onboarding.recoverTimeTitle")}>
               <DurationChips value={plan.unlockMinutes} onChange={(unlockMinutes) => setPlan((current) => ({ ...current, unlockMinutes }))} />
             </QuestionScreen>
           )}
           {step === 3 && (
-            <QuestionScreen body="El plan se adapta a la intencion que elijas." icon={<Target color="$primary9" size={38} />} title="Que quieres lograr?">
+            <QuestionScreen body={translate.t("onboarding.goalBody")} icon={<Target color="$primary9" size={38} />} title={translate.t("onboarding.goalTitle")}>
               <YStack gap="$3">
                 {goals.map((option) => (
-                  <ChoiceRow key={option} selected={goal === option} label={option} onPress={() => setGoal(option)} />
+                  <ChoiceRow key={option} selected={goal === option} label={translate.t(`onboarding.goals.${option}`)} onPress={() => setGoal(option)} />
                 ))}
-                {goal === "Otro" && (
+                {goal === "other" && (
                   <Input
                     backgroundColor="$background2"
                     borderColor="$borderColor"
-                    placeholder="Escribe tu objetivo"
+                    placeholder={translate.t("onboarding.customGoalPlaceholder")}
                     value={customGoal}
                     onChangeText={setCustomGoal}
                   />
@@ -601,13 +617,13 @@ export default function OnboardingScreen() {
             />
           )}
           {step === 5 && (
-            <QuestionScreen body="Elige uno o varios objetivos para tu plan." icon={<ListChecks color="$primary9" size={38} />} title="Selecciona tus objetivos">
+            <QuestionScreen body={translate.t("onboarding.objectivesBody")} icon={<ListChecks color="$primary9" size={38} />} title={translate.t("onboarding.objectivesTitle")}>
               <YStack gap="$3">
                 {objectiveOptions.map((option) => (
                   <ChoiceRow
                     key={option}
                     selected={objectives.includes(option)}
-                    label={option}
+                    label={PLAN_CATEGORY_COPY[option].name}
                     onPress={() => setObjectives((current) => current.includes(option) ? current.filter((entry) => entry !== option) : [...current, option])}
                   />
                 ))}
@@ -615,7 +631,7 @@ export default function OnboardingScreen() {
             </QuestionScreen>
           )}
           {step === 6 && (
-            <QuestionScreen body="Podras ajustarlas cuando quieras." icon={<Ban color="$primary9" size={38} />} title="Que apps quisieras dejar de usar mas?">
+            <QuestionScreen body={translate.t("onboarding.blockedBody")} icon={<Ban color="$primary9" size={38} />} title={translate.t("onboarding.blockedTitle")}>
               <AppSelectionList
                 apps={apps}
                 height={360}
@@ -625,13 +641,13 @@ export default function OnboardingScreen() {
             </QuestionScreen>
           )}
           {step === 7 && (
-            <QuestionScreen body="Este es el tiempo que tendras para estar en tu estado antes de liberar las redes." icon={<Clock3 color="$primary9" size={38} />} title="Cuanto tiempo quieres dejar de usar esas apps?">
-              <ModeRadial duration={plan.productiveMinutes} label="tu estado" />
+            <QuestionScreen body={translate.t("onboarding.modeTimeBody")} icon={<Clock3 color="$primary9" size={38} />} title={translate.t("onboarding.modeTimeTitle")}>
+              <ModeRadial duration={plan.productiveMinutes} label={translate.t("onboarding.yourMode")} />
               <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
             </QuestionScreen>
           )}
           {step === 8 && (
-            <QuestionScreen body="Estas apps se habilitan mientras mantienes tu estado." icon={<Repeat2 color="$primary9" size={38} />} title="Con que app te gustaria reemplazar ese tiempo?">
+            <QuestionScreen body={translate.t("onboarding.replacementBody")} icon={<Repeat2 color="$primary9" size={38} />} title={translate.t("onboarding.replacementTitle")}>
               <AppSelectionList
                 apps={apps}
                 height={360}
@@ -653,7 +669,7 @@ export default function OnboardingScreen() {
         {step > 0 && step < 9 && (
           <View marginTop="$4">
             <GradientButton disabled={step === 4 && permissions?.overlay !== true || step === 4 && permissions?.usageStats !== true} onPress={continueOnboarding}>
-              {step === 4 ? "Activar Rehabbit" : "Continuar"}
+              {step === 4 ? translate.t("onboarding.activate") : translate.t("common.continue")}
             </GradientButton>
           </View>
         )}
@@ -690,13 +706,13 @@ function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
           />
         </View>
         <YStack alignItems="center" gap="$3" paddingHorizontal="$4">
-          <H3 color="$text11" textAlign="center">Recupera tu atencion</H3>
+          <H3 color="$text11" textAlign="center">{translate.t("onboarding.welcomeTitle")}</H3>
           <Paragraph color="$text10" fontSize="$5" lineHeight="$6" textAlign="center">
-            Crea un estado para bloquear distracciones y dedicar tiempo a lo que importa.
+            {translate.t("onboarding.welcomeBody")}
           </Paragraph>
         </YStack>
       </YStack>
-      <GradientButton onPress={onContinue}>Empezar</GradientButton>
+      <GradientButton onPress={onContinue}>{translate.t("onboarding.start")}</GradientButton>
     </YStack>
   );
 }
@@ -781,33 +797,33 @@ function PermissionsScreen({
       </YStack>
       <YStack alignItems="center" gap="$2" paddingHorizontal="$3">
         <H3 color="$text11" fontSize={24} lineHeight={29} maxFontSizeMultiplier={1.1} textAlign="center">
-          Un último paso para activar Rehabbit
+          {translate.t("onboarding.permissionsTitle")}
         </H3>
         <Paragraph color="$text10" fontSize={17} lineHeight={24} maxFontSizeMultiplier={1.1} textAlign="center">
-          Necesitamos estos permisos para que el bloqueo funcione correctamente.
+          {translate.t("onboarding.permissionsBody")}
         </Paragraph>
       </YStack>
       <YStack gap="$3">
         <PermissionRow
-          description="Detecta cuándo abres una app bloqueada."
+          description={translate.t("onboarding.permissions.usageDescription")}
           granted={permissions?.usageStats === true}
           icon={<AppWindow color="#315BEA" size={24} />}
-          title="Acceso de uso"
+          title={translate.t("onboarding.permissions.usageTitle")}
           onPress={openUsageStatsSettings}
         />
         <PermissionRow
-          description="Muestra la pantalla de bloqueo."
+          description={translate.t("onboarding.permissions.overlayDescription")}
           granted={permissions?.overlay === true}
           icon={<Layers color="#315BEA" size={24} />}
-          title="Mostrar sobre otras apps"
+          title={translate.t("onboarding.permissions.overlayTitle")}
           onPress={openOverlaySettings}
         />
         <PermissionRow
-          badgeLabel="Opcional"
-          description="Estado y avisos del modo activo."
+          badgeLabel={translate.t("onboarding.permissions.optional")}
+          description={translate.t("onboarding.permissions.notificationsDescription")}
           granted={permissions?.notifications === true}
           icon={<Bell color="#315BEA" size={24} />}
-          title="Notificaciones"
+          title={translate.t("onboarding.permissions.notificationsTitle")}
           onPress={async () => {
             if (Number(Platform.Version) >= 33) {
               await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
@@ -924,8 +940,8 @@ function CreatingScreen({ visible }: { visible: boolean }) {
         <Clock3 color="$text11" size={38} />
       </View>
       <YStack alignItems="center" gap="$2">
-        <H3 color="$text11">Creando tu plan</H3>
-        <Paragraph color="$text10" textAlign="center">Estamos preparando tus limites y alternativas.</Paragraph>
+        <H3 color="$text11">{translate.t("onboarding.creatingTitle")}</H3>
+        <Paragraph color="$text10" textAlign="center">{translate.t("onboarding.creatingBody")}</Paragraph>
       </YStack>
       {visible && <View backgroundColor="$blue8" borderRadius={99} height={8} width={160} />}
     </YStack>
@@ -950,8 +966,8 @@ function PlanPreview({
   return (
     <YStack gap="$4">
       <YStack gap="$2">
-        <H3 color="$text11">Tu plan esta listo</H3>
-        <Paragraph color="$text10">Revisalo antes de guardarlo. Quedara inactivo hasta que decidas activarlo.</Paragraph>
+        <H3 color="$text11">{translate.t("onboarding.previewTitle")}</H3>
+        <Paragraph color="$text10">{translate.t("onboarding.previewBody")}</Paragraph>
       </YStack>
       <ShadowCard>
         <YStack gap="$4">
@@ -961,12 +977,12 @@ function PlanPreview({
             </View>
             <YStack flex={1}>
               <H4 color="$text11">{categoryLabel}</H4>
-              <SizableText color="$text10">Inactivo</SizableText>
+              <SizableText color="$text10">{translate.t("onboarding.inactive")}</SizableText>
             </YStack>
           </XStack>
           <ModeRadial duration={plan.productiveMinutes} label={categoryLabel.toLowerCase()} size={184} />
           <XStack alignItems="center" justifyContent="space-between">
-            <SizableText color="$text10">Bloquear</SizableText>
+            <SizableText color="$text10">{translate.t("editor.block")}</SizableText>
             <AppAvatarStack apps={selectedApps(plan.blockedPackages)} />
           </XStack>
           <XStack alignItems="center" justifyContent="space-between">
@@ -975,8 +991,8 @@ function PlanPreview({
           </XStack>
         </YStack>
       </ShadowCard>
-      <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={onEdit}>Editar opciones</Button>
-      <GradientButton onPress={onSave}>Guardar modo</GradientButton>
+      <Button backgroundColor="$blue2" borderColor="$borderColor" color="$text11" onPress={onEdit}>{translate.t("onboarding.editOptions")}</Button>
+      <GradientButton onPress={onSave}>{translate.t("editor.saveMode")}</GradientButton>
     </YStack>
   );
 }
@@ -1043,7 +1059,7 @@ function Editor({
             <YStack alignItems="center" gap="$3">
               <ModeRadial duration={plan.productiveMinutes} size={214} />
               <YStack gap="$2" width="100%">
-                <SizableText color="$text11" fontWeight="800" size="$4">Minutos por ganar</SizableText>
+                <SizableText color="$text11" fontWeight="800" size="$4">{translate.t("editor.minutesToGain")}</SizableText>
                 <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
               </YStack>
             </YStack>
@@ -1064,21 +1080,21 @@ function Editor({
 
             <AppGroupCard
               apps={selectedApps(plan.blockedPackages)}
-              description="Estas apps permanecen bloqueadas durante tu estado."
-              label="Bloquear"
+              description={translate.t("editor.blockDescription")}
+              label={translate.t("editor.block")}
               loading={appsLoading}
               onPress={() => setPickerTarget("blocked")}
             />
             <AppGroupCard
               apps={selectedApps(plan.productivePackages)}
-              description="Apps para reemplazar el tiempo de scroll."
+              description={translate.t("editor.rehabbitDescription")}
               label="Rehabbit"
               loading={appsLoading}
               onPress={() => setPickerTarget("productive")}
             />
 
             <YStack gap="$3">
-              <H4 color="$text11">Elige tu horario</H4>
+              <H4 color="$text11">{translate.t("editor.scheduleTitle")}</H4>
               <ScheduleCard
                 endMinute={plan.schedule.endMinute}
                 startMinute={plan.schedule.startMinute}
@@ -1089,7 +1105,7 @@ function Editor({
             </YStack>
 
             <GradientButton onPress={() => void onSave(true)}>
-              {plan.paused ? "Reanudar modo" : plan.enabled ? "Guardar cambios" : "Activar modo"}
+              {plan.paused ? translate.t("editor.resume") : plan.enabled ? translate.t("editor.saveChanges") : translate.t("editor.activate")}
             </GradientButton>
             {isEditing ? (
               <YStack gap="$3">
@@ -1104,7 +1120,7 @@ function Editor({
                   opacity={plan.paused ? 0.55 : 1}
                   onPress={() => void onPause()}
                 >
-                  {plan.paused ? "Modo pausado" : "Pausar modo"}
+                  {plan.paused ? translate.t("editor.paused") : translate.t("editor.pause")}
                 </Button>
                 <Button
                   backgroundColor="#FFFFFF"
@@ -1115,7 +1131,7 @@ function Editor({
                   icon={Trash2}
                   onPress={onDelete}
                 >
-                  Eliminar modo
+                  {translate.t("editor.delete")}
                 </Button>
               </YStack>
             ) : null}
@@ -1127,7 +1143,7 @@ function Editor({
         apps={apps}
         open={pickerTarget !== null}
         selectedPackages={pickerTarget === "blocked" ? plan.blockedPackages : plan.productivePackages}
-        title={pickerTarget === "blocked" ? "Apps bloqueadas" : "Apps Rehabbit"}
+        title={pickerTarget === "blocked" ? translate.t("editor.blockedApps") : translate.t("editor.rehabbitApps")}
         onOpenChange={(open) => !open && setPickerTarget(null)}
         onToggle={(packageName) => {
           if (!pickerTarget) return;
@@ -1164,12 +1180,12 @@ function AppGroupCard({
         {loading ? (
           <XStack alignItems="center" gap="$3" minHeight={44}>
             <Spinner color="$primary9" size="small" />
-            <SizableText color="$text10" fontWeight="700">Cargando aplicaciones...</SizableText>
+            <SizableText color="$text10" fontWeight="700">{translate.t("editor.loadingApps")}</SizableText>
           </XStack>
         ) : (
           <XStack alignItems="center" gap="$3" justifyContent="space-between">
             <YStack flex={1} gap="$1">
-              <SizableText color="$text11" fontWeight="800">{apps.length ? `${apps.length} apps seleccionadas` : "Seleccionar apps"}</SizableText>
+              <SizableText color="$text11" fontWeight="800">{apps.length ? translate.t("editor.appsSelected", { count: apps.length }) : translate.t("editor.selectApps")}</SizableText>
               <SizableText color="$text10" size="$3">{description}</SizableText>
             </YStack>
             {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color="$text11" size={22} />}

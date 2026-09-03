@@ -11,6 +11,7 @@ import { Button, SizableText, View, XStack, YStack } from "tamagui";
 import { ALL_PLAN_WEEKDAYS } from "../data/android-reward";
 import type { PlanWeekday } from "../data/android-reward";
 import { ShadowCard } from "./shadow.card";
+import { translate, useAppLanguage } from "./translate";
 
 type TimeTarget = "start" | "end";
 type Period = "a.m." | "p.m.";
@@ -61,9 +62,9 @@ function formatTime(totalMinutes: number) {
 }
 
 function recurrenceLabel(weekdays: PlanWeekday[]) {
-  if (weekdays.length === 7) return "Todos los días";
+  if (weekdays.length === 7) return translate.t("schedule.everyDay");
   if (weekdays.length === 5 && [1, 2, 3, 4, 5].every((day) => weekdays.includes(day as PlanWeekday))) {
-    return "Lunes a viernes";
+    return translate.t("schedule.weekdays");
   }
   return weekdays.map((day) => DAY_SHORT_NAMES[day]).join(", ");
 }
@@ -102,6 +103,7 @@ function TimeRow({
   value: number;
   onPress: () => void;
 }) {
+  useAppLanguage();
   return (
     <XStack alignItems="center" justifyContent="space-between" minHeight={70} paddingHorizontal="$5">
       <SizableText color="$text11" fontWeight="700" size="$5">{label}:</SizableText>
@@ -268,12 +270,12 @@ export function ScheduleCard({
   return (
     <YStack gap="$2" position="relative">
       <ShadowCard padding={0} tone="sky">
-        <TimeRow active={openTarget === "start"} label="Inicio" value={startMinute} onPress={() => setOpenTarget("start")} />
-        <TimeRow active={openTarget === "end"} label="Fin" value={endMinute} onPress={() => setOpenTarget("end")} />
+        <TimeRow active={openTarget === "start"} label={translate.t("schedule.start")} value={startMinute} onPress={() => setOpenTarget("start")} />
+        <TimeRow active={openTarget === "end"} label={translate.t("schedule.end")} value={endMinute} onPress={() => setOpenTarget("end")} />
       </ShadowCard>
       <ShadowCard padding={0} tone="surface">
         <YStack gap="$2" paddingBottom="$3" paddingTop="$3">
-          <SizableText color="$text11" fontWeight="800" paddingHorizontal="$4" size="$4">Días</SizableText>
+          <SizableText color="$text11" fontWeight="800" paddingHorizontal="$4" size="$4">{translate.t("schedule.days")}</SizableText>
           <XStack alignItems="center" gap={4} justifyContent="space-between" minHeight={50} paddingHorizontal="$3">
             {ALL_PLAN_WEEKDAYS.map((day) => {
               const selected = weekdays.includes(day);

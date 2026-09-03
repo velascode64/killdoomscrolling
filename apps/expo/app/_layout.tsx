@@ -12,6 +12,7 @@ import { BreakStore } from "../data/break.store";
 import { clearShortcutListener, listenForShortcut } from "../data/shortcut.listener";
 import { ShortCutPayload } from "../data/shortcut.payload";
 import { bootstrapSupabase } from "../data/supabase-bootstrap";
+import { translate, useAppLanguage } from "../components/translate";
 import config from "../tamagui.config";
 
 export const unstable_settings = {
@@ -43,6 +44,9 @@ export default function RootLayout() {
     });
   }, []);
   const appState = useRef(AppState.currentState);
+  useEffect(() => {
+    void translate.init();
+  }, []);
   useEffect(() => {
     // The original product receives iOS Shortcut/AppIntent callbacks. Android
     // uses the native foreground service in expo-app-blocker instead.
@@ -112,6 +116,7 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
+  useAppLanguage();
   const { theme } = useTheme();
   const tamaguiTheme = useThemeTamagui();
 

@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { translate } from "../components/translate";
 import type {
   AndroidRewardBlockerPlan,
   AndroidRewardBlockerPlansConfig,
@@ -9,7 +10,18 @@ export const ANDROID_REWARD_CONFIG_KEY = "android_reward_blocker_config";
 export type RewardPlanMode = "focus" | "sleep" | "work";
 export type PlanCategory = "focus" | "exercise" | "sleep" | "meditation" | "hobby" | "work";
 export type PlanWeekday = 1 | 2 | 3 | 4 | 5 | 6 | 7;
-export type PlanCustomCategoryIcon = "briefcase" | "book" | "heart" | "music" | "star";
+export type PlanCustomCategoryIcon =
+  | "briefcase"
+  | "book"
+  | "heart"
+  | "music"
+  | "star"
+  | "running"
+  | "fitness"
+  | "study"
+  | "game"
+  | "coffee"
+  | "moon";
 
 export interface PlanCustomCategory {
   id: string;
@@ -29,19 +41,40 @@ export interface AndroidRewardPlan extends AndroidRewardBlockerPlan {
   selectedCategoryId: string;
 }
 
+function localizedCopy(key: PlanCategory) {
+  return {
+    get description() {
+      return translate.t(`categories.${key}.description`);
+    },
+    get name() {
+      return translate.t(`categories.${key}.name`);
+    },
+  };
+}
+
+// Getters ensure a mode opened before a language change immediately uses the new labels.
 export const PLAN_COPY: Record<RewardPlanMode, { name: string; description: string }> = {
-  focus: { name: "Focus", description: "Recupera tu atención con apps que te hacen avanzar." },
-  sleep: { name: "Sleep", description: "Protege tu descanso y prepara una mejor noche." },
-  work: { name: "Work", description: "Crea espacio para el trabajo que importa." },
+  focus: { get name() { return translate.t("modes.focus"); }, get description() { return translate.t("categories.focus.description"); } },
+  sleep: { get name() { return translate.t("modes.sleep"); }, get description() { return translate.t("categories.sleep.description"); } },
+  work: { get name() { return translate.t("modes.work"); }, get description() { return translate.t("categories.work.description"); } },
 };
 
 export const PLAN_CATEGORY_COPY: Record<PlanCategory, { name: string; description: string }> = {
-  focus: { name: "Focus", description: "Recupera tu atencion con apps que te hacen avanzar." },
-  exercise: { name: "Exercise", description: "Abre espacio para moverte antes de volver a las redes." },
-  sleep: { name: "Sleep", description: "Protege tu descanso y prepara una mejor noche." },
-  meditation: { name: "Meditation", description: "Toma una pausa antes de volver a las distracciones." },
-  hobby: { name: "Hobby", description: "Reserva tiempo para una actividad que disfrutas." },
-  work: { name: "Work", description: "Crea espacio para el trabajo que importa." },
+  focus: localizedCopy("focus"),
+  exercise: localizedCopy("exercise"),
+  sleep: localizedCopy("sleep"),
+  meditation: localizedCopy("meditation"),
+  hobby: localizedCopy("hobby"),
+  work: localizedCopy("work"),
+};
+
+const LEGACY_CATEGORY_NAMES: Record<PlanCategory, string[]> = {
+  focus: ["Focus", "Foco"],
+  exercise: ["Exercise", "Ejercicio"],
+  sleep: ["Sleep", "Dormir"],
+  meditation: ["Meditation", "Meditación"],
+  hobby: ["Hobby", "Pasatiempo"],
+  work: ["Work", "Trabajo"],
 };
 
 const MODE_SCHEDULE: Record<RewardPlanMode, { startMinute: number; endMinute: number }> = {
@@ -81,7 +114,10 @@ function normalizePlan(value: Partial<AndroidRewardPlan>, index: number): Androi
   const category = value.category === "exercise" || value.category === "meditation" || value.category === "hobby" || value.category === "sleep" || value.category === "work" ? value.category : mode;
   const fallback = createAndroidRewardPlan(category);
   const id = value.id?.trim();
-  const name = value.name?.trim();
+  const storedName = value.name?.trim();
+  const name = !storedName || LEGACY_CATEGORY_NAMES[category].includes(storedName)
+    ? PLAN_CATEGORY_COPY[category].name
+    : storedName;
   const customCategories = value.customCategories?.filter((entry) => entry.id && entry.label.trim()) ?? [];
   const selectedCategoryId = value.selectedCategoryId && (
     value.selectedCategoryId in PLAN_CATEGORY_COPY || customCategories.some((entry) => entry.id === value.selectedCategoryId)
@@ -90,7 +126,7 @@ function normalizePlan(value: Partial<AndroidRewardPlan>, index: number): Androi
     ...fallback,
     ...value,
     id: id ? id : `plan-legacy-${index}`,
-    name: name ? name : PLAN_CATEGORY_COPY[category].name,
+    name,
     mode,
     category,
     paused: value.paused === true,
@@ -116,24 +152,25 @@ export async function saveAndroidRewardPlans(plans: AndroidRewardPlan[]): Promis
   await AsyncStorage.setItem(ANDROID_REWARD_CONFIG_KEY, JSON.stringify({ version: 2, plans }));
 }
 
-export function pruneUnavailablePlanApps(
-  plans: AndroidRewardPlan[],
-  installedPackageNames: Iterable<string>,
-): AndroidRewardPlan[] {
-  const installedPackages = new Set(installedPackageNames);
-  if (installedPackages.size === 0) return plans;
+// All destructive updates must begin from storage, not from a screen's possibly
+// stale state. This prevents a partially hydrated editor from replacing every
+// saved mode with only the mode currently on screen.
+let plansUpdateOperation: Promise<unknown> = Promise.resolve();
 
-  return plans.map((plan) => {
-    const blockedPackages = plan.blockedPackages.filter((packageName) => installedPackages.has(packageName));
-    const productivePackages = plan.productivePackages.filter((packageName) => installedPackages.has(packageName));
-    const enabled = plan.enabled && blockedPackages.length > 0 && productivePackages.length > 0;
-    const unchanged =
-      enabled === plan.enabled &&
-      blockedPackages.length === plan.blockedPackages.length &&
-      productivePackages.length === plan.productivePackages.length;
-
-    return unchanged ? plan : { ...plan, blockedPackages, enabled, productivePackages };
+export async function updateAndroidRewardPlans(
+  updater: (plans: AndroidRewardPlan[]) => AndroidRewardPlan[],
+): Promise<AndroidRewardPlan[]> {
+  const operation = plansUpdateOperation.then(async () => {
+    const currentPlans = await loadAndroidRewardPlans();
+    const nextPlans = updater(currentPlans);
+    await saveAndroidRewardPlans(nextPlans);
+    return nextPlans;
   });
+
+  // Keep the queue usable after a failed update while still returning the error
+  // to the caller that initiated it.
+  plansUpdateOperation = operation.catch(() => undefined);
+  return operation;
 }
 
 export function toNativeRewardPlansConfig(plans: AndroidRewardPlan[]): AndroidRewardBlockerPlansConfig {
