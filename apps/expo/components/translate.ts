@@ -16,7 +16,7 @@ const listeners = new Set<() => void>();
 
 // Initialize synchronously so data-driven labels use the device language on first render.
 void i18next.init({
-  compatibilityJSON: "v3",
+  compatibilityJSON: "v4",
   lng: currentLanguage,
   fallbackLng: "es",
   resources: { en, es },

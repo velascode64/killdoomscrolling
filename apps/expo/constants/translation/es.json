@@ -17,6 +17,7 @@
       "modes": "Tus modos",
       "everyDay": "Todos los días",
       "paused": "Pausado",
+      "resume": "Reanudar",
       "resuming": "Reanudando...",
       "resumeErrorTitle": "No se pudo reanudar",
       "resumeErrorBody": "Revisa que no haya otro modo activo en ese horario e inténtalo de nuevo.",
@@ -104,6 +105,7 @@
       "blockedApps": "Apps bloqueadas",
       "rehabbitApps": "Apps Rehabbit",
       "loadingApps": "Cargando aplicaciones...",
+      "appsSelected": "{{count}} apps seleccionadas",
       "appsSelected_one": "{{count}} app seleccionada",
       "appsSelected_other": "{{count}} apps seleccionadas",
       "selectApps": "Seleccionar apps",
@@ -137,6 +139,7 @@
       "search": "Buscar aplicaciones",
       "loadError": "No se pudieron cargar las aplicaciones instaladas.",
       "empty": "No encontramos aplicaciones con ese nombre.",
+      "selected": "{{count}} seleccionadas",
       "selected_one": "{{count}} seleccionada",
       "selected_other": "{{count}} seleccionadas",
       "categories": {
