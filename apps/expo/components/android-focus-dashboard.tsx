@@ -253,22 +253,24 @@ function ModeCard({
           {plan.paused ? (
             <Button
               alignItems="center"
-              backgroundColor="transparent"
-              borderWidth={0}
+              backgroundColor="$primary3"
+              borderColor="$primary5"
+              borderRadius={99}
+              borderWidth={1}
               color="$primary11"
               disabled={resuming}
               fontSize="$2"
               fontWeight="800"
-              height={28}
-              icon={resuming ? undefined : <Play fill="$primary11" size={13} />}
-              paddingHorizontal="$1"
-              pressStyle={{ opacity: 0.65 }}
+              height={30}
+              icon={resuming ? <Spinner color="$primary11" size="small" /> : <Play color="$primary11" fill="$primary11" size={12} />}
+              paddingHorizontal="$3"
+              pressStyle={{ opacity: 0.75 }}
               onPress={(event) => {
                 event.stopPropagation();
                 onResume(plan.id);
               }}
             >
-              {resuming ? translate.t("dashboard.resuming") : "Resume"}
+              {resuming ? translate.t("dashboard.resuming") : translate.t("dashboard.resume")}
             </Button>
           ) : null}
         </XStack>

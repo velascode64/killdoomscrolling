@@ -17,6 +17,7 @@
       "modes": "Your modes",
       "everyDay": "Every day",
       "paused": "Paused",
+      "resume": "Resume",
       "resuming": "Resuming...",
       "resumeErrorTitle": "Couldn't resume",
       "resumeErrorBody": "Make sure there isn't another active mode during that schedule, then try again.",
@@ -84,7 +85,7 @@
       "resume": "Resume mode", "saveChanges": "Save changes", "activate": "Activate mode",
       "paused": "Mode paused", "pause": "Pause mode", "delete": "Delete mode", "saveMode": "Save mode",
       "blockedApps": "Blocked apps", "rehabbitApps": "Rehabbit apps", "loadingApps": "Loading apps...",
-      "appsSelected_one": "{{count}} app selected", "appsSelected_other": "{{count}} apps selected", "selectApps": "Select apps",
+      "appsSelected": "{{count}} apps selected", "appsSelected_one": "{{count}} app selected", "appsSelected_other": "{{count}} apps selected", "selectApps": "Select apps",
       "alerts": {
         "nameTitle": "Add a name", "nameBody": "The mode needs a name before it can be saved.",
         "appsTitle": "Select apps", "appsBody": "Choose at least one app you want to block.",
@@ -115,6 +116,7 @@
       "search": "Search apps",
       "loadError": "We couldn't load the installed apps.",
       "empty": "We couldn't find apps with that name.",
+      "selected": "{{count}} selected",
       "selected_one": "{{count}} selected",
       "selected_other": "{{count}} selected",
       "categories": {
