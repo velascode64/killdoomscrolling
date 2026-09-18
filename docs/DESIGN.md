@@ -168,3 +168,69 @@ The design system employs **High Roundedness** to evoke a friendly and premium f
 
 ### Chips & Tags
 - Small, pill-shaped elements. Active chips use indigo emphasis; inactive chips use `#FFFFFF`, `#E2E8F0` border, and `#1F2430` text.
+
+
+
+## Mandatory Design Workflow
+
+Before changing any UI:
+
+1. Read this file and inspect the target screen plus the existing components listed below.
+2. Reuse the closest existing component and its visual language. Extend it only when it cannot represent the required state.
+3. Do not invent a new layout, color direction, card style, onboarding sequence, or interaction pattern from a text-only request. Ask for a Figma link, screenshot, or approved reference when visual direction is not already in the repository.
+4. For a new flow, enumerate its screens and states before editing: empty, loading, configured, active, completed, error, and permission-denied when relevant.
+5. Verify on the target Android device or emulator after implementation. A UI change is not complete based only on TypeScript passing.
+
+## Product Flow and Visual Reference
+
+Before changing onboarding, mode creation/editing, schedule selection, blocked/replacement apps, or dashboard cards, read `project-description/appflow-ui-system.md`.
+
+- This file is the source of truth for the current Android product flow, active screenshots, light-only theme, brand gradient, component behavior, and screen states.
+- Its source images are in `project-description/ui-references/`. Do not use deleted or unlisted images as visual references.
+- Do not reinterpret the documented flow into a generic dashboard, plan card, or onboarding sequence. If a requested UI conflicts with the document, update the document with an approved reference before implementing it.
+
+## Existing UI System: Source of Truth
+
+The app uses **Tamagui**. Keep a single visual system; do not add a parallel CSS system, a second theme provider, or an arbitrary color palette.
+
+- Theme configuration: `apps/expo/tamagui.config.ts`
+- Color source of truth: `apps/expo/theme/colors.ts`
+- Semantic tokens and spacing/radius scales: `apps/expo/theme/tokens.ts`
+- Generated Tamagui themes: `apps/expo/theme/theme-builder.ts` and `apps/expo/theme/theme-output.ts`
+- Fonts: `apps/expo/components/font-satoshi.ts` and the Satoshi assets in `apps/expo/assets/fonts/satoshi/`
+- Theme behavior: `apps/expo/components/theme-provider.tsx`
+
+Use semantic Tamagui tokens in UI code:
+
+- Surfaces: `$background1`, `$background2`, `$grey1`, `$grey3`
+- Text: `$text11` for primary text, `$text6` or `$grey7` for supporting text
+- Accent families: `$primary1` through `$primary12`, or the existing `$blue*`, `$green*`, `$orange*`, `$red*`, `$yellow*` families
+- Layout: `$space` and `$radius` values such as `$1`, `$2`, `$3`, `$4`; do not hard-code a new spacing scale
+
+Do not introduce a new hex, RGB/RGBA, gradient, font family, shadow recipe, or component-specific color in screen code. If a genuinely new brand color is approved, add it once to `theme/colors.ts` and expose it through `theme/tokens.ts`; then consume the token everywhere. Existing legacy hard-coded colors may be migrated to tokens when touching that component, but do not copy them into new work.
+
+## Components to Reuse
+
+- Page structure and safe areas: `apps/expo/components/container.tsx` (`Container`)
+- Default elevated card: `apps/expo/components/shadow.card.tsx` (`ShadowCard`)
+- App header and settings entry: `apps/expo/components/header.tsx` (`Header`)
+- App/service icon rendering: `apps/expo/components/app.icon.tsx` (`AppIcon`)
+- Vertical separator: `apps/expo/components/divider.tsx` (`Divider`)
+- Dashboard visual patterns: `apps/expo/components/weekly-summary.tsx`, `apps/expo/components/percentage.trend.tsx`, `apps/expo/components/pie.chart.tsx`, and `apps/expo/components/line.chart.tsx`
+- Icons: `@tamagui/lucide-icons`; do not add another icon library without an explicit request.
+
+Use Tamagui `View`, `XStack`, `YStack`, `Button`, `Input`, `Paragraph`, `SizableText`, `Heading`, and existing themes before using raw React Native primitives. Use `react-native-svg` only for actual graphics/charts and `expo-linear-gradient` only when a design reference explicitly contains a gradient.
+
+## Typography and Content
+
+- Use the existing Satoshi font configuration only. Do not introduce Inter, Roboto, Arial, or system fonts.
+- Use Tamagui type tokens before explicit pixel sizes. Use explicit sizes only when matching an approved visual reference.
+- Keep product text direct, short, and action-oriented. Preserve the app's existing language on the screen; do not mix Spanish and English inside a single new flow.
+
+## Onboarding and Focus Flow
+
+- Preserve the plan fields across all screens: blocked apps, focus/replacement apps, schedule, required focus duration, and earned unlock duration.
+- App selection, plan editing, dashboard summary, and the blocked/focus screen must display the same persisted plan. Do not create a platform-only dashboard or a simplified second onboarding.
+- The Android native blocker is an adapter for interception, usage measurement, and opening selected apps. React Native owns the product UI and dashboard.
+
+
