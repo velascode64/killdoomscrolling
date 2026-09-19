@@ -18,6 +18,7 @@ import {
   Target,
   Timer,
   Trash2,
+  UserRound,
 } from "@tamagui/lucide-icons";
 import {
   configureRewardBlockerPlans,
@@ -67,7 +68,7 @@ import {
 import type { AndroidRewardPlan, PlanCategory, PlanCustomCategory } from "../data/android-reward";
 import { markOnboardingCompleted } from "../data/onboarding-state";
 import { queueCelebrationNotice } from "../data/celebration-notice";
-import { deleteMode, syncModes, syncOnboarding, trackProductEvent } from "../data/supabase-sync";
+import { deleteMode, saveProfile, syncModes, syncOnboarding, trackProductEvent } from "../data/supabase-sync";
 
 const durationOptions = [15, 25, 60];
 const phoneUseOptions = [1, 2, 4, 8];
@@ -241,6 +242,7 @@ export default function OnboardingScreen() {
   const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
   const [step, setStep] = useState(Boolean(planId) || mode === "create" ? 10 : 0);
   const [phoneUse, setPhoneUse] = useState(2);
+  const [fullName, setFullName] = useState("");
   const [goal, setGoal] = useState<Goal>("focus");
   const [customGoal, setCustomGoal] = useState("");
   const [objectives, setObjectives] = useState<string[]>([]);
@@ -288,11 +290,11 @@ export default function OnboardingScreen() {
   }, []);
 
   useEffect(() => {
-    if (step !== 9 || isDirectEditor) return;
+    if (step !== 10 || isDirectEditor) return;
     setCreating(true);
     const timeout = setTimeout(() => {
       setCreating(false);
-      setStep(10);
+      setStep(11);
     }, 1000);
     return () => clearTimeout(timeout);
   }, [isDirectEditor, step]);
@@ -386,6 +388,7 @@ export default function OnboardingScreen() {
         }).catch((error: unknown) => console.warn("Unable to track mode", error));
       } else {
         void Promise.all([
+          saveProfile({ fullName }),
           syncOnboarding({
             blockedAppCount: nextPlan.blockedPackages.length,
             customGoal: goal === "other" ? customGoal.trim() : null,
@@ -411,11 +414,13 @@ export default function OnboardingScreen() {
             message: isEditing
               ? translate.t("onboarding.feedback.updatedMessage")
               : translate.t("onboarding.feedback.createdMessage"),
-            title: isEditing ? translate.t("onboarding.feedback.updatedTitle") : translate.t("onboarding.feedback.createdTitle"),
+          title: isEditing ? translate.t("onboarding.feedback.updatedTitle") : translate.t("onboarding.feedback.createdTitle"),
+            showProfile: false,
           }
         : {
             message: translate.t("onboarding.feedback.firstMessage"),
-            title: translate.t("onboarding.feedback.firstTitle"),
+          title: translate.t("onboarding.feedback.firstTitle"),
+          showProfile: true,
           });
       router.replace("/(tabs)/overview");
     } catch {
@@ -499,9 +504,9 @@ export default function OnboardingScreen() {
     if (step === 0) {
       void trackProductEvent("onboarding_started").catch((error: unknown) => console.warn("Unable to track onboarding", error));
     }
-    if (step === 3) setCategory(categoryForGoal(goal));
-    if (step === 4 && (!permissions?.overlay || !permissions?.usageStats)) return;
-    setStep((current) => Math.min(current + 1, 10));
+    if (step === 4) setCategory(categoryForGoal(goal));
+    if (step === 5 && (!permissions?.overlay || !permissions?.usageStats)) return;
+    setStep((current) => Math.min(current + 1, 11));
   };
 
   const goBack = () => {
@@ -573,6 +578,11 @@ export default function OnboardingScreen() {
             <WelcomeScreen onContinue={continueOnboarding} />
           )}
           {step === 1 && (
+            <QuestionScreen body={translate.t("onboarding.nameBody")} icon={<UserRound color="$primary9" size={38} />} title={translate.t("onboarding.nameTitle")}>
+              <Input placeholder={translate.t("onboarding.namePlaceholder")} value={fullName} onChangeText={setFullName} />
+            </QuestionScreen>
+          )}
+          {step === 2 && (
             <QuestionScreen
               body={translate.t("onboarding.phoneUseBody")}
               icon={<Smartphone color="$primary9" size={38} />}
@@ -585,12 +595,12 @@ export default function OnboardingScreen() {
               </XStack>
             </QuestionScreen>
           )}
-          {step === 2 && (
+          {step === 3 && (
             <QuestionScreen body={translate.t("onboarding.recoverTimeBody")} icon={<Timer color="$primary9" size={38} />} title={translate.t("onboarding.recoverTimeTitle")}>
               <DurationChips value={plan.unlockMinutes} onChange={(unlockMinutes) => setPlan((current) => ({ ...current, unlockMinutes }))} />
             </QuestionScreen>
           )}
-          {step === 3 && (
+          {step === 4 && (
             <QuestionScreen body={translate.t("onboarding.goalBody")} icon={<Target color="$primary9" size={38} />} title={translate.t("onboarding.goalTitle")}>
               <YStack gap="$3">
                 {goals.map((option) => (
@@ -608,7 +618,7 @@ export default function OnboardingScreen() {
               </YStack>
             </QuestionScreen>
           )}
-          {step === 4 && (
+          {step === 5 && (
             <PermissionsScreen
               permissions={permissions}
               onRefresh={() => void getPermissionStatus().then((status) => {
@@ -616,7 +626,7 @@ export default function OnboardingScreen() {
               })}
             />
           )}
-          {step === 5 && (
+          {step === 6 && (
             <QuestionScreen body={translate.t("onboarding.objectivesBody")} icon={<ListChecks color="$primary9" size={38} />} title={translate.t("onboarding.objectivesTitle")}>
               <YStack gap="$3">
                 {objectiveOptions.map((option) => (
@@ -630,7 +640,7 @@ export default function OnboardingScreen() {
               </YStack>
             </QuestionScreen>
           )}
-          {step === 6 && (
+          {step === 7 && (
             <QuestionScreen body={translate.t("onboarding.blockedBody")} icon={<Ban color="$primary9" size={38} />} title={translate.t("onboarding.blockedTitle")}>
               <AppSelectionList
                 apps={apps}
@@ -640,13 +650,13 @@ export default function OnboardingScreen() {
               />
             </QuestionScreen>
           )}
-          {step === 7 && (
+          {step === 8 && (
             <QuestionScreen body={translate.t("onboarding.modeTimeBody")} icon={<Clock3 color="$primary9" size={38} />} title={translate.t("onboarding.modeTimeTitle")}>
               <ModeRadial duration={plan.productiveMinutes} label={translate.t("onboarding.yourMode")} />
               <DurationChips value={plan.productiveMinutes} onChange={(productiveMinutes) => setPlan((current) => ({ ...current, productiveMinutes }))} />
             </QuestionScreen>
           )}
-          {step === 8 && (
+          {step === 9 && (
             <QuestionScreen body={translate.t("onboarding.replacementBody")} icon={<Repeat2 color="$primary9" size={38} />} title={translate.t("onboarding.replacementTitle")}>
               <AppSelectionList
                 apps={apps}
@@ -656,20 +666,20 @@ export default function OnboardingScreen() {
               />
             </QuestionScreen>
           )}
-          {step === 9 && <CreatingScreen visible={creating} />}
-          {step === 10 && (
+          {step === 10 && <CreatingScreen visible={creating} />}
+          {step === 11 && (
             <PlanPreview
               plan={plan}
               selectedApps={selectedApps}
-              onEdit={() => setStep(1)}
+              onEdit={() => setStep(2)}
               onSave={() => void savePlan(false)}
             />
           )}
         </View>
-        {step > 0 && step < 9 && (
+        {step > 0 && step < 10 && (
           <View marginTop="$4">
-            <GradientButton disabled={step === 4 && permissions?.overlay !== true || step === 4 && permissions?.usageStats !== true} onPress={continueOnboarding}>
-              {step === 4 ? translate.t("onboarding.activate") : translate.t("common.continue")}
+            <GradientButton disabled={step === 5 && permissions?.overlay !== true || step === 5 && permissions?.usageStats !== true} onPress={continueOnboarding}>
+              {step === 5 ? translate.t("onboarding.activate") : translate.t("common.continue")}
             </GradientButton>
           </View>
         )}

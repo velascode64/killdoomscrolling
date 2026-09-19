@@ -6,6 +6,7 @@ import {
   Languages,
   ShieldCheck,
   SlidersHorizontal,
+  User,
 } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import { Share } from "react-native";
@@ -25,6 +26,16 @@ const Settings = () => {
   return (
   <Container paddingVertical="$4">
     <YStack gap="$5">
+      <YStack gap="$2">
+        <YGroup alignSelf="center" bordered size="$4">
+          <YGroup.Item>
+            <ListItem icon={<RowIcon><User color="$primary11" size={19} /></RowIcon>} iconAfter={ChevronRight} onPress={() => router.push("/settings/profile")} pressTheme>
+              <ListItem.Text>Perfil</ListItem.Text>
+            </ListItem>
+          </YGroup.Item>
+        </YGroup>
+      </YStack>
+
       <YStack gap="$2">
         <SizableText color="$text10" fontSize="$3" fontWeight="700">{translate.t("settings.control")}</SizableText>
         <YGroup alignSelf="center" bordered size="$4">

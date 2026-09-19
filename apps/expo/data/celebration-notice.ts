@@ -1,5 +1,6 @@
 export type CelebrationNotice = {
   message: string;
+  showProfile?: boolean;
   title: string;
 };
 

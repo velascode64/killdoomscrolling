@@ -69,7 +69,7 @@ export const PLAN_CATEGORY_COPY: Record<PlanCategory, { name: string; descriptio
 };
 
 const LEGACY_CATEGORY_NAMES: Record<PlanCategory, string[]> = {
-  focus: ["Focus", "Foco"],
+  focus: ["Focus", "Foco", "Concentración"],
   exercise: ["Exercise", "Ejercicio"],
   sleep: ["Sleep", "Dormir"],
   meditation: ["Meditation", "Meditación"],

@@ -119,3 +119,24 @@ export async function syncPendingOnboarding(): Promise<void> {
   if (!value) return;
   await syncOnboarding(JSON.parse(value) as Record<string, unknown>);
 }
+
+export async function saveProfile(profile: { fullName?: string; email?: string; age?: number | null; gender?: string; occupation?: string }): Promise<void> {
+  const userId = await getUserId();
+  if (!userId) return;
+  const updates = {
+    ...(profile.fullName !== undefined ? { full_name: profile.fullName.trim() || null } : {}),
+    ...(profile.email !== undefined ? { email: profile.email.trim().toLowerCase() || null } : {}),
+    ...(profile.age !== undefined ? { age: profile.age } : {}),
+    ...(profile.gender !== undefined ? { gender: profile.gender.trim() || null } : {}),
+    ...(profile.occupation !== undefined ? { occupation: profile.occupation.trim() || null } : {}),
+  };
+  const { error } = await supabase.from("profiles").update(updates).eq("id", userId);
+  if (error) throw error;
+}
+
+export async function saveProfileEmail(email: string): Promise<void> {
+  const userId = await getUserId();
+  if (!userId) return;
+  const { error } = await supabase.from("profiles").update({ email: email.trim().toLowerCase() }).eq("id", userId);
+  if (error) throw error;
+}

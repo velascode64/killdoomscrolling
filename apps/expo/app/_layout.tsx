@@ -13,6 +13,7 @@ import { clearShortcutListener, listenForShortcut } from "../data/shortcut.liste
 import { ShortCutPayload } from "../data/shortcut.payload";
 import { bootstrapSupabase } from "../data/supabase-bootstrap";
 import { translate, useAppLanguage } from "../components/translate";
+import { recordAppOpen } from "../data/post-onboarding";
 import config from "../tamagui.config";
 
 export const unstable_settings = {
@@ -38,6 +39,7 @@ export default function RootLayout() {
     if (error) throw error;
   }, [error]);
   useEffect(() => {
+    void recordAppOpen();
     void bootstrapSupabase().catch((supabaseError: unknown) => {
       // The app stays local-first if Supabase is unavailable.
       console.warn("Supabase bootstrap failed", supabaseError);

@@ -76,6 +76,7 @@ const SettingsLayout = observer(() => {
         }}
       />
       <Stack.Screen name="permissions" options={{ title: "Permisos" }} />
+      <Stack.Screen name="profile" options={{ title: "Perfil" }} />
       <Stack.Screen name="privacy" options={{ title: "Privacidad y datos" }} />
       <Stack.Screen name="terms" options={{ title: "Términos y condiciones" }} />
       <Stack.Screen name="about" options={{ title: "Acerca de" }} />

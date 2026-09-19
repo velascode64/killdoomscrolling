@@ -1,14 +1,14 @@
 {
   "translation": {
     "categories": {
-      "focus": { "name": "Focus", "description": "Recover your attention with apps that help you move forward." },
+      "focus": { "name": "Concentration", "description": "Recover your attention with apps that help you move forward." },
       "exercise": { "name": "Exercise", "description": "Make room to move before returning to social media." },
       "sleep": { "name": "Sleep", "description": "Protect your rest and prepare for a better night." },
       "meditation": { "name": "Meditation", "description": "Take a pause before returning to distractions." },
       "hobby": { "name": "Hobby", "description": "Set aside time for an activity you enjoy." },
       "work": { "name": "Work", "description": "Create space for the work that matters." }
     },
-    "modes": { "focus": "Focus", "sleep": "Sleep", "work": "Work" },
+    "modes": { "focus": "Concentration", "sleep": "Sleep", "work": "Work" },
     "dashboard": {
       "startJourney": "Start your journey",
       "loading": "Loading your modes...",
@@ -38,6 +38,9 @@
       "androidOnly": "This experience is available on Android.",
       "welcomeTitle": "Recover your attention",
       "welcomeBody": "Create a mode to block distractions and spend time on what matters.",
+      "nameTitle": "What should we call you?",
+      "nameBody": "We'll use your name to personalize Rehabbit messages.",
+      "namePlaceholder": "Alicia",
       "start": "Get started",
       "phoneUseTitle": "How much time do you spend on your phone?",
       "phoneUseBody": "We'll use this to suggest an initial plan. You can change it later.",
@@ -67,6 +70,10 @@
       "creatingTitle": "Creating your plan",
       "creatingBody": "We're preparing your limits and alternatives.",
       "previewTitle": "Your plan is ready",
+      "emailTitle": "Where can we contact you?",
+      "emailBody": "We'll use your email to talk with you about your Rehabbit experience.",
+      "emailPlaceholder": "you@email.com",
+      "emailInvalid": "Enter a valid email to continue.",
       "previewBody": "Review it before saving. It will remain inactive until you choose to activate it.",
       "inactive": "Inactive",
       "editOptions": "Edit options",

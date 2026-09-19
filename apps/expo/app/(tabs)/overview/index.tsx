@@ -28,20 +28,29 @@ import { Container } from "../../../components/container";
 import { Divider } from "../../../components/divider";
 import { Header } from "../../../components/header";
 import { PercentageTrend } from "../../../components/percentage.trend";
+import { ProfileCompletionModal } from "../../../components/profile-completion-modal";
+import { EmailProgressModal } from "../../../components/email-progress-modal";
 import { ShadowCard } from "../../../components/shadow.card";
 import { WeeklySummary } from "../../../components/weekly-summary";
 import { consumeCelebrationNotice } from "../../../data/celebration-notice";
 import type { CelebrationNotice } from "../../../data/celebration-notice";
 import { OverviewStore } from "../../../data/overview.store";
+import { markEmailPrompted, shouldShowEmailPrompt } from "../../../data/post-onboarding";
 
 dayjs.extend(weekday);
 
 const Overview = observer(() => {
   const [celebration, setCelebration] = useState<CelebrationNotice | null>(null);
-  const dismissCelebration = useCallback(() => setCelebration(null), []);
+  const [profileVisible, setProfileVisible] = useState(false);
+  const [emailVisible, setEmailVisible] = useState(false);
+  const dismissCelebration = useCallback(() => {
+    if (celebration?.showProfile) setProfileVisible(true);
+    setCelebration(null);
+  }, [celebration]);
 
   useEffect(() => {
     void OverviewStore.init();
+    void shouldShowEmailPrompt().then((show) => { if (show) { void markEmailPrompted(); setEmailVisible(true); } });
   }, []);
   useFocusEffect(useCallback(() => {
     const notice = consumeCelebrationNotice();
@@ -266,6 +275,8 @@ const Overview = observer(() => {
         visible={celebration !== null}
         onDismiss={dismissCelebration}
       />
+      <ProfileCompletionModal visible={profileVisible} onClose={() => setProfileVisible(false)} />
+      <EmailProgressModal visible={emailVisible} onClose={() => setEmailVisible(false)} />
     </>
   );
 });

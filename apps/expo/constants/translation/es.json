@@ -1,14 +1,14 @@
 {
   "translation": {
     "categories": {
-      "focus": { "name": "Foco", "description": "Recupera tu atención con apps que te hacen avanzar." },
+      "focus": { "name": "Concentración", "description": "Recupera tu atención con apps que te hacen avanzar." },
       "exercise": { "name": "Ejercicio", "description": "Abre espacio para moverte antes de volver a las redes." },
       "sleep": { "name": "Dormir", "description": "Protege tu descanso y prepara una mejor noche." },
       "meditation": { "name": "Meditación", "description": "Toma una pausa antes de volver a las distracciones." },
       "hobby": { "name": "Pasatiempo", "description": "Reserva tiempo para una actividad que disfrutas." },
       "work": { "name": "Trabajo", "description": "Crea espacio para el trabajo que importa." }
     },
-    "modes": { "focus": "Foco", "sleep": "Dormir", "work": "Trabajo" },
+    "modes": { "focus": "Concentración", "sleep": "Dormir", "work": "Trabajo" },
     "dashboard": {
       "startJourney": "Comienza tu camino",
       "loading": "Cargando tus modos...",
@@ -38,6 +38,9 @@
       "androidOnly": "Esta experiencia está disponible en Android.",
       "welcomeTitle": "Recupera tu atención",
       "welcomeBody": "Crea un estado para bloquear distracciones y dedicar tiempo a lo que importa.",
+      "nameTitle": "¿Cómo quieres que te llamemos?",
+      "nameBody": "Usaremos tu nombre para personalizar los mensajes de Rehabbit.",
+      "namePlaceholder": "Alicia",
       "start": "Empezar",
       "phoneUseTitle": "¿Cuánto tiempo pasas en tu teléfono?",
       "phoneUseBody": "Usaremos esta referencia para proponerte un plan inicial. Puedes cambiarlo después.",
@@ -71,6 +74,10 @@
       "creatingTitle": "Creando tu plan",
       "creatingBody": "Estamos preparando tus límites y alternativas.",
       "previewTitle": "Tu plan está listo",
+      "emailTitle": "¿Dónde podemos contactarte?",
+      "emailBody": "Usaremos tu correo para hablar contigo sobre tu experiencia con Rehabbit.",
+      "emailPlaceholder": "tu@email.com",
+      "emailInvalid": "Escribe un correo válido para continuar.",
       "previewBody": "Revísalo antes de guardarlo. Quedará inactivo hasta que decidas activarlo.",
       "inactive": "Inactivo",
       "editOptions": "Editar opciones",
