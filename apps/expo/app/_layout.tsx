@@ -39,8 +39,7 @@ export default function RootLayout() {
     if (error) throw error;
   }, [error]);
   useEffect(() => {
-    void recordAppOpen();
-    void bootstrapSupabase().catch((supabaseError: unknown) => {
+    void recordAppOpen().then(() => bootstrapSupabase()).catch((supabaseError: unknown) => {
       // The app stays local-first if Supabase is unavailable.
       console.warn("Supabase bootstrap failed", supabaseError);
     });

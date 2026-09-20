@@ -140,3 +140,11 @@ export async function saveProfileEmail(email: string): Promise<void> {
   const { error } = await supabase.from("profiles").update({ email: email.trim().toLowerCase() }).eq("id", userId);
   if (error) throw error;
 }
+
+export async function getProfileIdentity(): Promise<{ userId: string | null; email: string | null }> {
+  const userId = await getUserId();
+  if (!userId) return { userId: null, email: null };
+  const { data, error } = await supabase.from("profiles").select("email").eq("id", userId).maybeSingle();
+  if (error) throw error;
+  return { userId, email: data?.email ?? null };
+}

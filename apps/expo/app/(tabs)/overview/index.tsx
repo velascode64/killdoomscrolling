@@ -35,7 +35,8 @@ import { WeeklySummary } from "../../../components/weekly-summary";
 import { consumeCelebrationNotice } from "../../../data/celebration-notice";
 import type { CelebrationNotice } from "../../../data/celebration-notice";
 import { OverviewStore } from "../../../data/overview.store";
-import { markEmailPrompted, shouldShowEmailPrompt } from "../../../data/post-onboarding";
+import { getProfileIdentity } from "../../../data/supabase-sync";
+import { getAppOpenCount, hasDeclinedEmailPrompt, markEmailPrompted } from "../../../data/post-onboarding";
 
 dayjs.extend(weekday);
 
@@ -43,19 +44,37 @@ const Overview = observer(() => {
   const [celebration, setCelebration] = useState<CelebrationNotice | null>(null);
   const [profileVisible, setProfileVisible] = useState(false);
   const [emailVisible, setEmailVisible] = useState(false);
+  const [profileDebug, setProfileDebug] = useState("checking profile...");
   const dismissCelebration = useCallback(() => {
     if (celebration?.showProfile) setProfileVisible(true);
     setCelebration(null);
   }, [celebration]);
 
+  const checkEmailPrompt = useCallback(() => {
+    void Promise.all([getAppOpenCount(), getProfileIdentity(), hasDeclinedEmailPrompt()]).then(([openCount, profile, declined]) => {
+      const shouldShow = openCount >= 2 && !profile.email && !declined;
+      const debug = `opens: ${openCount} · user_id: ${profile.userId ?? "none"} · email: ${profile.email ?? "empty"} · declined: ${declined} · modal: ${shouldShow}`;
+      console.log("[email-prompt]", debug);
+      setProfileDebug(debug);
+      if (shouldShow) setEmailVisible(true);
+    }).catch((error: unknown) => {
+      console.warn("[email-prompt] profile check failed", error);
+      setProfileDebug(`profile check failed: ${String(error)}`);
+    });
+  }, []);
+
   useEffect(() => {
     void OverviewStore.init();
-    void shouldShowEmailPrompt().then((show) => { if (show) { void markEmailPrompted(); setEmailVisible(true); } });
-  }, []);
+    void getAppOpenCount().then((count) => { if (count >= 2) checkEmailPrompt(); });
+  }, [checkEmailPrompt]);
   useFocusEffect(useCallback(() => {
     const notice = consumeCelebrationNotice();
-    if (notice) setCelebration(notice);
-  }, []));
+    if (notice) {
+      setCelebration(notice);
+      return;
+    }
+    checkEmailPrompt();
+  }, [checkEmailPrompt]));
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
@@ -71,6 +90,7 @@ const Overview = observer(() => {
         header={({ isSticky }) => <Header isSticky={isSticky} />}
       >
         <YStack space="$4">
+        {/* <SizableText color="$text6" fontSize="$2">{profileDebug}</SizableText> */}
         {Platform.OS === "android" && (
           <>
             <WeeklySummary />
@@ -276,7 +296,7 @@ const Overview = observer(() => {
         onDismiss={dismissCelebration}
       />
       <ProfileCompletionModal visible={profileVisible} onClose={() => setProfileVisible(false)} />
-      <EmailProgressModal visible={emailVisible} onClose={() => setEmailVisible(false)} />
+      <EmailProgressModal visible={emailVisible && !profileVisible} onClose={() => { void markEmailPrompted(); setEmailVisible(false); }} />
     </>
   );
 });

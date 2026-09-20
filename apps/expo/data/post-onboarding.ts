@@ -9,9 +9,12 @@ export async function recordAppOpen(): Promise<number> {
   return count;
 }
 
-export async function shouldShowEmailPrompt(): Promise<boolean> {
-  const [count, prompted] = await Promise.all([AsyncStorage.getItem(OPEN_COUNT_KEY), AsyncStorage.getItem(EMAIL_PROMPTED_KEY)]);
-  return Number(count ?? 0) >= 2 && prompted !== "true";
+export async function getAppOpenCount(): Promise<number> {
+  return Number(await AsyncStorage.getItem(OPEN_COUNT_KEY) ?? 0);
+}
+
+export function hasDeclinedEmailPrompt(): Promise<boolean> {
+  return AsyncStorage.getItem(EMAIL_PROMPTED_KEY).then((value) => value === "true");
 }
 
 export function markEmailPrompted(): Promise<void> {
