@@ -104,16 +104,16 @@ La primera validación, sin embargo, es más simple:
 
 # Cómo funciona Rehabbit
 
-La unidad principal del producto es un **Modo**.
+La unidad principal del producto es un **Plan**.
 
-Un Modo representa un periodo del día en el que el usuario quiere evitar ciertas aplicaciones y dedicar su tiempo a otra actividad.
+Un Plan representa un periodo del día en el que el usuario quiere evitar ciertas aplicaciones y dedicar su tiempo a otra actividad.
 
-Un Modo define:
+Un Plan define:
 
 - Qué aplicaciones quiere evitar.
 - Qué aplicación o aplicaciones quiere usar en su lugar.
 - Durante cuánto tiempo quiere utilizar la actividad alternativa.
-- En qué horario aplica el Modo.
+- En qué horario aplica el Plan.
 - Qué tipo de actividad representa.
 
 Ejemplos:
@@ -138,7 +138,7 @@ Fuera de estos periodos, el usuario puede dejar tiempo libre para utilizar sus r
 
 # 1. Onboarding
 
-El onboarding ayuda al usuario a configurar Rehabbit por primera vez y crear su primer Modo.
+El onboarding ayuda al usuario a configurar Rehabbit por primera vez y crear su primer Plan.
 
 Cada pantalla hace una sola pregunta o solicita una acción concreta.
 
@@ -148,9 +148,21 @@ Presenta Rehabbit y explica brevemente el objetivo del producto.
 
 El usuario continúa para empezar la configuración.
 
----
 
-## 1.2 Uso actual del teléfono
+---
+## 1.2 Nombre
+
+Solicitar el nombre para personalizar la experiencia.
+
+**Pregunta:**
+
+¿Cómo quieres que te llamemos?
+
+Placeholder: `Alicia`
+
+Utilizarlo posteriormente en los mensajes del onboarding
+
+## 1.3 Uso actual del teléfono
 
 Pregunta cuánto tiempo pasa aproximadamente usando su teléfono.
 
@@ -160,17 +172,17 @@ Esta información sirve como referencia inicial sobre su uso actual.
 
 ---
 
-## 1.3 Tiempo que quiere recuperar
+## 1.4 Tiempo que quiere recuperar
 
-Pregunta cuánto tiempo le gustaría dejar de perder usando el teléfono o aplicaciones que lo distraen.
+Pregunta: $Nombre cuánto tiempo le gustaría dejar de perder usando el teléfono o aplicaciones que lo distraen.
 
 El usuario selecciona una duración.
 
 ---
 
-## 1.4 Qué quiere lograr
+## 1.5 Qué quiere lograr
 
-Pregunta cuál es su principal objetivo al usar Rehabbit.
+Pregunta: $Nmbre Que objetivo quieres lograr con Rehabbit?
 
 Opciones actuales:
 
@@ -184,7 +196,7 @@ Si selecciona `Otro`, puede escribir su propio objetivo.
 
 ---
 
-## 1.5 Permisos
+## 1.6 Permisos
 
 Solicita los permisos necesarios para que Rehabbit pueda detectar el uso de aplicaciones y aplicar sus bloqueos.
 
@@ -192,23 +204,34 @@ Si posteriormente el usuario elimina uno de los permisos necesarios, Rehabbit mu
 
 ---
 
-## 1.6 Actividades que quiere hacer más
+## 1.7 Actividades que quiere hacer más
 
 Pregunta qué tipo de actividades le gustaría recuperar.
 
-Estas respuestas ayudan a definir qué tipo de Modo quiere crear.
+Estas respuestas ayudan a definir qué tipo de Plan quiere crear.
 
 ---
 
-## 1.7 Apps que quiere dejar de usar
+## 1.8 Apps que quiere dejar de usar
 
-Muestra las aplicaciones instaladas para que el usuario seleccione cuáles quiere reducir.
+Pregunta qué aplicaciones quiere reducir o evitar durante su primer Plan.
 
-Las aplicaciones seleccionadas se convierten en las **Apps bloqueadas** de su primer Modo.
+Para reducir fricción, Rehabbit debe mostrar primero una selección de aplicaciones instaladas que probablemente sean relevantes para este objetivo, priorizando inicialmente:
+
+- Redes sociales instaladas.
+- Juegos instalados.
+
+El objetivo es que el usuario pueda seleccionar directamente las aplicaciones que quiere reducir sin tener que buscarlas manualmente ni navegar primero por categorías.
+
+Cada aplicación debe mostrarse con su icono y nombre y poder seleccionarse directamente desde esta primera lista.
+
+El usuario también debe tener una opción como **Ver todas las apps** para explorar el resto de aplicaciones instaladas si la que busca no aparece en la selección inicial.
+
+Las aplicaciones seleccionadas se convierten en las **Apps bloqueadas** de su primer Plan.
 
 ---
 
-## 1.8 Tiempo de actividad alternativa
+## 1.9 Tiempo de actividad alternativa
 
 Pregunta cuánto tiempo quiere dedicar a la aplicación o actividad que reemplaza el uso de las Apps bloqueadas.
 
@@ -225,7 +248,7 @@ Este tiempo es el que posteriormente debe completar utilizando la App de reempla
 
 ---
 
-## 1.9 Apps de reemplazo
+## 1.10 Apps de reemplazo
 
 El usuario selecciona aplicaciones que le gustaría usar en lugar de las aplicaciones que quiere evitar.
 
@@ -238,11 +261,11 @@ Por ejemplo:
 - Una app de concentración.
 - Una herramienta de trabajo.
 
-Estas aplicaciones se convierten en las **Apps de reemplazo** del Modo.
+Estas aplicaciones se convierten en las **Apps de reemplazo** del Plan.
 
 ---
 
-## 1.10 Horarios sin restricciones
+## 1.11 Horarios sin restricciones
 
 El onboarding también puede preguntar en qué momentos del día el usuario quiere utilizar sus redes sociales sin restricciones.
 
@@ -250,17 +273,11 @@ La intención es que Rehabbit no bloquee las redes durante todo el día, sino ú
 
 ---
 
-## 1.11 Creando el plan
 
-Rehabbit utiliza las respuestas anteriores para crear el primer Modo.
-
-No requiere ninguna acción del usuario.
-
----
 
 ## 1.12 Revisión del plan
 
-El usuario revisa el Modo que Rehabbit creó para él.
+El usuario revisa el Plan que Rehabbit creó para él.
 
 Puede:
 
@@ -268,6 +285,60 @@ Puede:
 - Modificarlo antes de usarlo.
 
 Si el usuario abandona el onboarding antes de terminar, debe poder retomarlo desde el punto donde lo dejó.
+
+## 1.13 Creando el plan
+
+Rehabbit utiliza las respuestas anteriores para crear el primer Plan.
+Muestra una patalla de Success Screen, usa su $Nombre
+
+Pregunta al usaurio para dejarnos unos datos más para mejorar su experiencia
+
+---
+## 1.14 Completar perfil
+
+Sí el usuario acepta darnos más datos después de crear el  primer Plan, Rehabbit puede solicitar información adicional para conocer mejor a sus usuarios.
+
+- Edad o rango de edad.
+- Género.
+- A qué se dedica.
+
+El usuario puede omitir esta sección sin afectar el funcionamiento de Rehabbit.
+
+---
+
+## 1.15 Segunda apertura de la aplicación
+
+Cuando el usuario abre Rehabbit por segunda vez, se inicia una secuencia corta de post-onboarding.
+
+### Guardar progreso / Email
+
+Mostrar un modal simple explicando el beneficio antes de solicitar el correo.
+
+Ejemplo:
+
+**Guarda tu progreso**
+
+Agrega tu email para guardar tu progreso y poder continuar con tus Planes.
+
+[ Email ]
+
+**Guardar progreso**
+
+`Ahora no`
+
+El email no debe ser obligatorio para continuar utilizando la aplicación.
+
+### Rating
+
+Después de completar o cerrar el modal anterior, Rehabbit puede preguntar brevemente:
+
+**¿Cómo te ha ido con Rehabbit?**
+
+El usuario puede indicar cómo ha sido su experiencia hasta el momento.
+
+Si corresponde, Rehabbit puede continuar con la solicitud de calificación de la aplicación.
+
+La solicitud debe poder cerrarse y no debe impedir continuar usando Rehabbit.
 
 ---
 
@@ -277,47 +348,47 @@ El Dashboard es la pantalla principal de Rehabbit.
 
 Desde aquí el usuario puede:
 
-- Ver sus Modos.
-- Crear nuevos Modos.
-- Entrar a editar un Modo.
-- Pausar o reanudar un Modo.
+- Ver sus Planes.
+- Crear nuevos Planes.
+- Entrar a editar un Plan.
+- Pausar o reanudar un Plan.
 - Ver sus estadísticas.
 - Ver su progreso reciente.
 
 ---
 
-## 2.1 Dashboard sin Modos
+## 2.1 Dashboard sin Planes
 
-Si el usuario todavía no tiene ningún Modo, se muestra una invitación para crear el primero.
+Si el usuario todavía no tiene ningún Plan, se muestra una invitación para crear el primero.
 
-Cuando ya existe al menos un Modo, este estado desaparece.
+Cuando ya existe al menos un Plan, este estado desaparece.
 
 ---
 
-## 2.2 Modos
+## 2.2 Planes
 
-Cada Modo creado aparece de forma independiente.
+Cada Plan creado aparece de forma independiente.
 
 El usuario puede identificar:
 
-- El nombre del Modo.
+- El nombre del Plan.
 - Las Apps bloqueadas.
 - Las Apps de reemplazo.
 - El horario.
 
-Al seleccionar un Modo se abre la pantalla de edición.
+Al seleccionar un Plan se abre la pantalla de edición.
 
 ---
 
-## 2.3 Modo pausado
+## 2.3 Plan pausado
 
-Cuando el usuario pausa un Modo, este deja de aplicar temporalmente sus restricciones.
+Cuando el usuario pausa un Plan, este deja de aplicar temporalmente sus restricciones.
 
-La tarjeta del Modo permanece visible, pero aparece desactivada para indicar que está pausado.
+La tarjeta del Plan permanece visible, pero aparece desactivada para indicar que está pausado.
 
 El usuario puede volver a activarlo mediante el botón **Reanudar**.
 
-Mientras el Modo está pausado, sus Apps bloqueadas están disponibles.
+Mientras el Plan está pausado, sus Apps bloqueadas están disponibles.
 
 ---
 
@@ -334,7 +405,7 @@ Rehabbit no considera como tiempo recuperado el tiempo que la persona pasa dentr
 El tiempo recuperado proviene de dos comportamientos:
 
 - Tiempo utilizando una App de reemplazo.
-- Tiempo dentro del horario del Modo durante el cual el usuario evita utilizar la App bloqueada.
+- Tiempo dentro del horario del Plan durante el cual el usuario evita utilizar la App bloqueada.
 
 El objetivo es medir cuánto tiempo que antes podía terminar en una red social fue utilizado en otra actividad o simplemente dejado libre.
 
@@ -342,7 +413,7 @@ Esta métrica debe evitar inflar artificialmente el resultado. Por ejemplo, dorm
 
 ### Intentos bloqueados
 
-Cuántas veces Rehabbit intervino cuando el usuario intentó abrir una App bloqueada durante un Modo activo.
+Cuántas veces Rehabbit intervino cuando el usuario intentó abrir una App bloqueada durante un Plan activo.
 
 ### Redirecciones
 
@@ -352,11 +423,11 @@ Cuántas veces, después de un bloqueo, el usuario decidió abrir la App de reem
 
 Cuánto tiempo acumuló el usuario utilizando las aplicaciones que había elegido como alternativas.
 
-### Modos realizados
+### Planes realizados
 
 Permite entender qué periodos y actividades programadas está siguiendo el usuario.
 
-Un Modo no se considera “realizado” simplemente por haber sido creado.
+Un Plan no se considera “realizado” simplemente por haber sido creado.
 
 Representa un periodo del día que el usuario había programado para una actividad concreta.
 
@@ -372,13 +443,13 @@ Debe ayudar al usuario a responder preguntas simples como:
 
 Las estadísticas deben representar actividad que realmente ocurrió.
 
-Editar posteriormente un Modo no debería modificar el historial anterior.
+Editar posteriormente un Plan no debería modificar el historial anterior.
 
 ---
 
-# 3. Crear o editar un Modo
+# 3. Crear o editar un Plan
 
-Esta pantalla permite crear un nuevo Modo o modificar uno existente.
+Esta pantalla permite crear un nuevo Plan o modificar uno existente.
 
 Es el lugar principal donde el usuario define cómo quiere organizar un periodo de su día.
 
@@ -393,7 +464,7 @@ El usuario puede configurar:
 
 Al guardar:
 
-- Si es un Modo nuevo, se agrega al Dashboard.
+- Si es un Plan nuevo, se agrega al Dashboard.
 - Si ya existía, se actualiza.
 
 ---
@@ -417,13 +488,13 @@ El usuario configura:
 
 **Instagram → Kindle → 20 minutos**
 
-Para desbloquear Instagram durante ese Modo, debe acumular 20 minutos utilizando Kindle.
+Para desbloquear Instagram durante ese Plan, debe acumular 20 minutos utilizando Kindle.
 
 ---
 
 ## 3.2 Categoría
 
-La categoría describe el tipo de actividad asociada al Modo.
+La categoría describe el tipo de actividad asociada al Plan.
 
 Categorías actuales:
 
@@ -433,13 +504,15 @@ Categorías actuales:
 - Meditación.
 - Hobby.
 
-La categoría sirve principalmente para identificar el propósito del Modo.
+La categoría sirve principalmente para identificar el propósito del Plan.
+
+La categoría interna `focus` se muestra siempre como **Concentración**. El usuario no debe ver el nombre “Foco” en el onboarding, en el Dashboard ni al editar un Plan.
 
 ---
 
 ## 3.3 Horario
 
-Un Modo tiene un horario en el que aplica.
+Un Plan tiene un horario en el que aplica.
 
 El usuario define:
 
@@ -453,13 +526,13 @@ Ejemplo:
 Lunes a viernes  
 7:00 AM – 9:00 AM
 
-Durante ese periodo, las Apps bloqueadas configuradas para ese Modo quedan restringidas.
+Durante ese periodo, las Apps bloqueadas configuradas para ese Plan quedan restringidas.
 
 ---
 
 ## 3.4 Conflictos de horario
 
-No se debe permitir que dos Modos tengan horarios que se solapen.
+No se debe permitir que dos Planes tengan horarios que se solapen.
 
 Rehabbit funciona como un planner de actividades y cada bloque del día debe representar una intención clara.
 
@@ -475,7 +548,7 @@ Esto también permite que existan periodos en los que las redes sociales estén 
 
 ## 3.5 Apps bloqueadas
 
-Son las aplicaciones que el usuario quiere evitar durante ese Modo.
+Son las aplicaciones que el usuario quiere evitar durante ese Plan.
 
 El usuario puede:
 
@@ -483,7 +556,7 @@ El usuario puede:
 - Eliminar aplicaciones.
 - Cambiar la selección.
 
-Cuando el Modo está activo y el usuario intenta abrir una de estas aplicaciones, Rehabbit muestra la pantalla de bloqueo.
+Cuando el Plan está activo y el usuario intenta abrir una de estas aplicaciones, Rehabbit muestra la pantalla de bloqueo.
 
 ---
 
@@ -506,7 +579,7 @@ La alternativa es elegida por el propio usuario según lo que quiere hacer duran
 
 # 4. Pantalla de bloqueo
 
-Esta pantalla aparece cuando el usuario intenta abrir una **App bloqueada** durante el horario activo de un Modo.
+Esta pantalla aparece cuando el usuario intenta abrir una **App bloqueada** durante el horario activo de un Plan.
 
 Es uno de los puntos centrales de Rehabbit.
 
@@ -514,7 +587,7 @@ Su función es interrumpir el comportamiento automático y recordarle al usuario
 
 Ejemplo:
 
-**Modo:** Meditación  
+**Plan:** Meditación  
 **Horario:** 7:00 AM – 9:00 AM  
 **App bloqueada:** Instagram  
 **App de reemplazo:** Balance  
@@ -531,7 +604,7 @@ La pantalla le recuerda que está dentro de su periodo de meditación y le ofrec
 La pantalla debe dejar claro:
 
 - Qué App bloqueada intentó abrir.
-- Qué Modo está activo.
+- Qué Plan está activo.
 - Qué App de reemplazo configuró.
 - Cuánto tiempo necesita completar.
 - Cuánto progreso lleva.
@@ -540,7 +613,7 @@ La pantalla debe dejar claro:
 
 ## 4.2 App de reemplazo
 
-La pantalla muestra la App de reemplazo seleccionada para ese Modo.
+La pantalla muestra la App de reemplazo seleccionada para ese Plan.
 
 El usuario puede abrirla directamente desde aquí.
 
@@ -593,7 +666,7 @@ Ejemplo:
 
 **20 minutos de Kindle → 20 minutos disponibles en Instagram.**
 
-Esto funciona de forma similar a un ciclo Pomodoro:
+Esto funciona de forma similar a un ciclo PoPlanro:
 
 **actividad intencional → recompensa → volver al periodo protegido.**
 
@@ -617,17 +690,17 @@ Luego:
 
 El contador se detiene mientras Instagram no está abierta.
 
-Si vuelve posteriormente durante el mismo Modo, todavía dispone de esos 13 minutos.
+Si vuelve posteriormente durante el mismo Plan, todavía dispone de esos 13 minutos.
 
 ---
 
 ## 4.7 Volver a bloquear
 
-Cuando el usuario consume todo su tiempo disponible, la App bloqueada vuelve a quedar restringida si el horario del Modo todavía continúa activo.
+Cuando el usuario consume todo su tiempo disponible, la App bloqueada vuelve a quedar restringida si el horario del Plan todavía continúa activo.
 
 Ejemplo:
 
-Modo:
+Plan:
 
 **Concentración · 2:00 PM – 5:00 PM**
 
@@ -638,7 +711,7 @@ El usuario:
 3. Consume esos 20 minutos.
 4. Son las 3:10 PM.
 
-Como el Modo continúa activo hasta las 5:00 PM, Instagram vuelve a quedar bloqueado.
+Como el Plan continúa activo hasta las 5:00 PM, Instagram vuelve a quedar bloqueado.
 
 Para volver a acceder deberá completar nuevamente el tiempo requerido en la App de reemplazo.
 
@@ -664,7 +737,7 @@ El usuario sabe que al despertarse suele abrir Instagram automáticamente.
 
 Configura:
 
-- Modo: Meditación.
+- Plan: Meditación.
 - Lunes a viernes.
 - 7:00 AM – 9:00 AM.
 - App bloqueada: Instagram.
@@ -677,7 +750,7 @@ Rehabbit interviene y le propone abrir Balance.
 
 Si utiliza Balance durante 10 minutos, obtiene 10 minutos disponibles en Instagram.
 
-Cuando esos 10 minutos se terminan, Instagram vuelve a bloquearse porque el Modo continúa hasta las 9:00 AM.
+Cuando esos 10 minutos se terminan, Instagram vuelve a bloquearse porque el Plan continúa hasta las 9:00 AM.
 
 ---
 
@@ -687,7 +760,7 @@ El usuario quiere evitar quedarse viendo redes sociales antes de dormir.
 
 Configura:
 
-- Modo: Dormir.
+- Plan: Dormir.
 - 12:00 AM – 7:00 AM.
 - App bloqueada: Instagram.
 - App de reemplazo: una app para dormir.
@@ -704,7 +777,7 @@ El usuario quiere concentrarse durante su jornada de trabajo.
 
 Configura:
 
-- Modo: Concentración.
+- Plan: Concentración.
 - 2:00 PM – 5:00 PM.
 - Apps bloqueadas: Instagram y TikTok.
 - App de reemplazo: una app de concentración, Spotify o una herramienta de trabajo.
