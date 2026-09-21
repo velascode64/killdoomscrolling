@@ -204,6 +204,10 @@ class ExpoAppBlockerModule : Module() {
       RewardBlockerController(context).getStatus().asMap()
     }
 
+    Function("getRewardBlockerStatistics") {
+      RewardBlockerController(context).statistics().map { it.asMap() }
+    }
+
     Function("clearRewardBlockerConfig") {
       RewardBlockerController(context).clear()
       AppBlockerPrefs.setBlockedPackages(context, emptySet())

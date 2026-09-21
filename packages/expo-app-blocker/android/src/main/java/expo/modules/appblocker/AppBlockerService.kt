@@ -31,6 +31,7 @@ class AppBlockerService : Service() {
   private var consumingSinceMs = 0L
   // Whether a block is currently being enforced (overlay shown / app redirected).
   private var blocking = false
+  private var pendingRedirectionPlanId: String? = null
 
   private val pollRunnable = object : Runnable {
     override fun run() {
@@ -54,12 +55,23 @@ class AppBlockerService : Service() {
         foreground == null ||
         rewardController.isProductivePackage(foreground, now)
       ) {
+        if (foreground != null && rewardController.isProductivePackage(foreground, now)) {
+          val planId = rewardStatus.activePlanId
+          if (planId != null && pendingRedirectionPlanId == planId) {
+            rewardController.recordRedirection(planId)
+            pendingRedirectionPlanId = null
+          }
+        }
         clearBlock()
       } else if (rewardController.isBlockedPackage(foreground, now)) {
         if (rewardStatus.phase == "unlocked") {
           clearBlock()
         } else if (!blocking || foreground != lastForegroundPackage) {
           Log.d(TAG, "Reward blocker intercepting foreground app: $foreground")
+          rewardStatus.activePlanId?.let { planId ->
+            rewardController.recordBlockedAttempt(planId)
+            pendingRedirectionPlanId = planId
+          }
           enforceBlock(foreground, BlockReason.OPENED)
         }
       } else {
@@ -136,7 +148,7 @@ class AppBlockerService : Service() {
     } catch (e: Exception) {
       packageName
     }
-    AppBlockerPrefs.appendIntercept(this, appName, System.currentTimeMillis())
+    AppBlockerPrefs.appendIntercept(this, packageName, appName, System.currentTimeMillis())
   }
 
   private fun showBlockedNotification(packageName: String, reason: BlockReason) {

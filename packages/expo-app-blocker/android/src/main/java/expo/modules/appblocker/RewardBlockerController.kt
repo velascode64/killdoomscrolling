@@ -24,11 +24,26 @@ class RewardBlockerController(private val context: Context) {
 
   data class ProductiveApp(val packageName: String, val label: String)
 
+  data class Statistics(
+    val planId: String,
+    val blockedAttempts: Int,
+    val redirections: Int,
+    val productiveSeconds: Int,
+  ) {
+    fun asMap(): Map<String, Any> = mapOf(
+      "planId" to planId,
+      "blockedAttempts" to blockedAttempts,
+      "redirections" to redirections,
+      "productiveSeconds" to productiveSeconds,
+    )
+  }
+
   data class Status(
     val enabled: Boolean,
     val isScheduleActive: Boolean,
     val phase: String,
     val productiveElapsedSeconds: Int,
+    val totalProductiveSeconds: Int,
     val productiveRemainingSeconds: Int,
     val unlockRemainingSeconds: Int,
     val activePlanId: String? = null,
@@ -39,6 +54,7 @@ class RewardBlockerController(private val context: Context) {
       "isScheduleActive" to isScheduleActive,
       "phase" to phase,
       "productiveElapsedSeconds" to productiveElapsedSeconds,
+      "totalProductiveSeconds" to totalProductiveSeconds,
       "productiveRemainingSeconds" to productiveRemainingSeconds,
       "unlockRemainingSeconds" to unlockRemainingSeconds,
       "activePlanId" to (activePlanId ?: ""),
@@ -100,7 +116,10 @@ class RewardBlockerController(private val context: Context) {
     if (foregroundPackage != null && foregroundPackage in plan.productivePackages) {
       if (productiveSinceMs == 0L) productiveSinceMs = nowMs
       val elapsed = (nowMs - productiveSinceMs).coerceAtLeast(0L)
-      if (elapsed > 0L) addProductiveElapsed(plan.id, elapsed)
+      if (elapsed > 0L) {
+        addProductiveElapsed(plan.id, elapsed)
+        addTotalProductiveElapsed(plan.id, elapsed)
+      }
       productiveSinceMs = nowMs
       if (productiveElapsedMs(plan.id) >= plan.productiveMinutes * MINUTE_MS) {
         resetProgress(plan.id)
@@ -120,6 +139,19 @@ class RewardBlockerController(private val context: Context) {
     return status(config, plan, nowMs)
   }
 
+  fun recordBlockedAttempt(planId: String) = incrementPlanValue(KEY_BLOCKED_ATTEMPTS_BY_PLAN, planId)
+
+  fun recordRedirection(planId: String) = incrementPlanValue(KEY_REDIRECTIONS_BY_PLAN, planId)
+
+  fun statistics(): List<Statistics> = config()?.plans?.map { plan ->
+    Statistics(
+      planId = plan.id,
+      blockedAttempts = planValue(KEY_BLOCKED_ATTEMPTS_BY_PLAN, plan.id).toInt(),
+      redirections = planValue(KEY_REDIRECTIONS_BY_PLAN, plan.id).toInt(),
+      productiveSeconds = (totalProductiveElapsedMs(plan.id) / 1000L).toInt(),
+    )
+  } ?: emptyList()
+
   fun configure(config: Config) {
     val json = JSONObject().apply {
       put("plans", JSONArray(config.plans.map { plan -> JSONObject().apply {
@@ -135,13 +167,10 @@ class RewardBlockerController(private val context: Context) {
         put("unlockMinutes", plan.unlockMinutes)
       } }))
     }
-    AppBlockerPrefs.get(context).edit()
-      .putString(KEY_CONFIG, json.toString())
-      .remove(KEY_PRODUCTIVE_ELAPSED_MS)
-      .remove(KEY_UNLOCK_ENDS_AT_MS)
-      .remove(KEY_PRODUCTIVE_ELAPSED_BY_PLAN)
-      .remove(KEY_UNLOCK_ENDS_BY_PLAN)
-      .apply()
+    val prefs = AppBlockerPrefs.get(context)
+    val nextConfig = json.toString()
+    if (prefs.getString(KEY_CONFIG, null) == nextConfig) return
+    prefs.edit().putString(KEY_CONFIG, nextConfig).apply()
     productiveSinceMs = 0L
     productivePlanId = null
   }
@@ -229,7 +258,8 @@ class RewardBlockerController(private val context: Context) {
   }
 
   private fun status(config: Config, plan: Plan?, nowMs: Long): Status {
-    if (plan == null) return Status(config.plans.any { it.enabled }, false, "inactive", 0, 0, 0)
+    val totalSeconds = (config.plans.sumOf { totalProductiveElapsedMs(it.id) } / 1000L).toInt()
+    if (plan == null) return Status(config.plans.any { it.enabled }, false, "inactive", 0, totalSeconds, 0, 0)
     val elapsedMs = productiveElapsedMs(plan.id)
     val unlockRemainingMs = (unlockEndsAtMs(plan.id) - nowMs).coerceAtLeast(0L)
     return Status(
@@ -237,6 +267,7 @@ class RewardBlockerController(private val context: Context) {
       isScheduleActive = true,
       phase = if (unlockRemainingMs > 0L) "unlocked" else "earning",
       productiveElapsedSeconds = (elapsedMs / 1000L).toInt(),
+      totalProductiveSeconds = totalSeconds,
       productiveRemainingSeconds = ((plan.productiveMinutes * MINUTE_MS - elapsedMs).coerceAtLeast(0L) / 1000L).toInt(),
       unlockRemainingSeconds = (unlockRemainingMs / 1000L).toInt(),
       activePlanId = plan.id,
@@ -244,7 +275,7 @@ class RewardBlockerController(private val context: Context) {
     )
   }
 
-  private fun inactiveStatus() = Status(false, false, "inactive", 0, 0, 0)
+  private fun inactiveStatus() = Status(false, false, "inactive", 0, 0, 0, 0)
 
   private fun planValue(key: String, planId: String): Long = try {
     val raw = AppBlockerPrefs.get(context).getString(key, "{}") ?: "{}"
@@ -259,10 +290,16 @@ class RewardBlockerController(private val context: Context) {
     AppBlockerPrefs.get(context).edit().putString(key, json.toString()).apply()
   }
 
+  private fun incrementPlanValue(key: String, planId: String) =
+    setPlanValue(key, planId, planValue(key, planId) + 1L)
+
   private fun productiveElapsedMs(planId: String) = planValue(KEY_PRODUCTIVE_ELAPSED_BY_PLAN, planId)
   private fun addProductiveElapsed(planId: String, elapsedMs: Long) =
     setPlanValue(KEY_PRODUCTIVE_ELAPSED_BY_PLAN, planId, productiveElapsedMs(planId) + elapsedMs)
   private fun resetProgress(planId: String) = setPlanValue(KEY_PRODUCTIVE_ELAPSED_BY_PLAN, planId, 0L)
+  private fun totalProductiveElapsedMs(planId: String) = planValue(KEY_TOTAL_PRODUCTIVE_ELAPSED_BY_PLAN, planId)
+  private fun addTotalProductiveElapsed(planId: String, elapsedMs: Long) =
+    setPlanValue(KEY_TOTAL_PRODUCTIVE_ELAPSED_BY_PLAN, planId, totalProductiveElapsedMs(planId) + elapsedMs)
   private fun unlockEndsAtMs(planId: String) = planValue(KEY_UNLOCK_ENDS_BY_PLAN, planId)
   private fun setUnlockEndsAtMs(planId: String, value: Long) = setPlanValue(KEY_UNLOCK_ENDS_BY_PLAN, planId, value)
   private fun clearUnlock(planId: String) = setUnlockEndsAtMs(planId, 0L)
@@ -274,6 +311,9 @@ class RewardBlockerController(private val context: Context) {
     private const val KEY_PRODUCTIVE_ELAPSED_MS = "reward_blocker_productive_elapsed_ms"
     private const val KEY_UNLOCK_ENDS_AT_MS = "reward_blocker_unlock_ends_at_ms"
     private const val KEY_PRODUCTIVE_ELAPSED_BY_PLAN = "reward_blocker_productive_elapsed_by_plan"
+    private const val KEY_TOTAL_PRODUCTIVE_ELAPSED_BY_PLAN = "reward_blocker_total_productive_elapsed_by_plan"
+    private const val KEY_BLOCKED_ATTEMPTS_BY_PLAN = "reward_blocker_blocked_attempts_by_plan"
+    private const val KEY_REDIRECTIONS_BY_PLAN = "reward_blocker_redirections_by_plan"
     private const val KEY_UNLOCK_ENDS_BY_PLAN = "reward_blocker_unlock_ends_by_plan"
     private const val MINUTE_MS = 60_000L
     private val ALL_WEEKDAYS = (1..7).toSet()

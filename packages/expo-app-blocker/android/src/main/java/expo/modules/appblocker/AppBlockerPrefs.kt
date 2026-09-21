@@ -160,7 +160,7 @@ object AppBlockerPrefs {
    * `blocker_intercepts`. Debounced globally so the poll loop can't emit
    * duplicates for a single block, and capped to bound storage.
    */
-  fun appendIntercept(context: Context, appName: String, interceptedAtMs: Long) {
+  fun appendIntercept(context: Context, packageName: String, appName: String, interceptedAtMs: Long) {
     val prefs = get(context)
     val lastTs = prefs.getLong(KEY_LAST_INTERCEPT_TS, 0L)
     if (lastTs > 0L && interceptedAtMs - lastTs < INTERCEPT_DEBOUNCE_MS) return
@@ -170,7 +170,7 @@ object AppBlockerPrefs {
     } catch (e: Exception) {
       JSONArray()
     }
-    arr.put(JSONObject().put("appName", appName).put("interceptedAt", interceptedAtMs))
+    arr.put(JSONObject().put("packageName", packageName).put("appName", appName).put("interceptedAt", interceptedAtMs))
 
     val trimmed = if (arr.length() > MAX_PENDING_INTERCEPTS) {
       JSONArray().also { t ->
@@ -199,6 +199,7 @@ object AppBlockerPrefs {
       val o = arr.getJSONObject(i)
       out.add(
         mapOf(
+          "packageName" to o.optString("packageName", ""),
           "appName" to o.optString("appName", ""),
           "interceptedAt" to o.optDouble("interceptedAt"),
         )
