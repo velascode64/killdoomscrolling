@@ -7,7 +7,7 @@ import { translate, useAppLanguage } from "./translate";
 
 export const WeeklySummary = observer(() => {
   useAppLanguage();
-  const prevented = OverviewStore.totalPrevented;
+  const blockedAttempts = OverviewStore.blockedAttempts;
   const focusedMinutes = OverviewStore.focusedMinutes;
 
   return (
@@ -22,7 +22,7 @@ export const WeeklySummary = observer(() => {
       </View>
       <View style={styles.metrics}>
         <View style={styles.metric}>
-          <Text style={styles.value}>{prevented}x</Text>
+          <Text style={styles.value}>{blockedAttempts}x</Text>
           <Text style={styles.label}>{translate.t("summary.prevented")}</Text>
         </View>
         <View style={styles.metric}>

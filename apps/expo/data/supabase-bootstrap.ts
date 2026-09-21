@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import { drainPendingIntercepts, getRewardBlockerStatistics } from "expo-app-blocker";
 
 import { loadAndroidRewardPlans } from "./android-reward";
 import { supabase } from "./supabase";
@@ -28,5 +29,20 @@ export async function bootstrapSupabase(): Promise<void> {
 
   await trackProductEvent("app_opened", { platform: Platform.OS });
   const plans = Platform.OS === "android" ? await loadAndroidRewardPlans() : [];
+  if (Platform.OS === "android") {
+    const intercepts = drainPendingIntercepts();
+    if (intercepts.length > 0) {
+      const { OverviewStore } = await import("./overview.store");
+      await OverviewStore.importNativeIntercepts(intercepts.map((event) => ({ appId: event.packageName || event.appName || "unknown", timestamp: event.interceptedAt })));
+      await Promise.all(intercepts.map((event) => trackProductEvent("block_overlay_shown", { appName: event.appName || "unknown", packageName: event.packageName || "unknown" })));
+    }
+    const statistics = getRewardBlockerStatistics();
+    await Promise.all(statistics.map((item) => trackProductEvent("reward_statistics_snapshot", {
+      blockedAttempts: item.blockedAttempts,
+      clientModeId: item.planId,
+      productiveSeconds: item.productiveSeconds,
+      redirections: item.redirections,
+    })));
+  }
   await Promise.all([flushProductEvents(), syncModes(plans), syncPendingOnboarding()]);
 }

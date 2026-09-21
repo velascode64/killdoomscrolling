@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 import { makeAutoObservable } from "mobx";
+import { getRewardBlockerStatistics, getRewardBlockerStatus } from "expo-app-blocker";
+import { Platform } from "react-native";
 
 import { AppStatisticsStore } from "./app.statistics";
 import type { App, IAvailableApp } from "./apps.store";
@@ -10,12 +12,27 @@ class OverviewStoreSingleton {
 
   private appsStore = new AppsStore();
 
+  private nativeFocusedSeconds = 0;
+  private nativeBlockedAttempts = 0;
+  private nativeRedirections = 0;
+
   constructor() {
     makeAutoObservable(this);
   }
 
   public async init() {
     await Promise.all([this.appsStore.init(), this.appStatisticsStore.init()]);
+    if (Platform.OS === "android") {
+      const statistics = getRewardBlockerStatistics();
+      this.nativeFocusedSeconds = statistics.reduce((sum, item) => sum + item.productiveSeconds, 0);
+      this.nativeBlockedAttempts = statistics.reduce((sum, item) => sum + item.blockedAttempts, 0);
+      this.nativeRedirections = statistics.reduce((sum, item) => sum + item.redirections, 0);
+      if (statistics.length === 0) this.nativeFocusedSeconds = getRewardBlockerStatus().totalProductiveSeconds;
+    }
+  }
+
+  public async importNativeIntercepts(events: Array<{ appId: string; timestamp: number }>) {
+    await this.appStatisticsStore.importNativeIntercepts(events);
   }
 
   public get availableApps() {
@@ -34,9 +51,17 @@ class OverviewStoreSingleton {
     return this.appStatisticsStore.getEvents({ type: "app-close" }).length;
   }
 
-  /** Real focus minutes will be populated from completed native focus sessions. */
+  get blockedAttempts(): number {
+    return Platform.OS === "android" ? this.nativeBlockedAttempts : this.totalPrevented;
+  }
+
   get focusedMinutes(): number {
-    return 0;
+    return Math.floor(this.nativeFocusedSeconds / 60);
+  }
+
+  get localStatsDebug(): string {
+    const events = this.appStatisticsStore.events;
+    return `local events: ${events.length} · blocked: ${this.nativeBlockedAttempts} · redirected: ${this.nativeRedirections} · replacement: ${this.nativeFocusedSeconds}s (${this.focusedMinutes} min)`;
   }
 
   get totalPreventedInPercentage(): number {
@@ -189,5 +214,7 @@ class OverviewStoreSingleton {
     return this.appsStore.apps;
   }
 }
+
+type EventType = "break-start" | "app-reopen" | "app-close";
 
 export const OverviewStore = new OverviewStoreSingleton();

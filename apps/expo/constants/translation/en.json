@@ -26,7 +26,7 @@
     },
     "navigation": { "overview": "Home", "apps": "Apps", "tips": "Tips" },
     "common": { "done": "Done", "save": "Save", "continue": "Continue", "cancel": "Cancel", "delete": "Delete", "activate": "Enable" },
-    "summary": { "title": "Summary", "prevented": "Prevented", "savedTime": "Time saved" },
+    "summary": { "title": "Summary", "prevented": "Blocked attempts", "savedTime": "Recovered time" },
     "about": { "version": "Version {{version}}", "description": "Reclaim time from social media for what you really want to do." },
     "privacy": {
       "intro": "Rehabbit stores your modes, onboarding answers, and Rehabbit usage events to sync them and measure whether the product helps you. We don't send your complete phone usage history.",

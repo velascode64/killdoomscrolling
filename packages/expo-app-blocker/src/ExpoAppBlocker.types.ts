@@ -258,12 +258,21 @@ export interface AndroidRewardBlockerStatus {
   isScheduleActive: boolean;
   phase: AndroidRewardBlockerPhase;
   productiveElapsedSeconds: number;
+  /** Lifetime replacement-app time accumulated locally across earning cycles. */
+  totalProductiveSeconds: number;
   productiveRemainingSeconds: number;
   unlockRemainingSeconds: number;
   /** The plan currently active for the local time, when there is one. */
   activePlanId?: string;
   /** Locker mode of the currently active plan, when there is one. */
   activePlanMode?: "focus" | "sleep" | "work";
+}
+
+export interface AndroidRewardBlockerStatistics {
+  planId: string;
+  blockedAttempts: number;
+  redirections: number;
+  productiveSeconds: number;
 }
 
 export interface PluginConfig {

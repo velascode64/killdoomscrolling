@@ -10,7 +10,7 @@ import weekday from "dayjs/plugin/weekday";
 import { router, useFocusEffect } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useState } from "react";
-import { Platform, RefreshControl } from "react-native";
+import { AppState, Platform, RefreshControl } from "react-native";
 import {
   H1,
   H2,
@@ -66,6 +66,9 @@ const Overview = observer(() => {
   useEffect(() => {
     void OverviewStore.init();
     void getAppOpenCount().then((count) => { if (count >= 2) checkEmailPrompt(); });
+    return AppState.addEventListener("change", (state) => {
+      if (state === "active") void OverviewStore.init();
+    }).remove;
   }, [checkEmailPrompt]);
   useFocusEffect(useCallback(() => {
     const notice = consumeCelebrationNotice();
@@ -90,7 +93,10 @@ const Overview = observer(() => {
         header={({ isSticky }) => <Header isSticky={isSticky} />}
       >
         <YStack space="$4">
-        {/* <SizableText color="$text6" fontSize="$2">{profileDebug}</SizableText> */}
+        <YStack gap="$1">
+          <SizableText color="$text6" fontSize="$2">{profileDebug}</SizableText>
+          <SizableText color="$text6" fontSize="$2">{OverviewStore.localStatsDebug}</SizableText>
+        </YStack>
         {Platform.OS === "android" && (
           <>
             <WeeklySummary />

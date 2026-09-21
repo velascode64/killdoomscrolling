@@ -26,7 +26,7 @@
     },
     "navigation": { "overview": "Inicio", "apps": "Apps", "tips": "Tips" },
     "common": { "done": "Listo", "save": "Guardar", "continue": "Continuar", "cancel": "Cancelar", "delete": "Eliminar", "activate": "Activar" },
-    "summary": { "title": "Resumen", "prevented": "Evitados", "savedTime": "Tiempo ahorrado" },
+    "summary": { "title": "Resumen", "prevented": "Intentos bloqueados", "savedTime": "Tiempo recuperado" },
     "about": { "version": "Versión {{version}}", "description": "Recupera tiempo de las redes para lo que realmente quieres hacer." },
     "privacy": {
       "intro": "Rehabbit guarda tus modos, respuestas de onboarding y eventos de uso propios de Rehabbit para sincronizarlos y medir si el producto te ayuda. No enviamos el historial completo de uso de tu teléfono.",

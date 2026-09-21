@@ -87,4 +87,13 @@ export class AppStatisticsStore {
     await this.storage.batchUpdate(events);
     await this.init();
   }
+
+  public async importNativeIntercepts(events: Array<{ appId: string; timestamp: number }>) {
+    await this.init();
+    await this.storage.batchUpdate([
+      ...this.events,
+      ...events.map((event) => ({ ...event, id: Crypto.randomUUID(), type: "break-start" as const })),
+    ]);
+    await this.init();
+  }
 }

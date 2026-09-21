@@ -45,4 +45,6 @@ thumbs.db
 # turbo build log
 **/.turbo/*
 
-**/android/build/
+**/android/build/*
+packages/expo-app-blocker/android/build/
+packages/expo-app-blocker/android/build/*

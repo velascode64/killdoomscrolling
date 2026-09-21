@@ -17,6 +17,7 @@ import type {
   AndroidRewardBlockerPlan,
   AndroidRewardBlockerPlansConfig,
   AndroidRewardBlockerStatus,
+  AndroidRewardBlockerStatistics,
   IOSBlockedItem,
   IOSBlockConfiguration,
   TemporaryUnlockResult,
@@ -44,6 +45,7 @@ export type {
   AndroidRewardBlockerPlansConfig,
   AndroidRewardBlockerPhase,
   AndroidRewardBlockerStatus,
+  AndroidRewardBlockerStatistics,
   PluginConfig,
   FamilyActivityPickerSelectionEvent,
   FamilyActivityPickerViewProps,
@@ -173,12 +175,18 @@ export function getRewardBlockerStatus(): AndroidRewardBlockerStatus {
       isScheduleActive: false,
       phase: "inactive",
       productiveElapsedSeconds: 0,
+      totalProductiveSeconds: 0,
       productiveRemainingSeconds: 0,
       unlockRemainingSeconds: 0,
       activePlanId: undefined,
     };
   }
   return NativeModule.getRewardBlockerStatus();
+}
+
+export function getRewardBlockerStatistics(): AndroidRewardBlockerStatistics[] {
+  if (Platform.OS !== "android") return [];
+  return NativeModule.getRewardBlockerStatistics() ?? [];
 }
 
 /** Disable the earned-access rule and clear its partial progress and unlock window. */
@@ -314,6 +322,7 @@ export function restartAppForRecovery(deepLink?: string): void {
  * can resolve it (null otherwise).
  */
 export interface PendingIntercept {
+  packageName?: string;
   appName: string | null;
   interceptedAt: number;
 }
