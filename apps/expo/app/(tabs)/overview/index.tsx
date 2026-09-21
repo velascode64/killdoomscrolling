@@ -93,10 +93,10 @@ const Overview = observer(() => {
         header={({ isSticky }) => <Header isSticky={isSticky} />}
       >
         <YStack space="$4">
-        <YStack gap="$1">
+        {/* <YStack gap="$1">
           <SizableText color="$text6" fontSize="$2">{profileDebug}</SizableText>
           <SizableText color="$text6" fontSize="$2">{OverviewStore.localStatsDebug}</SizableText>
-        </YStack>
+        </YStack> */}
         {Platform.OS === "android" && (
           <>
             <WeeklySummary />
