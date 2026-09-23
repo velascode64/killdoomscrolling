@@ -4,6 +4,7 @@ import {
   Heart,
   Info,
   Languages,
+  Trash2,
   ShieldCheck,
   SlidersHorizontal,
   User,
@@ -69,6 +70,11 @@ const Settings = () => {
           <YGroup.Item>
             <ListItem icon={<RowIcon><ShieldCheck color="$primary11" size={19} /></RowIcon>} iconAfter={ChevronRight} onPress={() => router.push("/settings/privacy")} pressTheme>
               <ListItem.Text>{translate.t("settings.privacyData")}</ListItem.Text>
+            </ListItem>
+          </YGroup.Item>
+          <YGroup.Item>
+            <ListItem icon={<RowIcon><Trash2 color="#DC2626" size={19} /></RowIcon>} iconAfter={ChevronRight} onPress={() => router.push("/settings/delete-app-data")} pressTheme>
+              <ListItem.Text>{translate.t("privacy.deleteTitle")}</ListItem.Text>
             </ListItem>
           </YGroup.Item>
           <YGroup.Item>
