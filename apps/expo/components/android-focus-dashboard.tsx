@@ -61,10 +61,7 @@ export function AndroidFocusDashboard() {
     if (Platform.OS !== "android") return;
 
     const refresh = async () => {
-      const [apps, permissionStatus] = await Promise.all([
-        getInstalledApps(),
-        getPermissionStatus(),
-      ]);
+      const [apps, permissionStatus] = await Promise.all([getInstalledApps(), getPermissionStatus()]);
       // Installed-app discovery is informational only. It must never rewrite a
       // user's saved modes, since Android may return a partial app list.
       const currentPlans = await updateAndroidRewardPlans((savedPlans) => savedPlans);
@@ -149,6 +146,28 @@ export function AndroidFocusDashboard() {
       </YStack>
       <PermissionsSheet permissions={permissions} visible={!permissions.overlay || !permissions.usageStats} />
     </>
+  );
+}
+
+function PermissionsSheet({ visible, permissions }: { visible: boolean; permissions: { overlay: boolean; usageStats: boolean } }) {
+  return (
+    <Sheet dismissOnSnapToBottom={false} modal open={visible} snapPoints={[42]} onOpenChange={() => undefined}>
+      <Sheet.Overlay backgroundColor="rgba(33, 27, 32, 0.18)" />
+      <Sheet.Frame backgroundColor="$background" padding="$4">
+        <Sheet.Handle backgroundColor="$borderColor" />
+        <YStack gap="$4">
+          <View alignItems="center" backgroundColor="$primary3" borderRadius={99} height={48} justifyContent="center" width={48}>
+            <Settings color="$primary11" size={22} />
+          </View>
+          <YStack gap="$1">
+            <H4 color="$text11">{translate.t("permissions.sheetTitle")}</H4>
+            <Paragraph color="$text10">{translate.t("permissions.sheetDescription")}</Paragraph>
+          </YStack>
+          {!permissions.usageStats && <Button backgroundColor="$primary3" borderColor="$primary5" color="$primary11" onPress={() => void openUsageStatsSettings()}>{translate.t("permissions.enableUsage")}</Button>}
+          {!permissions.overlay && <Button backgroundColor="$primary3" borderColor="$primary5" color="$primary11" onPress={() => void openOverlaySettings()}>{translate.t("permissions.enableOverlay")}</Button>}
+        </YStack>
+      </Sheet.Frame>
+    </Sheet>
   );
 }
 
@@ -237,26 +256,4 @@ function recurrenceLabel(weekdays: AndroidRewardPlan["weekdays"]) {
     return translate.t("schedule.weekdays");
   }
   return weekdays.map((day) => translate.t(`schedule.shortDay.${day}`)).join(", ");
-}
-
-function PermissionsSheet({ visible, permissions }: { visible: boolean; permissions: { overlay: boolean; usageStats: boolean } }) {
-  return (
-    <Sheet dismissOnSnapToBottom={false} modal open={visible} snapPoints={[42]} onOpenChange={() => undefined}>
-      <Sheet.Overlay backgroundColor="rgba(33, 27, 32, 0.18)" />
-      <Sheet.Frame backgroundColor="$background" padding="$4">
-        <Sheet.Handle backgroundColor="$borderColor" />
-        <YStack gap="$4">
-          <View alignItems="center" backgroundColor="$primary3" borderRadius={99} height={48} justifyContent="center" width={48}>
-            <Settings color="$primary11" size={22} />
-          </View>
-          <YStack gap="$1">
-            <H4 color="$text11">{translate.t("permissions.sheetTitle")}</H4>
-            <Paragraph color="$text10">{translate.t("permissions.sheetDescription")}</Paragraph>
-          </YStack>
-          {!permissions.usageStats && <Button backgroundColor="$primary3" borderColor="$primary5" color="$primary11" onPress={() => void openUsageStatsSettings()}>{translate.t("permissions.enableUsage")}</Button>}
-          {!permissions.overlay && <Button backgroundColor="$primary3" borderColor="$primary5" color="$primary11" onPress={() => void openOverlaySettings()}>{translate.t("permissions.enableOverlay")}</Button>}
-        </YStack>
-      </Sheet.Frame>
-    </Sheet>
-  );
 }

@@ -347,11 +347,13 @@ export default function OnboardingScreen() {
   };
 
   const savePlan = async (enabled: boolean) => {
+    const permissionsGranted = permissions?.overlay === true && permissions?.usageStats === true;
+    const canSaveWithoutApps = Platform.OS !== "android" || !permissionsGranted;
     if (!plan.name.trim()) {
       Alert.alert(translate.t("editor.alerts.nameTitle"), translate.t("editor.alerts.nameBody"));
       return;
     }
-    if (plan.blockedPackages.length === 0) {
+    if (plan.blockedPackages.length === 0 && !canSaveWithoutApps) {
       Alert.alert(translate.t("editor.alerts.appsTitle"), translate.t("editor.alerts.appsBody"));
       return;
     }
@@ -360,7 +362,7 @@ export default function OnboardingScreen() {
       return;
     }
 
-    const nextPlan = { ...plan, enabled, paused: false };
+    const nextPlan = { ...plan, enabled: enabled && permissionsGranted, paused: false };
     if (enabled && planHasOverlap(nextPlan, plans)) {
       Alert.alert(translate.t("editor.alerts.overlapTitle"), translate.t("editor.alerts.overlapBody"));
       return;
@@ -504,8 +506,11 @@ export default function OnboardingScreen() {
     if (step === 0) {
       void trackProductEvent("onboarding_started").catch((error: unknown) => console.warn("Unable to track onboarding", error));
     }
-    if (step === 4) setCategory(categoryForGoal(goal));
-    if (step === 5 && (!permissions?.overlay || !permissions?.usageStats)) return;
+    if (step === 4) {
+      setCategory(categoryForGoal(goal));
+      setStep(6);
+      return;
+    }
     setStep((current) => Math.min(current + 1, 11));
   };
 
@@ -677,8 +682,8 @@ export default function OnboardingScreen() {
           )}
         </View>
         {step > 0 && step < 10 && (
-          <View marginTop="$4">
-            <GradientButton disabled={step === 5 && permissions?.overlay !== true || step === 5 && permissions?.usageStats !== true} onPress={continueOnboarding}>
+        <View marginTop="$4">
+            <GradientButton onPress={continueOnboarding}>
               {step === 5 ? translate.t("onboarding.activate") : translate.t("common.continue")}
             </GradientButton>
           </View>

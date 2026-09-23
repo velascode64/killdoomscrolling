@@ -11,7 +11,7 @@ import { AppAvatarStack } from "./mode-ui";
 import { translate, useAppLanguage } from "./translate";
 
 const PLAN_CARD_HERO_ICON_SIZE = 25;
-const PLAN_CARD_APP_AVATAR_SIZE = 34;
+const PLAN_CARD_APP_AVATAR_SIZE = 40;
 const PLAN_CARD_META_ICON_SIZE = 12;
 
 export function PlanCard(
