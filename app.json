@@ -1,13 +1,8 @@
 {
-  "ios": {
-    "bundleIdentifier": "com.carlosv.provoos.digital-break-app"
-  },
-  "extra": {
-    "eas": {
-      "projectId": "e31cb166-348d-46db-b35c-520cba7d573c"
-    }
-  },
   "expo": {
+    "ios": {
+      "bundleIdentifier": "com.carlosv.provoos.digital-break-app"
+    },
     "android": {
       "package": "com.carlosv.provoos.digitalbreakapp"
     },

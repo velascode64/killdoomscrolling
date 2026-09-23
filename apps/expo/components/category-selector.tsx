@@ -11,7 +11,6 @@ import {
   Hourglass,
   Music,
   Moon,
-  Palette,
   Plus,
   Star,
 } from "@tamagui/lucide-icons";
@@ -50,7 +49,7 @@ export function CategoryGlyph({ icon, color = "$text11", size = 20 }: { icon: Ca
   if (icon === "exercise") return <Footprints {...props} />;
   if (icon === "sleep") return <Moon {...props} />;
   if (icon === "meditation") return <Brain {...props} />;
-  if (icon === "hobby") return <Palette {...props} />;
+  if (icon === "hobby") return <BookOpen {...props} />;
   if (icon === "work") return <Briefcase {...props} />;
   if (icon === "briefcase") return <Briefcase {...props} />;
   if (icon === "book") return <BookOpen {...props} />;
