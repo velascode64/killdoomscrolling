@@ -10,7 +10,9 @@ import { CategoryGlyph } from "./category-selector";
 import { AppAvatarStack } from "./mode-ui";
 import { translate, useAppLanguage } from "./translate";
 
-const PLAN_CARD_ICON_SIZE = 44;
+const PLAN_CARD_HERO_ICON_SIZE = 34;
+const PLAN_CARD_APP_AVATAR_SIZE = 34;
+const PLAN_CARD_META_ICON_SIZE = 34;
 
 export function PlanCard(
   {
@@ -50,12 +52,12 @@ export function PlanCard(
       width="100%"
       onPress={onPress}
     >
-      <YStack backgroundColor="white" minHeight={190} position="relative">
+      <YStack backgroundColor="white" height={178} position="relative">
         {heroImage ? (
           <Image
             resizeMode="cover"
             source={heroImage}
-            style={{ height: "75%", position: "absolute", right: 0, top: 0, width: "100%" }}
+            style={{ height: "100%", position: "absolute", right: 0, top: 0, width: "100%" }}
           />
         ) : (
           <LinearGradient
@@ -67,58 +69,59 @@ export function PlanCard(
         )}
         <LinearGradient
           colors={[
-            "rgba(255, 255, 255, 0)",
-            "rgba(255, 255, 255, 0.18)",
-            "rgba(255, 255, 255, 0.72)",
+            "rgba(255,255,255,0)",
+            "rgba(255,255,255,0.04)",
+            "rgba(255, 255, 255, 0.66)",
+            "rgba(255, 255, 255, 0.97)",
             "#FFFFFF",
           ]}
-          locations={[0, 0.3, 0.72, 1]}
+          locations={[0, 0.35, 0.62, 0.84, 1]}
           pointerEvents="none"
-          style={{ bottom: 0, height: "34%", left: 0, position: "absolute", right: 0 }}
+          style={{ bottom: 0, height: "90%", left: 0, position: "absolute", right: 0 }}
         />
-        <YStack flex={1} gap={0} justifyContent="space-between" paddingHorizontal={12} paddingVertical={6}>
-          <XStack alignItems="center" gap={8} minHeight={50}>
+        <YStack flex={1} position="relative">
+          <XStack alignItems="center" gap={7} left={12} position="absolute" right={12} top={20}>
             <View
               alignItems="center"
               backgroundColor="rgba(255,255,255,0.92)"
               borderRadius={12}
-              height={42}
+              height={38}
               justifyContent="center"
-              width={42}
+              width={38}
             >
-              <CategoryGlyph color="$primary11" icon={heroIcon} size={PLAN_CARD_ICON_SIZE} />
+              <CategoryGlyph color="$primary11" icon={heroIcon} size={PLAN_CARD_HERO_ICON_SIZE} />
             </View>
             <YStack flex={1} gap={0} minWidth={0}>
-              <H4 color="white" fontSize={20} lineHeight={24} numberOfLines={1}>
+              <H4 color="white" fontSize={17} fontWeight="700" lineHeight={20} numberOfLines={1}>
                 {title}
               </H4>
               <SizableText
                 color="rgba(255,255,255,0.88)"
-                fontSize={14}
-                lineHeight={18}
+                fontSize={13}
+                lineHeight={16}
                 numberOfLines={1}
               >
                 {subtitle}
               </SizableText>
             </YStack>
-            {action ?? <ChevronRight color="white" size={20} />}
+            {action ?? <ChevronRight color="white" size={18} />}
           </XStack>
           <XStack
-            backgroundColor="rgba(255, 255, 255, 1)"
-            borderColor="rgba(1, 6, 13, 0)"
-            borderRadius={18}
-            borderWidth={1}
+            backgroundColor="#FFFFFF"
+            borderRadius={16}
             overflow="hidden"
-            paddingVertical={4}
+            paddingVertical={18}
             paddingHorizontal={8}
-            marginTop={-4}
-            marginHorizontal={6}
+            left={10}
+            position="absolute"
+            right={18}
             shadowColor="#483FFF"
-            shadowOpacity={0.08}
-            shadowRadius={8}
+            shadowOpacity={0.06}
+            shadowRadius={6}
+            top={67}
           >
             <PlanAppsColumn apps={blockedApps} dimmed label={translate.t("dashboard.avoid")} />
-            <View backgroundColor="rgba(226, 232, 240, 0.5)" marginVertical={5} width={1} />
+            <View backgroundColor="rgba(210, 218, 235, 0.7)" marginVertical={3} width={1} />
             <PlanAppsColumn
               apps={replacementApps}
               label={translate.t("dashboard.use")}
@@ -128,26 +131,29 @@ export function PlanCard(
           <XStack
             alignItems="center"
             flexWrap="wrap"
-            gap={5}
-            minHeight={22}
+            gap={10}
+            bottom={8}
+            left={14}
             paddingHorizontal={2}
+            position="absolute"
+            right={14}
           >
-            <XStack alignItems="center" gap={5}>
-              <Clock3 color="$primary11" size={15} />
+            <XStack alignItems="center" gap={4}>
+              <Clock3 color="$primary11" size={PLAN_CARD_META_ICON_SIZE} />
               <SizableText
                 color="$text11"
-                fontSize={14}
+                fontSize={12.5}
                 fontWeight="700"
                 numberOfLines={1}
               >
                 {scheduleText}
               </SizableText>
             </XStack>
-            <XStack alignItems="center" flex={1} gap={5} minWidth={100}>
-              <CalendarDays color="$primary11" size={15} />
+            <XStack alignItems="center" flex={1} gap={4} minWidth={100}>
+              <CalendarDays color="$primary11" size={PLAN_CARD_META_ICON_SIZE} />
               <SizableText
                 color="$text10"
-                fontSize={14}
+                fontSize={12.5}
                 fontWeight="600"
                 numberOfLines={1}
               >
@@ -174,25 +180,27 @@ function PlanAppsColumn(
   }
 ) {
   return (
-    <YStack flex={1} gap={1} minWidth={0} paddingHorizontal={9}>
-      <SizableText color="$text11" fontSize={15} fontWeight="800" lineHeight={18} numberOfLines={1}>
-        {label}
-      </SizableText>
-      <XStack alignItems="center" gap={8} minWidth={0}>
-      <AppAvatarStack
-        apps={apps}
-        dimmed={dimmed}
-        emptyLabel={translate.t("dashboard.noApps")}
-        maxVisible={3}
-        avatarSize={PLAN_CARD_ICON_SIZE}
-        showOverflow={false}
-      />
+    <YStack flex={1} minWidth={0} paddingHorizontal={6}>
+      <XStack alignItems="center" gap={7} minWidth={0}>
+        <AppAvatarStack
+          apps={apps}
+          dimmed={dimmed}
+          emptyLabel={translate.t("dashboard.noApps")}
+          maxVisible={2}
+          avatarSize={PLAN_CARD_APP_AVATAR_SIZE}
+          showOverflow
+        />
+        <YStack flex={1} gap={0} minWidth={0}>
+          <SizableText color="$text11" fontSize={13} fontWeight="800" lineHeight={16} numberOfLines={1}>
+            {label}
+          </SizableText>
+          {apps.length ? (
+            <SizableText color="$text10" fontSize={12} fontWeight="400" lineHeight={15} numberOfLines={1}>
+              {apps.slice(0, 2).map((app) => truncateAppName(app.name)).join(", ")}
+            </SizableText>
+          ) : null}
+        </YStack>
       </XStack>
-      {apps.length ? (
-        <SizableText color="$text10" fontSize={14} fontWeight="400" lineHeight={18} numberOfLines={1}>
-          {apps.slice(0, 2).map((app) => truncateAppName(app.name)).join(", ")}
-        </SizableText>
-      ) : null}
       {/* detail is intentionally hidden until the compact metadata layout returns. */}
     </YStack>
   );
