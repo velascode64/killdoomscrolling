@@ -1,11 +1,14 @@
+import type { AndroidBlockableApp } from "expo-app-blocker";
 import { LinearGradient } from "expo-linear-gradient";
 import type { ReactNode } from "react";
 import { Image, StyleSheet } from "react-native";
-import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from "react-native-svg";
+import Svg, {
+  Circle,
+  Defs,
+  Stop,
+  LinearGradient as SvgLinearGradient,
+} from "react-native-svg";
 import { Button, SizableText, View, XStack, YStack } from "tamagui";
-
-import type { AndroidBlockableApp } from "expo-app-blocker";
-
 import { brandGradient } from "../theme/colors";
 
 export const MODE_INK = "#1F2430";
@@ -24,17 +27,19 @@ export function BrandGradientFill() {
   );
 }
 
-export function GradientButton({
-  children,
-  disabled = false,
-  icon,
-  onPress,
-}: {
-  children: ReactNode;
-  disabled?: boolean;
-  icon?: ReactNode;
-  onPress: () => void;
-}) {
+export function GradientButton(
+  {
+    children,
+    disabled = false,
+    icon,
+    onPress,
+  }: {
+    children: ReactNode;
+    disabled?: boolean;
+    icon?: ReactNode;
+    onPress: () => void;
+  }
+) {
   return (
     <Button
       unstyled
@@ -56,30 +61,47 @@ export function GradientButton({
   );
 }
 
-export function ModeRadial({
-  duration,
-  label,
-  progress,
-  size = 252,
-}: {
-  duration: number;
-  label?: string;
-  progress?: number;
-  size?: number;
-}) {
+export function ModeRadial(
+  {
+    duration,
+    label,
+    progress,
+    size = 252,
+  }: {
+    duration: number;
+    label?: string;
+    progress?: number;
+    size?: number;
+  }
+) {
   const strokeWidth = 13;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const durationProgress = duration / 60;
-  const clampedProgress = Math.max(0.05, Math.min(1, progress ?? durationProgress));
+  const clampedProgress = Math.max(
+    0.05,
+    Math.min(1, progress ?? durationProgress)
+  );
   const offset = circumference * (1 - clampedProgress);
   const durationFontSize = size >= 230 ? 52 : 44;
 
   return (
-    <View alignSelf="center" width={size} height={size} alignItems="center" justifyContent="center">
+    <View
+      alignSelf="center"
+      width={size}
+      height={size}
+      alignItems="center"
+      justifyContent="center"
+    >
       <Svg width={size} height={size}>
         <Defs>
-          <SvgLinearGradient id="mode-radial" x1="0%" y1="0%" x2="100%" y2="100%">
+          <SvgLinearGradient
+            id="mode-radial"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <Stop offset="0" stopColor={brandGradient[0]} />
             <Stop offset="0.5" stopColor={brandGradient[1]} />
             <Stop offset="0.96" stopColor={brandGradient[2]} />
@@ -122,7 +144,12 @@ export function ModeRadial({
           {`${duration}:00`}
         </SizableText>
         {label ? (
-          <SizableText color={MODE_MUTED} fontSize="$5" fontWeight="700" maxFontSizeMultiplier={1.1}>
+          <SizableText
+            color={MODE_MUTED}
+            fontSize="$5"
+            fontWeight="700"
+            maxFontSizeMultiplier={1.1}
+          >
             {label}
           </SizableText>
         ) : null}
@@ -131,96 +158,108 @@ export function ModeRadial({
   );
 }
 
-export function AppAvatarStack({
+export function AppAvatarStack(
+  {
   apps,
-  dimmed = false,
-  emptyLabel = "Agregar",
-  maxVisible = 3,
-  onPress,
-}: {
+  avatarSize = 42,
+    dimmed = false,
+    emptyLabel = "Agregar",
+    maxVisible = 3,
+    onPress,
+    showOverflow = true,
+  }: {
   apps: AndroidBlockableApp[];
-  dimmed?: boolean;
-  emptyLabel?: string;
-  maxVisible?: number;
-  onPress?: () => void;
-}) {
+  avatarSize?: number;
+    dimmed?: boolean;
+    emptyLabel?: string;
+    maxVisible?: number;
+    onPress?: () => void;
+    showOverflow?: boolean;
+  }
+) {
   const visibleApps = apps.slice(0, maxVisible);
   const extra = apps.length - visibleApps.length;
 
-  return (
-    <Button unstyled onPress={onPress} disabled={!onPress} pressStyle={{ opacity: 0.75 }}>
-      <XStack alignItems="center">
-        {visibleApps.map((app, index) => (
-          <View
-            key={app.packageName}
-            width={42}
-            height={42}
-            marginLeft={index ? -10 : 0}
-            borderRadius={999}
-            overflow="hidden"
-            borderWidth={2}
-            borderColor="$background2"
-            backgroundColor="$primary3"
-            alignItems="center"
-            justifyContent="center"
-            zIndex={maxVisible - index}
-          >
-            {app.iconBase64 ? (
-              <Image
-                source={{ uri: `data:image/png;base64,${app.iconBase64}` }}
-                style={{ width: 42, height: 42 }}
-              />
-            ) : (
-              <SizableText color={MODE_INK} fontWeight="900">
-                {app.name.slice(0, 1).toUpperCase()}
-              </SizableText>
-            )}
-            {dimmed ? (
-              <View
-                backgroundColor="rgba(31, 36, 48, 0.42)"
-                bottom={0}
-                left={0}
-                pointerEvents="none"
-                position="absolute"
-                right={0}
-                top={0}
-              />
-            ) : null}
-          </View>
-        ))}
-        {extra > 0 && (
-          <View
-            width={42}
-            height={42}
-            marginLeft={-10}
-            borderRadius={999}
-            borderWidth={2}
-            borderColor="$background2"
-            backgroundColor="$grey2"
-            alignItems="center"
-            justifyContent="center"
-          >
+  const avatars = (
+    <XStack alignItems="center">
+      {visibleApps.map((app, index) => (
+        <View
+          key={app.packageName}
+          width={avatarSize}
+          height={avatarSize}
+          marginLeft={index ? -(avatarSize * 0.24) : 0}
+          borderRadius={999}
+          overflow="hidden"
+          borderWidth={2}
+          borderColor="$background2"
+          backgroundColor="$primary3"
+          alignItems="center"
+          justifyContent="center"
+          zIndex={maxVisible - index}
+        >
+          {app.iconBase64 ? (
+            <Image
+              source={{ uri: `data:image/png;base64,${app.iconBase64}` }}
+              style={{ width: avatarSize, height: avatarSize }}
+            />
+          ) : (
             <SizableText color={MODE_INK} fontWeight="900">
-              {`+${extra}`}
+              {app.name.slice(0, 1).toUpperCase()}
             </SizableText>
-          </View>
-        )}
-        {!apps.length && (
-          <View
-            height={42}
-            paddingHorizontal="$3"
-            borderRadius={999}
-            borderWidth={1}
-            borderColor="$grey3"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <SizableText color={MODE_MUTED} fontWeight="700">
-              {emptyLabel}
-            </SizableText>
-          </View>
-        )}
-      </XStack>
+          )}
+          {dimmed ? (
+            <View
+              backgroundColor="rgba(31, 36, 48, 0.42)"
+              bottom={0}
+              left={0}
+              pointerEvents="none"
+              position="absolute"
+              right={0}
+              top={0}
+            />
+          ) : null}
+        </View>
+      ))}
+      {showOverflow && extra > 0 && (
+        <View
+          width={avatarSize}
+          height={avatarSize}
+          marginLeft={-(avatarSize * 0.24)}
+          borderRadius={999}
+          borderWidth={2}
+          borderColor="$background2"
+          backgroundColor="$grey2"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <SizableText color={MODE_INK} fontWeight="900">
+            {`+${extra}`}
+          </SizableText>
+        </View>
+      )}
+      {!apps.length && (
+        <View
+            height={avatarSize}
+          paddingHorizontal="$3"
+          borderRadius={999}
+          borderWidth={1}
+          borderColor="$grey3"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <SizableText color={MODE_MUTED} fontWeight="700">
+            {emptyLabel}
+          </SizableText>
+        </View>
+      )}
+    </XStack>
+  );
+
+  return onPress ? (
+    <Button unstyled pressStyle={{ opacity: 0.75 }} onPress={onPress}>
+      {avatars}
     </Button>
+  ) : (
+    avatars
   );
 }

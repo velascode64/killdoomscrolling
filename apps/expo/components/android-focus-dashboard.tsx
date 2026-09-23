@@ -1,4 +1,4 @@
-import { ArrowRight, CircleMinus, Clock3, Play, Plus, Settings, Timer } from "@tamagui/lucide-icons";
+import { CircleMinus, Play, Plus, Settings } from "@tamagui/lucide-icons";
 import {
   configureRewardBlockerPlans,
   getInstalledApps,
@@ -19,9 +19,10 @@ import {
   updateAndroidRewardPlans,
 } from "../data/android-reward";
 import type { AndroidRewardPlan } from "../data/android-reward";
+import { PLAN_CARD_BACKGROUNDS } from "../data/plan-card-backgrounds";
 import { syncModes } from "../data/supabase-sync";
-import { CategoryGlyph } from "./category-selector";
-import { AppAvatarStack, GradientButton } from "./mode-ui";
+import { GradientButton } from "./mode-ui";
+import { PlanCard } from "./plan-card";
 import { ShadowCard } from "./shadow.card";
 import { translate } from "./translate";
 
@@ -194,90 +195,48 @@ function ModeCard({
   const categoryIcon = customCategory?.icon ?? plan.category;
 
   return (
-    <ShadowCard
-      padding="$4"
-      pressStyle={{ opacity: 0.88 }}
-      tone={plan.category === "sleep" ? "sky" : plan.category === "exercise" ? "mint" : "aqua"}
+    <PlanCard
+      action={plan.paused ? (
+        <Button
+          backgroundColor="$primary3"
+          borderColor="$primary5"
+          borderRadius={99}
+          borderWidth={1}
+          color="$primary11"
+          disabled={resuming}
+          fontSize="$2"
+          fontWeight="800"
+          height={30}
+          icon={resuming ? <Spinner color="$primary11" size="small" /> : <Play color="$primary11" fill="$primary11" size={12} />}
+          paddingHorizontal="$3"
+          pressStyle={{ opacity: 0.75 }}
+          onPress={(event) => {
+            event.stopPropagation();
+            onResume(plan.id);
+          }}
+        >
+          {resuming ? translate.t("dashboard.resuming") : translate.t("dashboard.resume")}
+        </Button>
+      ) : undefined}
+      blockedApps={blockedApps}
+      heroIcon={categoryIcon}
+      heroImage={PLAN_CARD_BACKGROUNDS[plan.category]}
+      replacementApps={rehabbitApps}
+      repeatText={recurrenceLabel(plan.weekdays)}
+      scheduleText={`${formatPlanTime(plan.schedule.startMinute)} - ${formatPlanTime(plan.schedule.endMinute)}`}
+      subtitle={customCategory ? translate.t("dashboard.defaultSubtitle") : translate.t(`dashboard.subtitle.${plan.category}`)}
+      title={plan.name}
       onPress={() => router.push({ pathname: "/onboarding", params: { planId: plan.id } })}
-    >
-      {plan.paused ? (
-        <View
-          backgroundColor="rgba(112, 119, 133, 0.16)"
-          bottom={0}
-          left={0}
-          pointerEvents="none"
-          position="absolute"
-          right={0}
-          top={0}
-          zIndex={1}
-        />
-      ) : null}
-      <YStack gap="$3" zIndex={2}>
-        <XStack alignItems="center" gap="$3">
-          <View
-            alignItems="center"
-            backgroundColor="$primary3"
-            borderRadius={14}
-            height={44}
-            justifyContent="center"
-            width={44}
-          >
-            <CategoryGlyph color="$primary11" icon={categoryIcon} size={23} />
-          </View>
-          <H4 color="$text11" flex={1} fontSize="$7" numberOfLines={1}>{plan.name}</H4>
-        </XStack>
-
-        <XStack alignItems="center" gap="$2">
-          <AppAvatarStack apps={blockedApps} dimmed emptyLabel={translate.t("dashboard.noApps")} maxVisible={2} />
-          <ArrowRight color="$primary11" size={20} />
-          <AppAvatarStack apps={rehabbitApps} emptyLabel={translate.t("dashboard.noRehabbit")} maxVisible={2} />
-        </XStack>
-
-        <XStack alignItems="center" gap="$4">
-          <XStack alignItems="center" gap="$2">
-            <Clock3 color="$primary11" size={17} />
-            <SizableText color="$text10" fontWeight="800">
-              {formatPlanTime(plan.schedule.startMinute)} - {formatPlanTime(plan.schedule.endMinute)}
-            </SizableText>
-          </XStack>
-          <XStack alignItems="center" gap="$1.5">
-            <Timer color="$primary11" size={17} />
-            <SizableText color="$text10" fontWeight="800">
-              {plan.productiveMinutes} min
-            </SizableText>
-          </XStack>
-        </XStack>
-
-        <XStack alignItems="center" justifyContent="space-between">
-          <SizableText color="$text6" fontSize="$2">{translate.t("dashboard.everyDay")}</SizableText>
-          {plan.paused ? (
-            <Button
-              alignItems="center"
-              backgroundColor="$primary3"
-              borderColor="$primary5"
-              borderRadius={99}
-              borderWidth={1}
-              color="$primary11"
-              disabled={resuming}
-              fontSize="$2"
-              fontWeight="800"
-              height={30}
-              icon={resuming ? <Spinner color="$primary11" size="small" /> : <Play color="$primary11" fill="$primary11" size={12} />}
-              paddingHorizontal="$3"
-              pressStyle={{ opacity: 0.75 }}
-              onPress={(event) => {
-                event.stopPropagation();
-                onResume(plan.id);
-              }}
-            >
-              {resuming ? translate.t("dashboard.resuming") : translate.t("dashboard.resume")}
-            </Button>
-          ) : null}
-        </XStack>
-
-      </YStack>
-    </ShadowCard>
+    />
   );
+}
+
+function recurrenceLabel(weekdays: AndroidRewardPlan["weekdays"]) {
+  if (weekdays.length === 7) return translate.t("dashboard.everyDay");
+  if (weekdays.length === 5 && [1, 2, 3, 4, 5].every((day) => weekdays.includes(day as AndroidRewardPlan["weekdays"][number]))) {
+    return translate.t("schedule.weekdays");
+  }
+  return weekdays.map((day) => translate.t(`schedule.shortDay.${day}`)).join(", ");
 }
 
 function PermissionsSheet({ visible, permissions }: { visible: boolean; permissions: { overlay: boolean; usageStats: boolean } }) {

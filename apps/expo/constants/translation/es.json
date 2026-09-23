@@ -1,12 +1,30 @@
 {
   "translation": {
     "categories": {
-      "focus": { "name": "Concentración", "description": "Recupera tu atención con apps que te hacen avanzar." },
-      "exercise": { "name": "Ejercicio", "description": "Abre espacio para moverte antes de volver a las redes." },
-      "sleep": { "name": "Dormir", "description": "Protege tu descanso y prepara una mejor noche." },
-      "meditation": { "name": "Meditación", "description": "Toma una pausa antes de volver a las distracciones." },
-      "hobby": { "name": "Pasatiempo", "description": "Reserva tiempo para una actividad que disfrutas." },
-      "work": { "name": "Trabajo", "description": "Crea espacio para el trabajo que importa." }
+      "focus": {
+        "name": "Concentración",
+        "description": "Recupera tu atención con apps que te hacen avanzar."
+      },
+      "exercise": {
+        "name": "Ejercicio",
+        "description": "Abre espacio para moverte antes de volver a las redes."
+      },
+      "sleep": {
+        "name": "Dormir",
+        "description": "Protege tu descanso y prepara una mejor noche."
+      },
+      "meditation": {
+        "name": "Meditación",
+        "description": "Toma una pausa antes de volver a las distracciones."
+      },
+      "hobby": {
+        "name": "Pasatiempo",
+        "description": "Reserva tiempo para una actividad que disfrutas."
+      },
+      "work": {
+        "name": "Trabajo",
+        "description": "Crea espacio para el trabajo que importa."
+      }
     },
     "modes": { "focus": "Concentración", "sleep": "Dormir", "work": "Trabajo" },
     "dashboard": {
@@ -16,6 +34,18 @@
       "createFirst": "Crear mi primer modo",
       "modes": "Tus modos",
       "everyDay": "Todos los días",
+      "avoid": "Evita",
+      "use": "Usa",
+      "minimumMinutes": "mínimo {{count}} min",
+      "defaultSubtitle": "Haz espacio para lo que importa.",
+      "subtitle": {
+        "focus": "¡Sal del scroll, concéntrate!",
+        "exercise": "Deja el scroll, muévete",
+        "sleep": "Suelta el scroll, descansa",
+        "meditation": "Pausa el scroll, respira",
+        "hobby": "Menos scroll, más de lo tuyo",
+        "work": "Cierra el scroll, avanza"
+      },
       "paused": "Pausado",
       "resume": "Reanudar",
       "resuming": "Reanudando...",
@@ -25,15 +55,35 @@
       "noRehabbit": "Sin Rehabbit"
     },
     "navigation": { "overview": "Inicio", "apps": "Apps", "tips": "Tips" },
-    "common": { "done": "Listo", "save": "Guardar", "continue": "Continuar", "cancel": "Cancelar", "delete": "Eliminar", "activate": "Activar" },
-    "summary": { "title": "Resumen", "prevented": "Intentos bloqueados", "savedTime": "Tiempo recuperado" },
-    "about": { "version": "Versión {{version}}", "description": "Recupera tiempo de las redes para lo que realmente quieres hacer." },
+    "common": {
+      "done": "Listo",
+      "save": "Guardar",
+      "continue": "Continuar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "activate": "Activar"
+    },
+    "summary": {
+      "title": "Resumen",
+      "prevented": "Intentos bloqueados",
+      "savedTime": "Tiempo recuperado"
+    },
+    "about": {
+      "version": "Versión {{version}}",
+      "description": "Recupera tiempo de las redes para lo que realmente quieres hacer."
+    },
     "privacy": {
       "intro": "Rehabbit guarda tus modos, respuestas de onboarding y eventos de uso propios de Rehabbit para sincronizarlos y medir si el producto te ayuda. No enviamos el historial completo de uso de tu teléfono.",
-      "storedTitle": "Datos que guardamos", "storedBody": "Configuración de modos, apps que eliges bloquear, respuestas de onboarding y eventos de interacción con Rehabbit.",
-      "deleteTitle": "Eliminar mis datos", "deleteBody": "Borra los datos del dispositivo y de Rehabbit."
+      "storedTitle": "Datos que guardamos",
+      "storedBody": "Configuración de modos, apps que eliges bloquear, respuestas de onboarding y eventos de interacción con Rehabbit.",
+      "deleteTitle": "Eliminar mis datos",
+      "deleteBody": "Borra los datos del dispositivo y de Rehabbit."
     },
-    "terms": { "title": "Uso de Rehabbit", "body1": "Rehabbit te permite crear modos para bloquear temporalmente las apps que selecciones. Los permisos Android son necesarios para que el bloqueo funcione.", "body2": "Puedes modificar o eliminar tus modos y tus datos en cualquier momento desde Ajustes." },
+    "terms": {
+      "title": "Uso de Rehabbit",
+      "body1": "Rehabbit te permite crear modos para bloquear temporalmente las apps que selecciones. Los permisos Android son necesarios para que el bloqueo funcione.",
+      "body2": "Puedes modificar o eliminar tus modos y tus datos en cualquier momento desde Ajustes."
+    },
     "onboarding": {
       "androidOnly": "Esta experiencia está disponible en Android.",
       "welcomeTitle": "Recupera tu atención",
@@ -48,7 +98,13 @@
       "recoverTimeBody": "Elige el primer periodo que quieres recuperar.",
       "goalTitle": "¿Qué quieres lograr?",
       "goalBody": "El plan se adapta a la intención que elijas.",
-      "goals": { "social": "Dejar redes", "focus": "Concentrarme más", "sleep": "Dormir", "activity": "Hacer otra actividad", "other": "Otro" },
+      "goals": {
+        "social": "Dejar redes",
+        "focus": "Concentrarme más",
+        "sleep": "Dormir",
+        "activity": "Hacer otra actividad",
+        "other": "Otro"
+      },
       "customGoalPlaceholder": "Escribe tu objetivo",
       "objectivesTitle": "Selecciona tus objetivos",
       "objectivesBody": "Elige uno o varios objetivos para tu plan.",
@@ -117,14 +173,22 @@
       "appsSelected_other": "{{count}} apps seleccionadas",
       "selectApps": "Seleccionar apps",
       "alerts": {
-        "nameTitle": "Agrega un nombre", "nameBody": "El modo necesita un nombre para poder guardarse.",
-        "appsTitle": "Selecciona apps", "appsBody": "Elige al menos una app que quieras bloquear.",
-        "scheduleTitle": "Revisa el horario", "scheduleBody": "La hora de inicio y la hora de fin deben ser diferentes.",
-        "overlapTitle": "Horario ocupado", "overlapBody": "Ya existe otro modo activo en ese horario.",
-        "saveErrorTitle": "No se pudo guardar", "saveErrorBody": "Intenta guardar el modo de nuevo.",
-        "pauseErrorTitle": "No se pudo pausar", "pauseErrorBody": "Intenta pausar el modo de nuevo.",
-        "deleteErrorTitle": "No se pudo eliminar", "deleteErrorBody": "Intenta eliminar el modo de nuevo.",
-        "deleteTitle": "Eliminar modo", "deleteBody": "¿Quieres eliminar {{name}}? Esta acción no se puede deshacer."
+        "nameTitle": "Agrega un nombre",
+        "nameBody": "El modo necesita un nombre para poder guardarse.",
+        "appsTitle": "Selecciona apps",
+        "appsBody": "Elige al menos una app que quieras bloquear.",
+        "scheduleTitle": "Revisa el horario",
+        "scheduleBody": "La hora de inicio y la hora de fin deben ser diferentes.",
+        "overlapTitle": "Horario ocupado",
+        "overlapBody": "Ya existe otro modo activo en ese horario.",
+        "saveErrorTitle": "No se pudo guardar",
+        "saveErrorBody": "Intenta guardar el modo de nuevo.",
+        "pauseErrorTitle": "No se pudo pausar",
+        "pauseErrorBody": "Intenta pausar el modo de nuevo.",
+        "deleteErrorTitle": "No se pudo eliminar",
+        "deleteErrorBody": "Intenta eliminar el modo de nuevo.",
+        "deleteTitle": "Eliminar modo",
+        "deleteBody": "¿Quieres eliminar {{name}}? Esta acción no se puede deshacer."
       }
     },
     "category": {
@@ -139,7 +203,16 @@
       "end": "Fin",
       "days": "Días",
       "everyDay": "Todos los días",
-      "weekdays": "Lunes a viernes"
+      "weekdays": "Lunes a viernes",
+      "shortDay": {
+        "1": "Lun",
+        "2": "Mar",
+        "3": "Mié",
+        "4": "Jue",
+        "5": "Vie",
+        "6": "Sáb",
+        "7": "Dom"
+      }
     },
     "appPicker": {
       "title": "Seleccionar apps",
@@ -170,7 +243,8 @@
       "usageSettingsDescription": "Detecta cuándo abres una app que seleccionaste para bloquear.",
       "overlaySettingsDescription": "Muestra el bloqueo cuando intentas abrir una app seleccionada.",
       "notificationsSettingsDescription": "Mantiene visible el estado del modo activo en Android.",
-      "active": "Activo", "pending": "Pendiente"
+      "active": "Activo",
+      "pending": "Pendiente"
     },
     "settings": {
       "control": "Control",

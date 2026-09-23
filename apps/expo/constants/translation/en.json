@@ -1,12 +1,30 @@
 {
   "translation": {
     "categories": {
-      "focus": { "name": "Concentration", "description": "Recover your attention with apps that help you move forward." },
-      "exercise": { "name": "Exercise", "description": "Make room to move before returning to social media." },
-      "sleep": { "name": "Sleep", "description": "Protect your rest and prepare for a better night." },
-      "meditation": { "name": "Meditation", "description": "Take a pause before returning to distractions." },
-      "hobby": { "name": "Hobby", "description": "Set aside time for an activity you enjoy." },
-      "work": { "name": "Work", "description": "Create space for the work that matters." }
+      "focus": {
+        "name": "Concentration",
+        "description": "Recover your attention with apps that help you move forward."
+      },
+      "exercise": {
+        "name": "Exercise",
+        "description": "Make room to move before returning to social media."
+      },
+      "sleep": {
+        "name": "Sleep",
+        "description": "Protect your rest and prepare for a better night."
+      },
+      "meditation": {
+        "name": "Meditation",
+        "description": "Take a pause before returning to distractions."
+      },
+      "hobby": {
+        "name": "Hobby",
+        "description": "Set aside time for an activity you enjoy."
+      },
+      "work": {
+        "name": "Work",
+        "description": "Create space for the work that matters."
+      }
     },
     "modes": { "focus": "Concentration", "sleep": "Sleep", "work": "Work" },
     "dashboard": {
@@ -16,6 +34,18 @@
       "createFirst": "Create my first mode",
       "modes": "Your modes",
       "everyDay": "Every day",
+      "avoid": "Avoid",
+      "use": "Use",
+      "minimumMinutes": "at least {{count}} min",
+      "defaultSubtitle": "Make room for what matters.",
+      "subtitle": {
+        "focus": "Leave the scroll, focus",
+        "exercise": "Stop scrolling, get moving",
+        "sleep": "Put scrolling to bed",
+        "meditation": "Pause the scroll, breathe",
+        "hobby": "Less scrolling, more you",
+        "work": "Close the scroll, get going"
+      },
       "paused": "Paused",
       "resume": "Resume",
       "resuming": "Resuming...",
@@ -25,15 +55,35 @@
       "noRehabbit": "No Rehabbit apps"
     },
     "navigation": { "overview": "Home", "apps": "Apps", "tips": "Tips" },
-    "common": { "done": "Done", "save": "Save", "continue": "Continue", "cancel": "Cancel", "delete": "Delete", "activate": "Enable" },
-    "summary": { "title": "Summary", "prevented": "Blocked attempts", "savedTime": "Recovered time" },
-    "about": { "version": "Version {{version}}", "description": "Reclaim time from social media for what you really want to do." },
+    "common": {
+      "done": "Done",
+      "save": "Save",
+      "continue": "Continue",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "activate": "Enable"
+    },
+    "summary": {
+      "title": "Summary",
+      "prevented": "Blocked attempts",
+      "savedTime": "Recovered time"
+    },
+    "about": {
+      "version": "Version {{version}}",
+      "description": "Reclaim time from social media for what you really want to do."
+    },
     "privacy": {
       "intro": "Rehabbit stores your modes, onboarding answers, and Rehabbit usage events to sync them and measure whether the product helps you. We don't send your complete phone usage history.",
-      "storedTitle": "Data we store", "storedBody": "Mode settings, apps you choose to block, onboarding answers, and interaction events with Rehabbit.",
-      "deleteTitle": "Delete my data", "deleteBody": "Deletes data from your device and Rehabbit."
+      "storedTitle": "Data we store",
+      "storedBody": "Mode settings, apps you choose to block, onboarding answers, and interaction events with Rehabbit.",
+      "deleteTitle": "Delete my data",
+      "deleteBody": "Deletes data from your device and Rehabbit."
     },
-    "terms": { "title": "Using Rehabbit", "body1": "Rehabbit lets you create modes to temporarily block apps you choose. Android permissions are required for blocking to work.", "body2": "You can edit or delete your modes and data at any time from Settings." },
+    "terms": {
+      "title": "Using Rehabbit",
+      "body1": "Rehabbit lets you create modes to temporarily block apps you choose. Android permissions are required for blocking to work.",
+      "body2": "You can edit or delete your modes and data at any time from Settings."
+    },
     "onboarding": {
       "androidOnly": "This experience is available on Android.",
       "welcomeTitle": "Recover your attention",
@@ -48,7 +98,13 @@
       "recoverTimeBody": "Choose the first period you want to recover.",
       "goalTitle": "What do you want to achieve?",
       "goalBody": "Your plan adapts to the intention you choose.",
-      "goals": { "social": "Use social media less", "focus": "Focus more", "sleep": "Sleep", "activity": "Do another activity", "other": "Other" },
+      "goals": {
+        "social": "Use social media less",
+        "focus": "Focus more",
+        "sleep": "Sleep",
+        "activity": "Do another activity",
+        "other": "Other"
+      },
       "customGoalPlaceholder": "Write your goal",
       "objectivesTitle": "Choose your goals",
       "objectivesBody": "Choose one or more goals for your plan.",
@@ -63,9 +119,13 @@
       "permissionsTitle": "One last step to activate Rehabbit",
       "permissionsBody": "We need these permissions for blocking to work correctly.",
       "permissions": {
-        "usageTitle": "Usage access", "usageDescription": "Detects when you open a blocked app.",
-        "overlayTitle": "Display over other apps", "overlayDescription": "Shows the blocking screen.",
-        "notificationsTitle": "Notifications", "notificationsDescription": "Status and updates for your active mode.", "optional": "Optional"
+        "usageTitle": "Usage access",
+        "usageDescription": "Detects when you open a blocked app.",
+        "overlayTitle": "Display over other apps",
+        "overlayDescription": "Shows the blocking screen.",
+        "notificationsTitle": "Notifications",
+        "notificationsDescription": "Status and updates for your active mode.",
+        "optional": "Optional"
       },
       "creatingTitle": "Creating your plan",
       "creatingBody": "We're preparing your limits and alternatives.",
@@ -78,30 +138,57 @@
       "inactive": "Inactive",
       "editOptions": "Edit options",
       "feedback": {
-        "updatedTitle": "Mode updated", "updatedMessage": "Your mode changes have been saved.",
-        "createdTitle": "Mode created", "createdMessage": "Your new mode is saved and ready to use.",
-        "firstTitle": "Your Rehabbit starts now!", "firstMessage": "Your first mode is ready. You can activate or change it whenever you want.",
-        "pausedTitle": "Mode paused", "pausedMessage": "The mode stopped blocking apps. Its setup is still saved.",
-        "deletedTitle": "Mode deleted", "deletedMessage": "The mode and its setup have been deleted."
+        "updatedTitle": "Mode updated",
+        "updatedMessage": "Your mode changes have been saved.",
+        "createdTitle": "Mode created",
+        "createdMessage": "Your new mode is saved and ready to use.",
+        "firstTitle": "Your Rehabbit starts now!",
+        "firstMessage": "Your first mode is ready. You can activate or change it whenever you want.",
+        "pausedTitle": "Mode paused",
+        "pausedMessage": "The mode stopped blocking apps. Its setup is still saved.",
+        "deletedTitle": "Mode deleted",
+        "deletedMessage": "The mode and its setup have been deleted."
       }
     },
     "editor": {
-      "createTitle": "Create mode", "editTitle": "Edit mode", "minutesToGain": "Minutes to earn",
-      "block": "Block", "blockDescription": "These apps stay blocked while your mode is active.",
-      "rehabbitDescription": "Apps to replace scrolling time.", "scheduleTitle": "Choose your schedule",
-      "resume": "Resume mode", "saveChanges": "Save changes", "activate": "Activate mode",
-      "paused": "Mode paused", "pause": "Pause mode", "delete": "Delete mode", "saveMode": "Save mode",
-      "blockedApps": "Blocked apps", "rehabbitApps": "Rehabbit apps", "loadingApps": "Loading apps...",
-      "appsSelected": "{{count}} apps selected", "appsSelected_one": "{{count}} app selected", "appsSelected_other": "{{count}} apps selected", "selectApps": "Select apps",
+      "createTitle": "Create mode",
+      "editTitle": "Edit mode",
+      "minutesToGain": "Minutes to earn",
+      "block": "Block",
+      "blockDescription": "These apps stay blocked while your mode is active.",
+      "rehabbitDescription": "Apps to replace scrolling time.",
+      "scheduleTitle": "Choose your schedule",
+      "resume": "Resume mode",
+      "saveChanges": "Save changes",
+      "activate": "Activate mode",
+      "paused": "Mode paused",
+      "pause": "Pause mode",
+      "delete": "Delete mode",
+      "saveMode": "Save mode",
+      "blockedApps": "Blocked apps",
+      "rehabbitApps": "Rehabbit apps",
+      "loadingApps": "Loading apps...",
+      "appsSelected": "{{count}} apps selected",
+      "appsSelected_one": "{{count}} app selected",
+      "appsSelected_other": "{{count}} apps selected",
+      "selectApps": "Select apps",
       "alerts": {
-        "nameTitle": "Add a name", "nameBody": "The mode needs a name before it can be saved.",
-        "appsTitle": "Select apps", "appsBody": "Choose at least one app you want to block.",
-        "scheduleTitle": "Check the schedule", "scheduleBody": "Start and end time must be different.",
-        "overlapTitle": "Schedule in use", "overlapBody": "There is already another active mode during that schedule.",
-        "saveErrorTitle": "Couldn't save", "saveErrorBody": "Try saving the mode again.",
-        "pauseErrorTitle": "Couldn't pause", "pauseErrorBody": "Try pausing the mode again.",
-        "deleteErrorTitle": "Couldn't delete", "deleteErrorBody": "Try deleting the mode again.",
-        "deleteTitle": "Delete mode", "deleteBody": "Do you want to delete {{name}}? This can't be undone."
+        "nameTitle": "Add a name",
+        "nameBody": "The mode needs a name before it can be saved.",
+        "appsTitle": "Select apps",
+        "appsBody": "Choose at least one app you want to block.",
+        "scheduleTitle": "Check the schedule",
+        "scheduleBody": "Start and end time must be different.",
+        "overlapTitle": "Schedule in use",
+        "overlapBody": "There is already another active mode during that schedule.",
+        "saveErrorTitle": "Couldn't save",
+        "saveErrorBody": "Try saving the mode again.",
+        "pauseErrorTitle": "Couldn't pause",
+        "pauseErrorBody": "Try pausing the mode again.",
+        "deleteErrorTitle": "Couldn't delete",
+        "deleteErrorBody": "Try deleting the mode again.",
+        "deleteTitle": "Delete mode",
+        "deleteBody": "Do you want to delete {{name}}? This can't be undone."
       }
     },
     "category": {
@@ -116,7 +203,16 @@
       "end": "End",
       "days": "Days",
       "everyDay": "Every day",
-      "weekdays": "Monday to Friday"
+      "weekdays": "Monday to Friday",
+      "shortDay": {
+        "1": "Mon",
+        "2": "Tue",
+        "3": "Wed",
+        "4": "Thu",
+        "5": "Fri",
+        "6": "Sat",
+        "7": "Sun"
+      }
     },
     "appPicker": {
       "title": "Select apps",
@@ -147,7 +243,8 @@
       "usageSettingsDescription": "Detects when you open an app you selected to block.",
       "overlaySettingsDescription": "Shows blocking when you try to open a selected app.",
       "notificationsSettingsDescription": "Keeps your active mode status visible on Android.",
-      "active": "Active", "pending": "Pending"
+      "active": "Active",
+      "pending": "Pending"
     },
     "settings": {
       "control": "Control",
