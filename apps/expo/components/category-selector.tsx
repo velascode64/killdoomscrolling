@@ -1,15 +1,14 @@
 import {
-  BedDouble,
-  BookOpen,
   Brain,
+  BookOpen,
   Briefcase,
   Dumbbell,
-  CircleMinus,
   Coffee,
   Footprints,
   Gamepad2,
   GraduationCap,
   Heart,
+  Hourglass,
   Music,
   Moon,
   Palette,
@@ -47,9 +46,9 @@ const CUSTOM_ICONS: PlanCustomCategoryIcon[] = [
 
 export function CategoryGlyph({ icon, color = "$text11", size = 20 }: { icon: CategoryIconName; color?: string; size?: number }) {
   const props = { color, size };
-  if (icon === "focus") return <CircleMinus {...props} />;
-  if (icon === "exercise") return <Dumbbell {...props} />;
-  if (icon === "sleep") return <BedDouble {...props} />;
+  if (icon === "focus") return <Hourglass {...props} />;
+  if (icon === "exercise") return <Footprints {...props} />;
+  if (icon === "sleep") return <Moon {...props} />;
   if (icon === "meditation") return <Brain {...props} />;
   if (icon === "hobby") return <Palette {...props} />;
   if (icon === "work") return <Briefcase {...props} />;
@@ -64,7 +63,7 @@ export function CategoryGlyph({ icon, color = "$text11", size = 20 }: { icon: Ca
   if (icon === "coffee") return <Coffee {...props} />;
   if (icon === "moon") return <Moon {...props} />;
   if (icon === "star") return <Star {...props} />;
-  return <CircleMinus {...props} />;
+  return <Hourglass {...props} />;
 }
 
 export function CategorySelector({

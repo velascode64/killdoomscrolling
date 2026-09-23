@@ -10,6 +10,11 @@
   "expo": {
     "android": {
       "package": "com.carlosv.provoos.digitalbreakapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e31cb166-348d-46db-b35c-520cba7d573c"
+      }
     }
   }
 }

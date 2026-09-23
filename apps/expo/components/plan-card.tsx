@@ -4,15 +4,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { ReactNode } from "react";
 import type { ImageSourcePropType } from "react-native";
 import { Image, StyleSheet } from "react-native";
+import { BlurView } from "expo-blur";
 import { Button, H4, SizableText, View, XStack, YStack } from "tamagui";
-import { brandGradient } from "../theme/colors";
 import { CategoryGlyph } from "./category-selector";
 import { AppAvatarStack } from "./mode-ui";
 import { translate, useAppLanguage } from "./translate";
 
-const PLAN_CARD_HERO_ICON_SIZE = 34;
+const PLAN_CARD_HERO_ICON_SIZE = 30;
 const PLAN_CARD_APP_AVATAR_SIZE = 34;
-const PLAN_CARD_META_ICON_SIZE = 34;
+const PLAN_CARD_META_ICON_SIZE = 12;
 
 export function PlanCard(
   {
@@ -61,7 +61,7 @@ export function PlanCard(
           />
         ) : (
           <LinearGradient
-            colors={brandGradient}
+            colors={["#1F2847", "#314176", "#483FFF"]}
             end={{ x: 1, y: 1 }}
             start={{ x: 0, y: 0 }}
             style={StyleSheet.absoluteFillObject}
@@ -83,13 +83,23 @@ export function PlanCard(
           <XStack alignItems="center" gap={7} left={12} position="absolute" right={12} top={20}>
             <View
               alignItems="center"
-              backgroundColor="rgba(255,255,255,0.92)"
-              borderRadius={12}
+              backgroundColor="rgba(255,255,255,0.28)"
+              borderColor="rgba(255,255,255,0.38)"
+              borderRadius={16}
+              borderWidth={1}
               height={38}
               justifyContent="center"
+              overflow="hidden"
+              position="relative"
               width={38}
             >
-              <CategoryGlyph color="$primary11" icon={heroIcon} size={PLAN_CARD_HERO_ICON_SIZE} />
+              <BlurView
+                intensity={24}
+                pointerEvents="none"
+                style={StyleSheet.absoluteFillObject}
+                tint="light"
+              />
+              <CategoryGlyph color="white" icon={heroIcon} size={PLAN_CARD_HERO_ICON_SIZE} />
             </View>
             <YStack flex={1} gap={0} minWidth={0}>
               <H4 color="white" fontSize={17} fontWeight="700" lineHeight={20} numberOfLines={1}>
