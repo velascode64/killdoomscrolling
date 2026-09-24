@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
+import { router } from "expo-router";
+import { ArrowLeft } from "@tamagui/lucide-icons";
 import { Button, H3, Input, Paragraph, SizableText, YStack } from "tamagui";
 
 import { Container } from "../../components/container";
@@ -44,7 +46,7 @@ export default function Profile() {
     setSaving(true);
     try {
       await saveProfile({ fullName: normalizedName, email: normalizedEmail, age: parsedAge, gender, occupation });
-      Alert.alert("Perfil guardado", "Tus datos fueron actualizados.");
+      router.replace("/(tabs)/overview");
     } catch {
       Alert.alert("No se pudo guardar", "Intenta nuevamente.");
     } finally {
@@ -55,6 +57,9 @@ export default function Profile() {
   return (
     <Container paddingVertical="$4">
       <YStack gap="$4">
+        <Button alignSelf="flex-start" chromeless icon={ArrowLeft} onPress={() => router.back()} paddingHorizontal={0}>
+          <SizableText color="$text11">Volver</SizableText>
+        </Button>
         <YStack gap="$2">
           <H3 color="$text11">Tu perfil</H3>
           <Paragraph color="$text10">Ayúdanos a entender mejor quién usa Rehabbit.</Paragraph>
