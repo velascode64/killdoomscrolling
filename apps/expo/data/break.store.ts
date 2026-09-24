@@ -112,6 +112,7 @@ export class BreakStoreSingleton {
 
     // This module is optional in development builds. Loading it here prevents a
     // missing native implementation from blocking the rest of the application.
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
     const ExpoExitApp = require("../../../packages/expo-exit-app") as typeof import("../../../packages/expo-exit-app");
     ExpoExitApp.exit();
   }

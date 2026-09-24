@@ -1,5 +1,6 @@
+/* eslint-disable */
 // @ts-nocheck
-type Theme = {
+interface Theme {
   color1: string;
   color2: string;
   color3: string;
@@ -177,9 +178,9 @@ type Theme = {
 }
 
 function t(a: [number, number][]) {
-  let res: Record<string,string> = {}
+  const res: Record<string,string> = {}
   for (const [ki, vi] of a) {
-    res[ks[ki] as string] = colors[vi] as string
+    res[ks[ki]!] = colors[vi]!
   }
   return res as Theme
 }

@@ -8,7 +8,7 @@ import { Button, Paragraph, SizableText, View, XStack, YStack } from "tamagui";
 import { Container } from "../../components/container";
 import { translate, useAppLanguage } from "../../components/translate";
 
-type PermissionState = { notifications: boolean; overlay: boolean; usageStats: boolean };
+interface PermissionState { notifications: boolean; overlay: boolean; usageStats: boolean }
 
 export default function Permissions() {
   useAppLanguage();

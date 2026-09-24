@@ -88,7 +88,7 @@ export class AppStatisticsStore {
     await this.init();
   }
 
-  public async importNativeIntercepts(events: Array<{ appId: string; timestamp: number }>) {
+  public async importNativeIntercepts(events: { appId: string; timestamp: number }[]) {
     await this.init();
     await this.storage.batchUpdate([
       ...this.events,

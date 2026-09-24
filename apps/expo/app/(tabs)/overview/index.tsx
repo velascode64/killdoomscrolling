@@ -44,7 +44,6 @@ const Overview = observer(() => {
   const [celebration, setCelebration] = useState<CelebrationNotice | null>(null);
   const [profileVisible, setProfileVisible] = useState(false);
   const [emailVisible, setEmailVisible] = useState(false);
-  const [profileDebug, setProfileDebug] = useState("checking profile...");
   const dismissCelebration = useCallback(() => {
     if (celebration?.showProfile) setProfileVisible(true);
     setCelebration(null);
@@ -55,20 +54,19 @@ const Overview = observer(() => {
       const shouldShow = openCount >= 2 && !profile.email && !declined;
       const debug = `opens: ${openCount} · user_id: ${profile.userId ?? "none"} · email: ${profile.email ?? "empty"} · declined: ${declined} · modal: ${shouldShow}`;
       console.log("[email-prompt]", debug);
-      setProfileDebug(debug);
       if (shouldShow) setEmailVisible(true);
     }).catch((error: unknown) => {
       console.warn("[email-prompt] profile check failed", error);
-      setProfileDebug(`profile check failed: ${String(error)}`);
     });
   }, []);
 
   useEffect(() => {
     void OverviewStore.init();
     void getAppOpenCount().then((count) => { if (count >= 2) checkEmailPrompt(); });
-    return AppState.addEventListener("change", (state) => {
+    const subscription = AppState.addEventListener("change", (state) => {
       if (state === "active") void OverviewStore.init();
-    }).remove;
+    });
+    return () => subscription.remove();
   }, [checkEmailPrompt]);
   useFocusEffect(useCallback(() => {
     const notice = consumeCelebrationNotice();

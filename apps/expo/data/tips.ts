@@ -9,14 +9,14 @@ export type TipIcon =
 
 export type TipCardLayout = "featured" | "offset" | "centered" | "schedule" | "index";
 
-export type TipSection = {
+export interface TipSection {
   title: string;
   body: string[];
   items?: string[];
   numbered?: boolean;
-};
+}
 
-export type Tip = {
+export interface Tip {
   id: string;
   category: TipCategory;
   title: string;
@@ -28,7 +28,7 @@ export type Tip = {
   readTime: number;
   cardLayout: TipCardLayout;
   sections: TipSection[];
-};
+}
 
 export const tips: Tip[] = [
   {

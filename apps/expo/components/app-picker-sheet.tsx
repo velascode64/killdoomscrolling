@@ -33,12 +33,12 @@ const CATEGORY_ORDER: AndroidAppCategory[] = [
   "other",
 ];
 
-type AppSection = {
+interface AppSection {
   category: AndroidAppCategory;
   data: AndroidBlockableApp[];
   selectedCount: number;
   title: string;
-};
+}
 
 function CategoryIcon({ category, color }: { category: AndroidAppCategory; color: string }) {
   const props = { color, size: 18 };
@@ -287,7 +287,7 @@ export function AppPickerSheet({
           />
 
           <GradientButton onPress={() => onOpenChange(false)}>
-            {selectedPackages.length ? `${translate.t("common.done")} · ${selectedPackages.length}` : translate.t("common.done")}
+            {translate.t("common.done")}
           </GradientButton>
         </YStack>
       </Sheet.Frame>

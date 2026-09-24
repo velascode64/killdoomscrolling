@@ -6,14 +6,12 @@ import {
   Check,
   ChevronRight,
   Clock3,
-  Focus,
   Layers,
   ListChecks,
   Pause,
   Plus,
   Repeat2,
   ShieldCheck,
-  ShieldBan,
   Smartphone,
   Target,
   Timer,
@@ -78,7 +76,7 @@ const objectiveOptions: PlanCategory[] = ["focus", "exercise", "sleep", "meditat
 type Goal = (typeof goals)[number];
 
 type PickerTarget = "blocked" | "productive" | null;
-type AndroidPermissionState = { notifications: boolean; overlay: boolean; usageStats: boolean };
+interface AndroidPermissionState { notifications: boolean; overlay: boolean; usageStats: boolean }
 
 type ActionFeedback = {
   celebration?: boolean;
@@ -199,7 +197,7 @@ function DurationChips({ value, onChange }: { value: number; onChange: (minutes:
 }
 
 function OnboardingProgress({ step }: { step: number }) {
-  const progressWidth = `${Math.max(8, Math.min(100, step * 10))}%` as `${number}%`;
+  const progressWidth = `${Math.max(8, Math.min(100, step * 10))}%`;
 
   return (
     <View backgroundColor="$primary3" borderRadius={99} height={7} overflow="hidden" width="100%">
@@ -716,6 +714,7 @@ function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
           width={92}
         >
           <Image
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             source={require("../assets/images/rehabbit-logo.png")}
             style={{ borderRadius: 24, height: 78, width: 78 }}
           />

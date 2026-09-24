@@ -1,8 +1,8 @@
-export type CelebrationNotice = {
+export interface CelebrationNotice {
   message: string;
   showProfile?: boolean;
   title: string;
-};
+}
 
 let pendingNotice: CelebrationNotice | null = null;
 

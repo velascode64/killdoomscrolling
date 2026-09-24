@@ -33,8 +33,8 @@ export async function bootstrapSupabase(): Promise<void> {
     const intercepts = drainPendingIntercepts();
     if (intercepts.length > 0) {
       const { OverviewStore } = await import("./overview.store");
-      await OverviewStore.importNativeIntercepts(intercepts.map((event) => ({ appId: event.packageName || event.appName || "unknown", timestamp: event.interceptedAt })));
-      await Promise.all(intercepts.map((event) => trackProductEvent("block_overlay_shown", { appName: event.appName || "unknown", packageName: event.packageName || "unknown" })));
+      await OverviewStore.importNativeIntercepts(intercepts.map((event) => ({ appId: event.packageName ?? event.appName ?? "unknown", timestamp: event.interceptedAt })));
+      await Promise.all(intercepts.map((event) => trackProductEvent("block_overlay_shown", { appName: event.appName ?? "unknown", packageName: event.packageName ?? "unknown" })));
     }
     const statistics = getRewardBlockerStatistics();
     await Promise.all(statistics.map((item) => trackProductEvent("reward_statistics_snapshot", {

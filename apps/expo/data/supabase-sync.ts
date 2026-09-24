@@ -7,12 +7,12 @@ import { supabase } from "./supabase";
 const EVENT_QUEUE_KEY = "rehabbit_supabase_event_queue";
 const ONBOARDING_QUEUE_KEY = "rehabbit_supabase_onboarding_queue";
 
-type QueuedEvent = {
+interface QueuedEvent {
   eventId: string;
   eventName: string;
   occurredAt: string;
   properties: Record<string, boolean | number | string>;
-};
+}
 
 let eventQueueOperation: Promise<void> = Promise.resolve();
 
@@ -146,5 +146,5 @@ export async function getProfileIdentity(): Promise<{ userId: string | null; ema
   if (!userId) return { userId: null, email: null };
   const { data, error } = await supabase.from("profiles").select("email").eq("id", userId).maybeSingle();
   if (error) throw error;
-  return { userId, email: data?.email ?? null };
+  return { userId, email: typeof data?.email === "string" ? data.email : null };
 }

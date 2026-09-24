@@ -1,12 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { supabase } from "./supabase";
-import type { Tip, TipCardLayout, TipIcon, TipSection } from "./tips";
+import type { Tip, TipSection } from "./tips";
 import { tips as bundledTips } from "./tips";
 
 const TIPS_CACHE_KEY = "rehabbit_tips_cache";
 
-type RemoteTip = {
+interface RemoteTip {
   card_style: Partial<Pick<Tip, "accentColor" | "backgroundColor" | "cardLayout" | "foregroundColor" | "icon">>;
   category: Tip["category"];
   content: TipSection[];
@@ -14,17 +14,17 @@ type RemoteTip = {
   id: string;
   read_time_minutes: number;
   title: string;
-};
+}
 
 function toTip(row: RemoteTip): Tip {
   return {
     accentColor: row.card_style.accentColor ?? "#483FFF",
     backgroundColor: row.card_style.backgroundColor ?? "#F8FAFC",
-    cardLayout: (row.card_style.cardLayout ?? "offset") as TipCardLayout,
+    cardLayout: (row.card_style.cardLayout ?? "offset"),
     category: row.category,
     description: row.description,
     foregroundColor: row.card_style.foregroundColor ?? "#1F2430",
-    icon: (row.card_style.icon ?? "shape-outline") as TipIcon,
+    icon: (row.card_style.icon ?? "shape-outline"),
     id: row.id,
     readTime: row.read_time_minutes,
     sections: row.content,

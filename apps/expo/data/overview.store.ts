@@ -31,7 +31,7 @@ class OverviewStoreSingleton {
     }
   }
 
-  public async importNativeIntercepts(events: Array<{ appId: string; timestamp: number }>) {
+  public async importNativeIntercepts(events: { appId: string; timestamp: number }[]) {
     await this.appStatisticsStore.importNativeIntercepts(events);
   }
 
@@ -214,7 +214,5 @@ class OverviewStoreSingleton {
     return this.appsStore.apps;
   }
 }
-
-type EventType = "break-start" | "app-reopen" | "app-close";
 
 export const OverviewStore = new OverviewStoreSingleton();
