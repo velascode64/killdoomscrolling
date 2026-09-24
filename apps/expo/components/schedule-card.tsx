@@ -112,7 +112,7 @@ function TimeRow({
   );
 }
 
-function Wheel<T extends number | string>({
+export function Wheel<T extends number | string>({
   values,
   selected,
   width,

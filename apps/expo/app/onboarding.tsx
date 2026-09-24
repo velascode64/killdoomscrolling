@@ -506,7 +506,7 @@ export default function OnboardingScreen() {
     }
     if (step === 4) {
       setCategory(categoryForGoal(goal));
-      setStep(6);
+      setStep(5);
       return;
     }
     setStep((current) => Math.min(current + 1, 11));

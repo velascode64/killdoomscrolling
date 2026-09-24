@@ -200,8 +200,13 @@ Si selecciona `Otro`, puede escribir su propio objetivo.
 
 Solicita los permisos necesarios para que Rehabbit pueda detectar el uso de aplicaciones y aplicar sus bloqueos.
 
-Si posteriormente el usuario elimina uno de los permisos necesarios, Rehabbit muestra un modal solicitando que lo vuelva a habilitar antes de continuar utilizando las funciones que dependen de ese permiso.
+Opcional puede pasar al siguiente steip
 
+Si posteriormente el usuario elimina uno de los permisos necesarios o no ha agregado, Rehabbit muestra un modal solicitando que lo vuelva a habilitar o habilite para continuar utilizando las funciones que dependen de de los permisos.
+
+Este modal se muestra cada vez que ingrese nuevamente a la app y tambén es opcional
+
+O cuando vaya a editar su plan aquí si es obligatorio por que sino no puede editar o crear un nuevo plan esto referente a la pantalla # 3. Crear o editar un Plan
 ---
 
 ## 1.7 Actividades que quiere hacer más
@@ -294,19 +299,8 @@ Muestra una patalla de Success Screen, usa su $Nombre
 Pregunta al usaurio para dejarnos unos datos más para mejorar su experiencia
 
 ---
-## 1.14 Completar perfil
 
-Sí el usuario acepta darnos más datos después de crear el  primer Plan, Rehabbit puede solicitar información adicional para conocer mejor a sus usuarios.
-
-- Edad o rango de edad.
-- Género.
-- A qué se dedica.
-
-El usuario puede omitir esta sección sin afectar el funcionamiento de Rehabbit.
-
----
-
-## 1.15 Segunda apertura de la aplicación
+## 1.14 Segunda apertura de la aplicación
 
 Cuando el usuario abre Rehabbit por segunda vez, se inicia una secuencia corta de post-onboarding.
 
@@ -320,7 +314,16 @@ Ejemplo:
 
 Agrega tu email para guardar tu progreso y poder continuar con tus Planes.
 
-[ Email ]
+se lo lleva a la pantalla de profile, para que actualice sus datos
+
+Incluyedo 
+- email
+- Edad o rango de edad.
+- Género.
+- A qué se dedica.
+
+El usuario puede omitir esta sección sin afectar el funcionamiento de Rehabbit.
+
 
 **Guardar progreso**
 

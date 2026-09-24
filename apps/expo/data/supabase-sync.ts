@@ -148,3 +148,17 @@ export async function getProfileIdentity(): Promise<{ userId: string | null; ema
   if (error) throw error;
   return { userId, email: typeof data?.email === "string" ? data.email : null };
 }
+
+export async function getProfile(): Promise<{ fullName: string; email: string; age: number | null; gender: string; occupation: string }> {
+  const userId = await getUserId();
+  if (!userId) return { fullName: "", email: "", age: null, gender: "", occupation: "" };
+  const { data, error } = await supabase.from("profiles").select("full_name,email,age,gender,occupation").eq("id", userId).maybeSingle();
+  if (error) throw error;
+  return {
+    fullName: typeof data?.full_name === "string" ? data.full_name : "",
+    email: typeof data?.email === "string" ? data.email : "",
+    age: typeof data?.age === "number" ? data.age : null,
+    gender: typeof data?.gender === "string" ? data.gender : "",
+    occupation: typeof data?.occupation === "string" ? data.occupation : "",
+  };
+}

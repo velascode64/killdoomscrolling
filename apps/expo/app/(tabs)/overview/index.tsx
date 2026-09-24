@@ -24,35 +24,32 @@ import {
 import { AppIcon } from "../../../components/app.icon";
 import { AndroidFocusDashboard } from "../../../components/android-focus-dashboard";
 import { CelebrationModal } from "../../../components/celebration-modal";
+import { InvitationToSaveProgressModal } from "../../../components/invitation-to-save-progress-modal";
 import { Container } from "../../../components/container";
 import { Divider } from "../../../components/divider";
 import { Header } from "../../../components/header";
 import { PercentageTrend } from "../../../components/percentage.trend";
-import { ProfileCompletionModal } from "../../../components/profile-completion-modal";
-import { EmailProgressModal } from "../../../components/email-progress-modal";
 import { ShadowCard } from "../../../components/shadow.card";
 import { WeeklySummary } from "../../../components/weekly-summary";
 import { consumeCelebrationNotice } from "../../../data/celebration-notice";
 import type { CelebrationNotice } from "../../../data/celebration-notice";
 import { OverviewStore } from "../../../data/overview.store";
 import { getProfileIdentity } from "../../../data/supabase-sync";
-import { getAppOpenCount, hasDeclinedEmailPrompt, markEmailPrompted } from "../../../data/post-onboarding";
+import { getAppOpenCount } from "../../../data/post-onboarding";
 
 dayjs.extend(weekday);
 
 const Overview = observer(() => {
   const [celebration, setCelebration] = useState<CelebrationNotice | null>(null);
-  const [profileVisible, setProfileVisible] = useState(false);
   const [emailVisible, setEmailVisible] = useState(false);
   const dismissCelebration = useCallback(() => {
-    if (celebration?.showProfile) setProfileVisible(true);
     setCelebration(null);
-  }, [celebration]);
+  }, []);
 
   const checkEmailPrompt = useCallback(() => {
-    void Promise.all([getAppOpenCount(), getProfileIdentity(), hasDeclinedEmailPrompt()]).then(([openCount, profile, declined]) => {
-      const shouldShow = openCount >= 2 && !profile.email && !declined;
-      const debug = `opens: ${openCount} · user_id: ${profile.userId ?? "none"} · email: ${profile.email ?? "empty"} · declined: ${declined} · modal: ${shouldShow}`;
+    void Promise.all([getAppOpenCount(), getProfileIdentity()]).then(([openCount, profile]) => {
+      const shouldShow = !profile.email && (openCount === 2 || (openCount > 2 && (openCount - 2) % 3 === 0));
+      const debug = `opens: ${openCount} · user_id: ${profile.userId ?? "none"} · email: ${profile.email ?? "empty"} · modal: ${shouldShow}`;
       console.log("[email-prompt]", debug);
       if (shouldShow) setEmailVisible(true);
     }).catch((error: unknown) => {
@@ -299,8 +296,14 @@ const Overview = observer(() => {
         visible={celebration !== null}
         onDismiss={dismissCelebration}
       />
-      <ProfileCompletionModal visible={profileVisible} onClose={() => setProfileVisible(false)} />
-      <EmailProgressModal visible={emailVisible && !profileVisible} onClose={() => { void markEmailPrompted(); setEmailVisible(false); }} />
+      <InvitationToSaveProgressModal
+        visible={emailVisible}
+        onContinue={() => {
+          setEmailVisible(false);
+          router.push("/settings/profile");
+        }}
+        onClose={() => setEmailVisible(false)}
+      />
     </>
   );
 });
