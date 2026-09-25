@@ -9,7 +9,6 @@ import {
   Layers,
   ListChecks,
   Pause,
-  Plus,
   Repeat2,
   ShieldCheck,
   Smartphone,
@@ -32,7 +31,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { Alert, AppState, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, StyleSheet } from "react-native";
+import { Alert, AppState, Image, Keyboard, Linking, Modal, PermissionsAndroid, Platform, Pressable, StyleSheet } from "react-native";
 import {
   Button,
   H3,
@@ -41,14 +40,14 @@ import {
   Paragraph,
   ScrollView,
   SizableText,
-  Spinner,
   View,
   XStack,
   YStack,
 } from "tamagui";
 
 import { AppAvatarStack, GradientButton, ModeRadial } from "../components/mode-ui";
-import { AppPickerSheet, AppSelectionList } from "../components/app-picker-sheet";
+import { AppPickerSheet } from "../components/app-picker-sheet";
+import { QuickAppSelection } from "../components/quick-app-selection";
 import { ActionSuccessModal } from "../components/action-success-modal";
 import { CategoryGlyph, CategorySelector } from "../components/category-selector";
 import type { CategoryOption } from "../components/category-selector";
@@ -501,6 +500,7 @@ export default function OnboardingScreen() {
   };
 
   const continueOnboarding = () => {
+    Keyboard.dismiss();
     if (step === 0) {
       void trackProductEvent("onboarding_started").catch((error: unknown) => console.warn("Unable to track onboarding", error));
     }
@@ -551,7 +551,6 @@ export default function OnboardingScreen() {
           addCustomCategory={addCustomCategory}
           selectCustomCategory={selectCustomCategory}
           togglePackages={togglePackages}
-          selectedApps={selectedApps}
           updateTime={updateTime}
           title={isCreatingMode ? translate.t("editor.createTitle") : translate.t("editor.editTitle")}
           onBack={() => router.back()}
@@ -645,12 +644,7 @@ export default function OnboardingScreen() {
           )}
           {step === 7 && (
             <QuestionScreen body={translate.t("onboarding.blockedBody")} icon={<Ban color="$primary9" size={38} />} title={translate.t("onboarding.blockedTitle")}>
-              <AppSelectionList
-                apps={apps}
-                height={360}
-                selectedPackages={plan.blockedPackages}
-                onToggle={(item) => togglePackages("blockedPackages", item)}
-              />
+              <QuickAppSelection apps={apps} replacement={false} selectedPackages={plan.blockedPackages} onToggle={(item) => togglePackages("blockedPackages", item)} onMore={() => setPickerTarget("blocked")} />
             </QuestionScreen>
           )}
           {step === 8 && (
@@ -661,12 +655,7 @@ export default function OnboardingScreen() {
           )}
           {step === 9 && (
             <QuestionScreen body={translate.t("onboarding.replacementBody")} icon={<Repeat2 color="$primary9" size={38} />} title={translate.t("onboarding.replacementTitle")}>
-              <AppSelectionList
-                apps={apps}
-                height={360}
-                selectedPackages={plan.productivePackages}
-                onToggle={(item) => togglePackages("productivePackages", item)}
-              />
+              <QuickAppSelection apps={apps} replacement selectedPackages={plan.productivePackages} onToggle={(item) => togglePackages("productivePackages", item)} onMore={() => setPickerTarget("productive")} />
             </QuestionScreen>
           )}
           {step === 10 && <CreatingScreen visible={creating} />}
@@ -688,6 +677,17 @@ export default function OnboardingScreen() {
         )}
         </YStack>
       </Container>
+      <AppPickerSheet
+        apps={apps}
+        open={pickerTarget !== null && !isDirectEditor}
+        selectedPackages={pickerTarget === "blocked" ? plan.blockedPackages : plan.productivePackages}
+        title={pickerTarget === "blocked" ? translate.t("editor.blockedApps") : translate.t("editor.rehabbitApps")}
+        onOpenChange={(open) => !open && setPickerTarget(null)}
+        onToggle={(packageName) => {
+          if (!pickerTarget) return;
+          togglePackages(pickerTarget === "blocked" ? "blockedPackages" : "productivePackages", packageName);
+        }}
+      />
       <ActionSuccessModal
         celebration={feedback?.celebration}
         message={feedback?.message ?? ""}
@@ -1023,7 +1023,6 @@ function Editor({
   addCustomCategory,
   selectCustomCategory,
   togglePackages,
-  selectedApps,
   updateTime,
   title,
   onBack,
@@ -1042,7 +1041,6 @@ function Editor({
   addCustomCategory: (category: PlanCustomCategory) => void;
   selectCustomCategory: (category: PlanCustomCategory) => void;
   togglePackages: (key: "blockedPackages" | "productivePackages", packageName: string) => void;
-  selectedApps: (packages: string[]) => AndroidBlockableApp[];
   updateTime: (key: "start" | "end", value: number) => void;
   title: string;
   onBack: () => void;
@@ -1092,20 +1090,8 @@ function Editor({
               }}
             />
 
-            <AppGroupCard
-              apps={selectedApps(plan.blockedPackages)}
-              description={translate.t("editor.blockDescription")}
-              label={translate.t("editor.block")}
-              loading={appsLoading}
-              onPress={() => setPickerTarget("blocked")}
-            />
-            <AppGroupCard
-              apps={selectedApps(plan.productivePackages)}
-              description={translate.t("editor.rehabbitDescription")}
-              label="Rehabbit"
-              loading={appsLoading}
-              onPress={() => setPickerTarget("productive")}
-            />
+            {!appsLoading && <QuickAppSelection apps={apps} replacement={false} selectedPackages={plan.blockedPackages} onToggle={(packageName) => togglePackages("blockedPackages", packageName)} onMore={() => setPickerTarget("blocked")} />}
+            {!appsLoading && <QuickAppSelection apps={apps} replacement selectedPackages={plan.productivePackages} onToggle={(packageName) => togglePackages("productivePackages", packageName)} onMore={() => setPickerTarget("productive")} />}
 
             <YStack gap="$3">
               <H4 color="$text11">{translate.t("editor.scheduleTitle")}</H4>
@@ -1166,47 +1152,6 @@ function Editor({
       />
 
     </Container>
-  );
-}
-
-function AppGroupCard({
-  apps,
-  description,
-  label,
-  loading,
-  onPress,
-}: {
-  apps: AndroidBlockableApp[];
-  description: string;
-  label: string;
-  loading: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <YStack gap="$3">
-      <H4 color="$text11">{label}</H4>
-      <ShadowCard
-        padding="$5"
-        pressStyle={loading ? undefined : { opacity: 0.75 }}
-        tone="surface"
-        onPress={loading ? undefined : onPress}
-      >
-        {loading ? (
-          <XStack alignItems="center" gap="$3" minHeight={44}>
-            <Spinner color="$primary9" size="small" />
-            <SizableText color="$text10" fontWeight="700">{translate.t("editor.loadingApps")}</SizableText>
-          </XStack>
-        ) : (
-          <XStack alignItems="center" gap="$3" justifyContent="space-between">
-            <YStack flex={1} gap="$1">
-              <SizableText color="$text11" fontWeight="800">{apps.length ? translate.t("editor.appsSelected", { count: apps.length }) : translate.t("editor.selectApps")}</SizableText>
-              <SizableText color="$text10" size="$3">{description}</SizableText>
-            </YStack>
-            {apps.length > 0 ? <AppAvatarStack apps={apps} /> : <Plus color="$text11" size={22} />}
-          </XStack>
-        )}
-      </ShadowCard>
-    </YStack>
   );
 }
 

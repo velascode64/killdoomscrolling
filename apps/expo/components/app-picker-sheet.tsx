@@ -330,18 +330,18 @@ function AppPickerRow({
   );
 }
 
-function AppIcon({ app }: { app: AndroidBlockableApp }) {
+export function AppIcon({ app, size = 44 }: { app: AndroidBlockableApp; size?: number }) {
   if (app.iconBase64) {
     return (
       <Image
         source={{ uri: `data:image/png;base64,${app.iconBase64}` }}
-        style={{ borderRadius: 22, height: 44, width: 44 }}
+        style={{ borderRadius: size / 2, height: size, width: size }}
       />
     );
   }
 
   return (
-    <View alignItems="center" backgroundColor="$blue3" borderRadius={22} height={44} justifyContent="center" width={44}>
+    <View alignItems="center" backgroundColor="$blue3" borderRadius={size / 2} height={size} justifyContent="center" width={size}>
       <SizableText color="$text11" fontWeight="900">{app.name.slice(0, 1).toUpperCase()}</SizableText>
     </View>
   );

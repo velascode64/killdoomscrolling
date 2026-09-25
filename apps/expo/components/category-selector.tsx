@@ -15,7 +15,7 @@ import {
   Star,
 } from "@tamagui/lucide-icons";
 import { useEffect, useState } from "react";
-import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Button, H4, Input, Sheet, SizableText, View, XStack, YStack } from "tamagui";
 
 import type { PlanCustomCategory, PlanCustomCategoryIcon } from "../data/android-reward";
@@ -144,7 +144,6 @@ export function CategorySelector({
           padding="$5"
         >
           <Sheet.Handle backgroundColor="$borderColor" marginBottom="$3" />
-          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <YStack gap="$4">
             <H4 color="$text11" fontSize="$7">{translate.t("category.new")}</H4>
@@ -189,7 +188,6 @@ export function CategorySelector({
             <GradientButton disabled={!canSave} onPress={saveCategory}>{translate.t("common.save")}</GradientButton>
           </YStack>
           </TouchableWithoutFeedback>
-          </KeyboardAvoidingView>
         </Sheet.Frame>
       </Sheet>
     </>
