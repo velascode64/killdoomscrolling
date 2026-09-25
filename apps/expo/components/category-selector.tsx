@@ -15,6 +15,7 @@ import {
   Star,
 } from "@tamagui/lucide-icons";
 import { useEffect, useState } from "react";
+import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from "react-native";
 import { Button, H4, Input, Sheet, SizableText, View, XStack, YStack } from "tamagui";
 
 import type { PlanCustomCategory, PlanCustomCategoryIcon } from "../data/android-reward";
@@ -132,7 +133,7 @@ export function CategorySelector({
         </XStack>
       </YStack>
 
-      <Sheet modal open={sheetOpen} snapPointsMode="fit" onOpenChange={setSheetOpen}>
+      <Sheet modal moveOnKeyboardChange open={sheetOpen} snapPointsMode="fit" onOpenChange={setSheetOpen}>
         <Sheet.Overlay animation="quick" backgroundColor="rgba(33, 27, 32, 0.2)" />
         <Sheet.Frame
           backgroundColor="#F8FAFC"
@@ -143,6 +144,8 @@ export function CategorySelector({
           padding="$5"
         >
           <Sheet.Handle backgroundColor="$borderColor" marginBottom="$3" />
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <YStack gap="$4">
             <H4 color="$text11" fontSize="$7">{translate.t("category.new")}</H4>
             <YStack gap="$2">
@@ -185,6 +188,8 @@ export function CategorySelector({
             </YStack>
             <GradientButton disabled={!canSave} onPress={saveCategory}>{translate.t("common.save")}</GradientButton>
           </YStack>
+          </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </Sheet.Frame>
       </Sheet>
     </>

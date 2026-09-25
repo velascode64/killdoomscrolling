@@ -10,7 +10,8 @@ const ROW_HEIGHT = 40;
 
 export function GenderPicker({ value, open, onOpenChange, onChange }: { value: string; open: boolean; onOpenChange: (open: boolean) => void; onChange: (value: string) => void }) {
   const selectedIndex = Math.max(0, VALUES.indexOf(value as (typeof VALUES)[number]));
-  const label = OPTIONS[selectedIndex] ?? "Selecciona una opción";
+  const label = value ? OPTIONS[selectedIndex] : "Selecciona una opción";
+  const wheelValue = OPTIONS[selectedIndex] ?? OPTIONS[0];
   return <>
     <YStack gap="$2"><SizableText color="$text11" fontWeight="800">Género</SizableText><Button backgroundColor="white" borderColor="#E2E8F0" borderRadius={12} borderWidth={1} color={value ? "$text11" : "$text6"} justifyContent="flex-start" onPress={() => onOpenChange(true)}>{label}</Button></YStack>
     <Modal animationType="fade" transparent visible={open} onRequestClose={() => onOpenChange(false)}>
@@ -21,7 +22,7 @@ export function GenderPicker({ value, open, onOpenChange, onChange }: { value: s
             <View pointerEvents="none" style={styles.overlay} />
             <View pointerEvents="none" style={styles.highlight} />
             <View pointerEvents="none" style={styles.selectedRow} />
-            <Wheel values={[...OPTIONS]} selected={label} width={260} onChange={(option) => { onChange(VALUES[OPTIONS.indexOf(option)] ?? "NA"); onOpenChange(false); }} />
+            <Wheel values={[...OPTIONS]} selected={wheelValue} width={260} onChange={(option) => { onChange(VALUES[OPTIONS.indexOf(option)] ?? "NA"); onOpenChange(false); }} />
           </View>
         </Pressable>
       </Pressable>

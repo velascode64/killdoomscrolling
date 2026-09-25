@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { ScrollView, View } from "tamagui";
@@ -37,6 +37,7 @@ export const Container = ({
     : Math.max(tabBarHeight, floatingTabClearance);
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} enabled keyboardVerticalOffset={insets.top} style={styles.keyboardContainer}>
     <View flex={1} backgroundColor="#F8FAFC">
       <LinearGradient
         colors={["#F8FAFC", "#F8FAFC", "#F2F5FF", "#F8FAFC"]}
@@ -57,6 +58,8 @@ export const Container = ({
             maxWidth: 600,
           }}
           scrollEventThrottle={16}
+          automaticallyAdjustKeyboardInsets
+          keyboardShouldPersistTaps="handled"
           onScroll={(event) => {
             const offsetY = event.nativeEvent.contentOffset.y;
             setIsSticky(offsetY >= 5);
@@ -92,5 +95,8 @@ export const Container = ({
         </View>
       )}
     </View>
+    </KeyboardAvoidingView>
   );
 };
+
+const styles = StyleSheet.create({ keyboardContainer: { flex: 1 } });
